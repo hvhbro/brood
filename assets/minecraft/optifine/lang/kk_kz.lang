@@ -1,0 +1,788 @@
+# Жалпы
+of.general.ambiguous=Анықталмаған
+of.general.compact=Ықшам
+of.general.custom=Таңдамалы
+of.general.from=Файл
+of.general.id=ID
+of.general.max=Макс.
+of.general.restart=⟲
+of.general.smart=Ақылды
+
+# Пернелер
+of.key.zoom=Жақындату
+
+# Хабарлама
+of.message.aa.shaders1=Тегістеу шейдерлермен үйлесімсіз.
+of.message.aa.shaders2=Бұл параметрді қосу үшін шейдерлерді өшіріңіз.
+
+of.message.af.shaders1=Анизотропты сүзгілеу шейдерлермен үйлесімсіз.
+of.message.af.shaders2=Бұл параметрді қосу үшін шейдерлерді өшіріңіз.
+
+of.message.fr.shaders1=Жылдам рендер шейдерлермен үйлесімсіз.
+of.message.fr.shaders2=Бұл параметрді қосу үшін шейдерлерді өшіріңіз.
+
+of.message.shaders.aa1=Тегістеу шейдерлермен үйлесімсіз.
+of.message.shaders.aa2=«Сапа» → «Тегістеу» параметрін «Сөндірулі» күйіне ауыстырып, ойынды қайта іске қосыңыз.
+
+of.message.shaders.af1=Шейдерлер анизотропты сүзгілеумен үйлесімсіз.
+of.message.shaders.af2=«Сапа» → «Анизотропты сүзгі» параметрін «Сөндірулі» күйіне ауыстырыңыз.
+
+of.message.shaders.fr1=Шейдерлер жылдам рендермен үйлесімсіз.
+of.message.shaders.fr2=«Өнімділік» → «Жылдам рендер» параметрін «Сөндірулі» күйіне ауыстырыңыз.
+
+of.message.shaders.gf1=Шейдерлер «Керемет!» графикасымен үйлесімсіз.
+of.message.shaders.gf2=Жылдам немесе егжей-тегжейлі графиканы пайдаланыңыз.
+
+of.message.shaders.an1=Шейдерлер анаглифпен үйлесімсіз.
+of.message.shaders.an2=«Басқа» → «Анаглиф» параметрін «Сөндірулі» күйіне ауыстырыңыз.
+
+of.message.shaders.nv1=Бұл шейдерлер OptiFine-ның жаңа нұсқасын қажет етеді: %s
+of.message.shaders.nv2=Сіз оларды шынымен жүктегіңіз келе ме?
+
+of.message.newVersion=§eOptiFine§r-ның жаңа нұсқасы қолжетімді: §e%s§r
+of.message.java64Bit=Өнімділікті арттыру үшін §e64-биттік Java§r орнатыңыз.
+of.message.openglError=§eOpenGL қатесі§r: %s (%s)
+
+of.message.shaders.loading=Шейдерлер жүктелуде: %s
+
+of.message.other.reset=Барлық графика баптауларын бастапқы мәндеріне қайтару керек пе?
+
+of.message.loadingVisibleChunks=Көрінетін чанктар жүктелуде
+
+# Скин кастомизациясы
+
+of.options.skinCustomisation.ofCape=OptiFine шапаны...
+
+of.options.capeOF.title=OptiFine шапаны
+of.options.capeOF.openEditor=Шапан редакторын ашу
+of.options.capeOF.reloadCape=Шапанды жаңарту
+of.options.capeOF.copyEditorLink=Сілтемені көшіру
+
+of.message.capeOF.openEditor=OptiFine шапан редакторы браузерде ашылады.
+of.message.capeOF.openEditorError=Браузерде сілтемені ашу кезінде қате пайда болды.
+of.message.capeOF.reloadCape=Шапан 15 секундтан кейін жаңартылады.
+
+of.message.capeOF.error1=Mojang тіркелгісіне кіру мүмкін болмады.
+of.message.capeOF.error2=Қате: %s
+
+# Бейне баптаулары
+
+options.graphics.tooltip.1=Графика сапасы
+options.graphics.tooltip.2=  Жылдам - төмен сапа (жылдамырақ)
+options.graphics.tooltip.3=  Егжей-тегжейлі - жоғары сапа (баяуырақ)
+options.graphics.tooltip.4=  Керемет - ең жақсы мөлдірлік (одан да баяу)
+options.graphics.tooltip.5=Шым, жапырақ, су, көлеңке және бұлттардың көрінісін өзгертеді.
+options.graphics.tooltip.6=Керемет графика шейдерлермен үйлесімсіз.
+options.graphics.tooltip.7=
+
+of.options.renderDistance.tiny=Минималды
+of.options.renderDistance.short=Шағын
+of.options.renderDistance.normal=Қалыпты
+of.options.renderDistance.far=Алыс
+of.options.renderDistance.extreme=Шекті
+of.options.renderDistance.insane=Ессіз
+of.options.renderDistance.ludicrous=Ақылға сыймайтын!
+
+options.renderDistance.tooltip.1=Салу қашықтығы
+options.renderDistance.tooltip.2=  2 Минималды - 32 м (өте жылдам)
+options.renderDistance.tooltip.3=  4 Шағын - 64 м (жылдамырақ)
+options.renderDistance.tooltip.4=  8 Қалыпты - 128 м
+options.renderDistance.tooltip.5=  16 Алыс - 256 м (баяуырақ)
+options.renderDistance.tooltip.6=  32 Шекті - 512 м (одан да баяу!)
+options.renderDistance.tooltip.7=  48 Ессіз - 768 м, 2 Гбайт ЖЖҚ қажет
+options.renderDistance.tooltip.8=  64 Ақылға сыймайтын! - 1024 м, 3 Гбайт ЖЖҚ қажет
+
+options.entityDistanceScaling.tooltip.1=Нысанға дейінгі қашықтық
+options.entityDistanceScaling.tooltip.2=  50%% - жылдамырақ
+options.entityDistanceScaling.tooltip.3=  §o100%%§r - әдепкі
+options.entityDistanceScaling.tooltip.4=  500%% - баяуырақ
+options.entityDistanceScaling.tooltip.5=Нысандар көрінетін максималды қашықтық.
+
+options.framerateLimit.tooltip.1=Кадр жиілігі
+options.framerateLimit.tooltip.2=  V-Sync - монитордың жаңарту жиілігі
+options.framerateLimit.tooltip.3=  5–255 - өз мәндері
+options.framerateLimit.tooltip.4=  Максимум - шектеусіз (жылдамырақ)
+options.framerateLimit.tooltip.5=Кадр жиілігін көрсетілгенге дейін азайтады.
+options.framerateLimit.tooltip.6=
+of.options.framerateLimit.vsync=V-Sync
+
+options.guiScale.tooltip.1=Интерфейс өлшемі
+options.guiScale.tooltip.2=  Авто - максималды өлшем
+options.guiScale.tooltip.3=  Ұсақ, қалыпты, ірі - сәйкесінше 1x—3x
+options.guiScale.tooltip.4=  4x-тен 10x-ке дейін - 4K ажыратымдылығы бар мониторларда
+options.guiScale.tooltip.5=Тақ мәндер Unicode қаріпімен үйлесімсіз.
+options.guiScale.tooltip.6=Кішірек мәндерде интерфейс жылдамырақ болуы мүмкін.
+
+options.vbo=VBO пайдалану
+options.vbo.tooltip.1=Vertex Buffer Objects
+options.vbo.tooltip.2=Баламалы рендеринг үлгісін пайдаланады,
+options.vbo.tooltip.3=ол әдетте стандарттыдан 5–10%% жылдамырақ.
+
+options.gamma.tooltip.1=Қараңғы нысандардың жарықтығы
+options.gamma.tooltip.2=  §oБұлыңғыр§r - стандартты жарықтық
+options.gamma.tooltip.3=  1–99%% - өз мәндері
+options.gamma.tooltip.4=  Жарық - максималды жарықтық
+options.gamma.tooltip.5=Толығымен қара нысандардың жарықтығын өзгертпейді.
+options.gamma.tooltip.6=
+
+of.options.ALTERNATE_BLOCKS=Балама блоктар
+of.options.ALTERNATE_BLOCKS.tooltip.1=Балама блок үлгілері
+of.options.ALTERNATE_BLOCKS.tooltip.2=Блоктардың баламалы үлгілерін пайдаланады.
+of.options.ALTERNATE_BLOCKS.tooltip.3=Таңдалған ресурстар жиынтығына байланысты.
+
+of.options.FOG_FANCY=Тұман
+of.options.FOG_FANCY.tooltip.1=Тұман түрі
+of.options.FOG_FANCY.tooltip.2=  Жылдам - қарапайым тұман
+of.options.FOG_FANCY.tooltip.3=  Егжей-тегжейлі - қалың тұман
+of.options.FOG_FANCY.tooltip.4=  Сөндірулі - тұман өшірілген (жылдамырақ)
+of.options.FOG_FANCY.tooltip.5=Қалың тұманды бейнекарта қолдауы керек.
+of.options.FOG_FANCY.tooltip.6=
+
+of.options.FOG_START=Тұманның қашықтығы
+of.options.FOG_START.tooltip.1=Тұманның қашықтығы
+of.options.FOG_START.tooltip.2=  0.2 - тұманның ойыншыға жақын басталуы
+of.options.FOG_START.tooltip.3=  0.8 - тұманның ойыншыдан алыс басталуы
+of.options.FOG_START.tooltip.4=Әдетте өнімділікке әсер етпейді.
+
+of.options.CHUNK_LOADING=Чанктарды жүктеу
+of.options.CHUNK_LOADING.tooltip.1=Чанктарды жүктеу
+of.options.CHUNK_LOADING.tooltip.2=  §oӘдепкі§r - чанктарды жүктеу кезінде тұрақсыз FPS
+of.options.CHUNK_LOADING.tooltip.3=  Біркелкі - тұрақты FPS
+of.options.CHUNK_LOADING.tooltip.4=  Көп ядролы - тұрақты FPS, әлем 3 есе жылдам жүктеледі
+of.options.CHUNK_LOADING.tooltip.5=Біркелкі және көп ядролы жүктеулер кідірістер мен лагтарды
+of.options.CHUNK_LOADING.tooltip.6=болдырмайды, олар чанктарды жүктеуден туындайды.
+of.options.CHUNK_LOADING.tooltip.7=Көп ядролы жүктеу әлемді 3 есе жылдам жүктеп,
+of.options.CHUNK_LOADING.tooltip.8=процессордың екінші ядросын пайдаланып, FPS-ті арттыра алады.
+of.options.chunkLoading.smooth=Біркелкі
+of.options.chunkLoading.multiCore=Көп ядролы
+
+of.options.shaders=Шейдерлер...
+of.options.shadersTitle=Шейдерлер
+
+of.options.shaders.packNone=Өшірілген
+of.options.shaders.packDefault=(кірістірілген)
+
+of.options.shaders.ANTIALIASING=Тегістеу
+of.options.shaders.ANTIALIASING.tooltip.1=Тегістеу
+of.options.shaders.ANTIALIASING.tooltip.2=  §oСөндірулі§r - тегістеу өшірілген (жылдамырақ)
+of.options.shaders.ANTIALIASING.tooltip.3=  FXAA 2x, 4x - сызықтар мен жиектерді тегістеу (баяуырақ)
+of.options.shaders.ANTIALIASING.tooltip.4=FXAA — бұл кейінгі өңдеу эффектісі, ол тегіс емес
+of.options.shaders.ANTIALIASING.tooltip.5=сызықтарды және кенет түс ауысуларын тегістейді.
+of.options.shaders.ANTIALIASING.tooltip.6=Ол дәстүрлі тегістеуден жылдамырақ
+of.options.shaders.ANTIALIASING.tooltip.7=және шейдерлермен үйлесімді.
+
+of.options.shaders.NORMAL_MAP=Нормаль картасы
+of.options.shaders.NORMAL_MAP.tooltip.1=Нормаль картасы
+of.options.shaders.NORMAL_MAP.tooltip.2=  §oҚосулы§r - нормаль картасы қосулы
+of.options.shaders.NORMAL_MAP.tooltip.3=  Сөндірулі - нормаль картасы өшірулі
+of.options.shaders.NORMAL_MAP.tooltip.4=Шейдерлермен жазық беттерде үш өлшемді
+of.options.shaders.NORMAL_MAP.tooltip.5=геометрияны модельдеу үшін қолданылады.
+of.options.shaders.NORMAL_MAP.tooltip.6=Ресурстар жиынтығымен қамтамасыз етіледі.
+of.options.shaders.NORMAL_MAP.tooltip.7=
+
+of.options.shaders.SPECULAR_MAP=Шағылысу картасы
+of.options.shaders.SPECULAR_MAP.tooltip.1=Шағылысу картасы
+of.options.shaders.SPECULAR_MAP.tooltip.2=  §oҚосулы§r - шағылысу картасы қосулы
+of.options.shaders.SPECULAR_MAP.tooltip.3=  Сөндірулі - шағылысу картасы өшірулі
+of.options.shaders.SPECULAR_MAP.tooltip.4=Шейдерлермен ерекше шағылысу эффектісін
+of.options.shaders.SPECULAR_MAP.tooltip.5=жасау үшін қолданылады.
+of.options.shaders.SPECULAR_MAP.tooltip.6=Ресурстар жиынтығымен қамтамасыз етіледі.
+of.options.shaders.SPECULAR_MAP.tooltip.7=
+
+of.options.shaders.RENDER_RES_MUL=Рендер сапасы
+of.options.shaders.RENDER_RES_MUL.tooltip.1=Рендеринг сапасы
+of.options.shaders.RENDER_RES_MUL.tooltip.2=  0.5x - төмен сапа (жылдамырақ)
+of.options.shaders.RENDER_RES_MUL.tooltip.3=  §o1x§r - стандартты рендеринг сапасы
+of.options.shaders.RENDER_RES_MUL.tooltip.4=  2x - жоғары сапа (баяуырақ)
+of.options.shaders.RENDER_RES_MUL.tooltip.5=Шейдерлермен визуализацияланатын текстуралардың өлшемін өзгертеді.
+of.options.shaders.RENDER_RES_MUL.tooltip.6=Төмен мәндер 4K мониторлар үшін пайдалы болуы мүмкін.
+of.options.shaders.RENDER_RES_MUL.tooltip.7=Жоғары мәндер тегістеу сүзгісі ретінде жұмыс істейді.
+of.options.shaders.RENDER_RES_MUL.tooltip.8=
+
+of.options.shaders.SHADOW_RES_MUL=Көлеңке сапасы
+of.options.shaders.SHADOW_RES_MUL.tooltip.1=Көлеңке сапасы
+of.options.shaders.SHADOW_RES_MUL.tooltip.2=  0.5x - анық емес, дөрекі көлеңкелер (жылдамырақ)
+of.options.shaders.SHADOW_RES_MUL.tooltip.3=  §o1x§r - стандартты көлеңке сапасы
+of.options.shaders.SHADOW_RES_MUL.tooltip.4=  2x - егжей-тегжейлі көлеңкелер (баяуырақ)
+of.options.shaders.SHADOW_RES_MUL.tooltip.5=Көлеңке картасы текстурасының өлшемін өзгертеді.
+of.options.shaders.SHADOW_RES_MUL.tooltip.6=
+of.options.shaders.SHADOW_RES_MUL.tooltip.7=
+of.options.shaders.SHADOW_RES_MUL.tooltip.8=
+
+of.options.shaders.HAND_DEPTH_MUL=Қол тереңдігі
+of.options.shaders.HAND_DEPTH_MUL.tooltip.1=Қол тереңдігі
+of.options.shaders.HAND_DEPTH_MUL.tooltip.2=  0.5x - қол камераға жақын
+of.options.shaders.HAND_DEPTH_MUL.tooltip.3=  §o1x§r - стандартты қол тереңдігі
+of.options.shaders.HAND_DEPTH_MUL.tooltip.4=  2x - қол камерадан алыс
+of.options.shaders.HAND_DEPTH_MUL.tooltip.5=Қолдағы нысандардың камерадан
+of.options.shaders.HAND_DEPTH_MUL.tooltip.6=қашықтығын өзгертеді.
+of.options.shaders.HAND_DEPTH_MUL.tooltip.7=Тереңдік өткірлігін қолданатын шейдерлерде
+of.options.shaders.HAND_DEPTH_MUL.tooltip.8=қолдағы нысандардың өткірлігі өзгеруі керек.
+
+of.options.shaders.CLOUD_SHADOW=Бұлт көлеңкелері
+
+of.options.shaders.OLD_HAND_LIGHT=Қолдан жарық
+of.options.shaders.OLD_HAND_LIGHT.tooltip.1=Қолдан ескіше жарықтандыру
+of.options.shaders.OLD_HAND_LIGHT.tooltip.2=  §oӘдепкі§r - шейдермен басқарылады
+of.options.shaders.OLD_HAND_LIGHT.tooltip.3=  Қосулы - қолдан ескіше жарықтандыру
+of.options.shaders.OLD_HAND_LIGHT.tooltip.4=  Сөндірулі - қолдан жаңаша жарықтандыру
+of.options.shaders.OLD_HAND_LIGHT.tooltip.5=Негізгі қолдағы жарық шығаратын заттарды ғана
+of.options.shaders.OLD_HAND_LIGHT.tooltip.6=танып, шейдерлерге екінші қолдағы заттармен
+of.options.shaders.OLD_HAND_LIGHT.tooltip.7=де жұмыс істеуге мүмкіндік береді.
+
+of.options.shaders.OLD_LIGHTING=Ескі жарық
+of.options.shaders.OLD_LIGHTING.tooltip.1=Ескі жарықтандыру
+of.options.shaders.OLD_LIGHTING.tooltip.2=  §oӘдепкі§r - шейдермен басқарылады
+of.options.shaders.OLD_LIGHTING.tooltip.3=  Қосулы - ескі жарықтандыруды қолдану
+of.options.shaders.OLD_LIGHTING.tooltip.4=  Сөндірулі - ескі жарықтандыруды қолданбау
+of.options.shaders.OLD_LIGHTING.tooltip.5=Ойынның блоктардың жақтарына қолданатын
+of.options.shaders.OLD_LIGHTING.tooltip.6=тұрақты жарықтандыруды басқарады.
+of.options.shaders.OLD_LIGHTING.tooltip.7=Кіріктірілген көлеңкелері бар шейдерлер әдетте
+of.options.shaders.OLD_LIGHTING.tooltip.8=күннің орналасуына байланысты жарықты әлдеқайда жақсы көрсетеді.
+
+of.options.shaders.DOWNLOAD=Шейдерлерді жүктеу
+of.options.shaders.DOWNLOAD.tooltip.1=Шейдерлерді жүктеу
+of.options.shaders.DOWNLOAD.tooltip.2=
+of.options.shaders.DOWNLOAD.tooltip.3=Браузерде шейдерлер тізімі бар бетті ашады.
+of.options.shaders.DOWNLOAD.tooltip.4=Жүктелген шейдерлерді шейдерлер қалтасына салыңыз,
+of.options.shaders.DOWNLOAD.tooltip.5=содан кейін олар қолдануға қолжетімді болады.
+
+of.options.shaders.SHADER_PACK=Шейдерлер
+
+of.options.shaders.shadersFolder=Шейдерлер қалтасы
+of.options.shaders.shaderOptions=Шейдер баптаулары...
+
+of.options.shaderOptionsTitle=Шейдер баптаулары
+
+of.options.quality=Сапа...
+of.options.qualityTitle=Сапа баптаулары
+
+of.options.details=Ойын элементтері...
+of.options.detailsTitle=Ойын элементтерінің баптаулары
+
+of.options.performance=Өнімділік...
+of.options.performanceTitle=Өнімділік баптаулары
+
+of.options.animations=Анимация...
+of.options.animationsTitle=Анимация баптаулары
+
+of.options.other=Басқа...
+of.options.otherTitle=Басқа баптаулар
+
+of.options.other.reset=Қалпына келтіру
+
+of.shaders.profile=Баптаулар
+
+# Сапа
+
+of.options.mipmap.bilinear=Билинейлі
+of.options.mipmap.linear=Сызықтық
+of.options.mipmap.nearest=Жақын
+of.options.mipmap.trilinear=Трилинейлі
+
+options.mipmapLevels.tooltip.1=Детализация деңгейлері
+options.mipmapLevels.tooltip.2=  Сөндірулі - тегістеусіз
+options.mipmapLevels.tooltip.3=  1 - минималды тегістеу
+options.mipmapLevels.tooltip.4=  Макс. - максималды тегістеу
+options.mipmapLevels.tooltip.5=Алыстағы нысандарды текстура бөлшектерін
+options.mipmapLevels.tooltip.6=тегістеу арқылы жақсырақ көрсетеді.
+options.mipmapLevels.tooltip.7=Әдетте өнімділікке әсер етпейді.
+
+of.options.MIPMAP_TYPE=Детализация
+of.options.MIPMAP_TYPE.tooltip.1=Текстуралардың детализациясы
+of.options.MIPMAP_TYPE.tooltip.2=  Жақын - дөрекі тегістеу (жылдамырақ)
+of.options.MIPMAP_TYPE.tooltip.3=  Сызықтық - қалыпты тегістеу
+of.options.MIPMAP_TYPE.tooltip.4=  Билинейлі - жақсы тегістеу
+of.options.MIPMAP_TYPE.tooltip.5=  Трилинейлі - ең жақсы тегістеу (баяуырақ)
+of.options.MIPMAP_TYPE.tooltip.6=Алыстағы нысандарды текстура бөлшектерін
+of.options.MIPMAP_TYPE.tooltip.7=тегістеу арқылы жақсырақ көрсетеді.
+
+of.options.AA_LEVEL=Тегістеу
+of.options.AA_LEVEL.tooltip.1=Тегістеу
+of.options.AA_LEVEL.tooltip.2= §oСөндірулі§r - тегістеу өшірілген (жылдамырақ)
+of.options.AA_LEVEL.tooltip.3= 2–16 - сызықтар мен жиектерді тегістеу (баяуырақ)
+of.options.AA_LEVEL.tooltip.4=Тегіс емес сызықтар мен түс ауысуларын тегістейді.
+of.options.AA_LEVEL.tooltip.5=Өнімділікті айтарлықтай төмендетуі мүмкін.
+of.options.AA_LEVEL.tooltip.6=Барлық бейнекарталар тегістеудің барлық
+of.options.AA_LEVEL.tooltip.7=деңгейлерін қолдай бермейді.
+of.options.AA_LEVEL.tooltip.8=⟲ Өзгерістер тек ҚАЙТА ІСКЕ ҚОСҚАННАН кейін күшіне енеді!
+
+of.options.AF_LEVEL=Анизотропты сүзгі
+of.options.AF_LEVEL.tooltip.1=Анизотропты сүзгілеу
+of.options.AF_LEVEL.tooltip.2= §oСөндірулі§r - стандартты детализация (жылдамырақ)
+of.options.AF_LEVEL.tooltip.3= 2–16 - жақсартылған детализация (баяуырақ)
+of.options.AF_LEVEL.tooltip.4=MIP-текстуралардағы бөлшектерді қалпына келтіреді.
+of.options.AF_LEVEL.tooltip.5=Өнімділікті айтарлықтай төмендетуі мүмкін.
+of.options.AF_LEVEL.tooltip.6=
+
+of.options.CLEAR_WATER=Тазартылған су
+of.options.CLEAR_WATER.tooltip.1=Тазартылған су
+of.options.CLEAR_WATER.tooltip.2=  Қосулы - таза, мөлдір су
+of.options.CLEAR_WATER.tooltip.3=  §oСөндірулі§r - стандартты су
+
+of.options.RANDOM_ENTITIES=Кездейсоқ нысандар
+of.options.RANDOM_ENTITIES.tooltip.1=Нысандардың кездейсоқ текстуралары
+of.options.RANDOM_ENTITIES.tooltip.2=  Сөндірулі - кездейсоқ нысандар өшірілген (жылдамырақ)
+of.options.RANDOM_ENTITIES.tooltip.3=  Қосулы - кездейсоқ нысандар қосулы (баяуырақ)
+of.options.RANDOM_ENTITIES.tooltip.4=Нысандар кездейсоқ текстураларды пайдаланады.
+of.options.RANDOM_ENTITIES.tooltip.5=Ресурстар жиынтығымен қамтамасыз етіледі.
+
+of.options.BETTER_GRASS=Жақсартылған шым
+of.options.BETTER_GRASS.tooltip.1=Жақсартылған шым
+of.options.BETTER_GRASS.tooltip.2=  §oСөндірулі§r - стандартты шым (жылдамырақ)
+of.options.BETTER_GRASS.tooltip.3=  Жылдам - текстураларды толық өзгерту (баяуырақ)
+of.options.BETTER_GRASS.tooltip.4=  Егжей-тегжейлі - динамикалық текстуралар (одан да баяу)
+of.options.BETTER_GRASS.tooltip.5=Шымның бүйір текстураларын үстіңгісіне өзгертеді.
+
+of.options.BETTER_SNOW=Жақсартылған қар
+of.options.BETTER_SNOW.tooltip.1=Жақсартылған қар
+of.options.BETTER_SNOW.tooltip.2=  §oСөндірулі§r - стандартты қар (жылдамырақ)
+of.options.BETTER_SNOW.tooltip.3=  Қосулы - жақсартылған қар (баяуырақ)
+of.options.BETTER_SNOW.tooltip.4=Жанындағы мөлдір блоктардың (қоршау, шөп)
+of.options.BETTER_SNOW.tooltip.5=астындағы қарды көрсетеді.
+
+of.options.CUSTOM_FONTS=Арнайы қаріп
+of.options.CUSTOM_FONTS.tooltip.1=Пайдаланушы қаріпі
+of.options.CUSTOM_FONTS.tooltip.2=  §oҚосулы§r - пайдаланушы қаріпі
+of.options.CUSTOM_FONTS.tooltip.3=  Сөндірулі - стандартты қаріп (жылдамырақ)
+of.options.CUSTOM_FONTS.tooltip.4=Ресурстар жиынтығымен қамтамасыз етіледі.
+of.options.CUSTOM_FONTS.tooltip.5=
+
+of.options.CUSTOM_COLORS=Арнайы түстер
+of.options.CUSTOM_COLORS.tooltip.1=Пайдаланушы түстері
+of.options.CUSTOM_COLORS.tooltip.2=  §oҚосулы§r - пайдаланушы түстері
+of.options.CUSTOM_COLORS.tooltip.3=  Сөндірулі - стандартты түстер (жылдамырақ)
+of.options.CUSTOM_COLORS.tooltip.4=Ресурстар жиынтығымен қамтамасыз етіледі.
+of.options.CUSTOM_COLORS.tooltip.5=
+
+of.options.SWAMP_COLORS=Бақпақ түстері
+of.options.SWAMP_COLORS.tooltip.1=Бақпақ түстері
+of.options.SWAMP_COLORS.tooltip.2=  §oҚосулы§r - батпақ түстері (баяуырақ)
+of.options.SWAMP_COLORS.tooltip.3=  Сөндірулі - батпақ түстері көрсетілмейді (жылдамырақ)
+of.options.SWAMP_COLORS.tooltip.4=Батпақтағы шөп, жапырақ, шырмауық және су түсіне әсер етеді.
+
+of.options.SMOOTH_BIOMES=Тегістелген биомдар
+of.options.SMOOTH_BIOMES.tooltip.1=Биом шекараларының түстерін тегістеу
+of.options.SMOOTH_BIOMES.tooltip.2=  §oҚосулы§r - тегістелген түстер (баяуырақ)
+of.options.SMOOTH_BIOMES.tooltip.3=  Сөндірулі - тегістелмеген түстер (жылдамырақ)
+of.options.SMOOTH_BIOMES.tooltip.4=Қоршаған барлық блоктардың түс мәндерін таңдап,
+of.options.SMOOTH_BIOMES.tooltip.5=орташалау арқылы орындалады.
+of.options.SMOOTH_BIOMES.tooltip.6=Шөп, жапырақ, шырмауық және су түсіне әсер етеді.
+
+of.options.CONNECTED_TEXTURES=Текстуралар қосылуы
+of.options.CONNECTED_TEXTURES.tooltip.1=Текстуралар қосылуы
+of.options.CONNECTED_TEXTURES.tooltip.2=  §oСөндірулі§r - стандартты текстуралар
+of.options.CONNECTED_TEXTURES.tooltip.3=  Жылдам - қарапайым қосылу
+of.options.CONNECTED_TEXTURES.tooltip.4=  Егжей-тегжейлі - сапалы қосылу
+of.options.CONNECTED_TEXTURES.tooltip.5=Текстураларды (әдепкі бойынша шыны, құмтас
+of.options.CONNECTED_TEXTURES.tooltip.6=және кітап сөрелері) бір-бірімен біріктіреді.
+of.options.CONNECTED_TEXTURES.tooltip.7=Ресурстар жиынтығымен қамтамасыз етіледі.
+of.options.CONNECTED_TEXTURES.tooltip.8=
+
+of.options.NATURAL_TEXTURES=Еркін текстуралар
+of.options.NATURAL_TEXTURES.tooltip.1=Еркін текстуралар
+of.options.NATURAL_TEXTURES.tooltip.2=  §oСөндірулі§r - еркін текстураларсыз
+of.options.NATURAL_TEXTURES.tooltip.3=  Қосулы - еркін текстураларды қолдану
+of.options.NATURAL_TEXTURES.tooltip.4=Блоктардың қайталанатын текстураларын жойып,
+of.options.NATURAL_TEXTURES.tooltip.5=олардың орнына бұрылған және шағылысқан нұсқаларды пайдаланады.
+of.options.NATURAL_TEXTURES.tooltip.6=Конфигурация ресурстар жиынтығымен қамтамасыз етіледі.
+of.options.NATURAL_TEXTURES.tooltip.7=
+of.options.NATURAL_TEXTURES.tooltip.8=
+
+of.options.EMISSIVE_TEXTURES=Жарқырайтын текстуралар
+of.options.EMISSIVE_TEXTURES.tooltip.1=Жарқырайтын текстуралар
+of.options.EMISSIVE_TEXTURES.tooltip.2=  §oСөндірулі§r - жарқырайтын текстураларсыз
+of.options.EMISSIVE_TEXTURES.tooltip.3=  Қосулы - жарқырайтын текстураларды пайдалану
+of.options.EMISSIVE_TEXTURES.tooltip.4=Жарқырайтын текстуралар толық жарықтықпен көрсетіледі.
+of.options.EMISSIVE_TEXTURES.tooltip.5=Оларды негізгі текстураның бөліктерінің
+of.options.EMISSIVE_TEXTURES.tooltip.6=жарық шығаруын имитациялау үшін қолдануға болады.
+of.options.EMISSIVE_TEXTURES.tooltip.7=Ресурстар жиынтығымен қамтамасыз етіледі.
+of.options.EMISSIVE_TEXTURES.tooltip.8=
+
+of.options.CUSTOM_SKY=Арнайы аспан
+of.options.CUSTOM_SKY.tooltip.1=Пайдаланушы аспан текстуралары
+of.options.CUSTOM_SKY.tooltip.2=  §oҚосулы§r - пайдаланушы текстуралары бар аспан
+of.options.CUSTOM_SKY.tooltip.3=  Сөндірулі - стандартты аспан текстуралары (жылдамырақ)
+of.options.CUSTOM_SKY.tooltip.4=Ресурстар жиынтығымен қамтамасыз етіледі.
+of.options.CUSTOM_SKY.tooltip.5=
+
+of.options.CUSTOM_ITEMS=Арнайы заттар
+of.options.CUSTOM_ITEMS.tooltip.1=Пайдаланушы зат текстуралары
+of.options.CUSTOM_ITEMS.tooltip.2=  §oҚосулы§r - пайдаланушы текстуралары бар заттар
+of.options.CUSTOM_ITEMS.tooltip.3=  Сөндірулі - стандартты зат текстуралары (жылдамырақ)
+of.options.CUSTOM_ITEMS.tooltip.4=Ресурстар жиынтығымен қамтамасыз етіледі.
+of.options.CUSTOM_ITEMS.tooltip.5=
+
+of.options.CUSTOM_ENTITY_MODELS=Арнайы нысандар
+of.options.CUSTOM_ENTITY_MODELS.tooltip.1=Нысандардың пайдаланушы үлгілері
+of.options.CUSTOM_ENTITY_MODELS.tooltip.2=  §oҚосулы§r - пайдаланушы үлгілері бар нысандар
+of.options.CUSTOM_ENTITY_MODELS.tooltip.3=  Сөндірулі - стандартты нысан үлгілері (жылдамырақ)
+of.options.CUSTOM_ENTITY_MODELS.tooltip.4=Ресурстар жиынтығымен қамтамасыз етіледі.
+of.options.CUSTOM_ENTITY_MODELS.tooltip.5=
+
+of.options.CUSTOM_GUIS=Арнайы интерфейс
+of.options.CUSTOM_GUIS.tooltip.1=Пайдаланушы интерфейсі
+of.options.CUSTOM_GUIS.tooltip.2=  §oҚосулы§r - пайдаланушы интерфейсі
+of.options.CUSTOM_GUIS.tooltip.3=  Сөндірулі - стандартты интерфейс (жылдамырақ)
+of.options.CUSTOM_GUIS.tooltip.4=Ресурстар жиынтығымен қамтамасыз етіледі.
+
+# Детальдар
+
+of.options.CLOUDS=Бұлттар
+of.options.CLOUDS.tooltip.1=Бұлттарды көрсету
+of.options.CLOUDS.tooltip.2=  §oӘдепкі§r - графика баптауларына сәйкес
+of.options.CLOUDS.tooltip.3=  Жылдам - екі өлшемді бұлттар (жылдамырақ)
+of.options.CLOUDS.tooltip.4=  Егжей-тегжейлі - үш өлшемді бұлттар (баяуырақ)
+of.options.CLOUDS.tooltip.5=  Сөндірулі - бұлттар өшірілген (одан да жылдам)
+of.options.CLOUDS.tooltip.6=
+of.options.CLOUDS.tooltip.7=
+
+of.options.CLOUD_HEIGHT=Бұлт биіктігі
+of.options.CLOUD_HEIGHT.tooltip.1=Бұлт биіктігі
+of.options.CLOUD_HEIGHT.tooltip.2=  §oСөндірулі§r - әдепкі биіктік
+of.options.CLOUD_HEIGHT.tooltip.3=  100%% - әлем биіктігі шегінен жоғары
+
+of.options.TREES=Жапырақтар
+of.options.TREES.tooltip.1=Жапырақтарды көрсету
+of.options.TREES.tooltip.2=  §oӘдепкі§r - графика баптауларына сәйкес
+of.options.TREES.tooltip.3=  Жылдам - мөлдір емес жапырақтар (жылдамырақ)
+of.options.TREES.tooltip.4=  Ақылды - арасында текстурасыз мөлдір жапырақтар
+of.options.TREES.tooltip.5=  Егжей-тегжейлі - мөлдір жапырақтар (баяуырақ)
+of.options.TREES.tooltip.6=
+of.options.TREES.tooltip.7=
+
+of.options.RAIN=Жаңбыр мен қар
+of.options.RAIN.tooltip.1=Жаңбыр мен қарды көрсету
+of.options.RAIN.tooltip.2=  §oӘдепкі§r - графика баптауларына сәйкес
+of.options.RAIN.tooltip.3=  Жылдам - жеңіл жаңбыр/қар (жылдамырақ)
+of.options.RAIN.tooltip.4=  Егжей-тегжейлі - қатты жаңбыр/қар (баяуырақ)
+of.options.RAIN.tooltip.5=  Сөндірулі - жаңбыр/қарсыз (одан да жылдам)
+of.options.RAIN.tooltip.6=Жаңбыр шашырандылары мен дыбыстарына әсер етпейді.
+of.options.RAIN.tooltip.7=
+
+of.options.SKY=Аспан
+of.options.SKY.tooltip.1=Аспанды көрсету
+of.options.SKY.tooltip.2=  §oҚосулы§r - аспан көрінеді (баяуырақ)
+of.options.SKY.tooltip.3=  Сөндірулі - аспан көрінбейді (жылдамырақ)
+of.options.SKY.tooltip.4=Күн мен айға әсер етпейді.
+
+of.options.STARS=Жұлдыздар
+of.options.STARS.tooltip.1=Жұлдыздарды көрсету
+of.options.STARS.tooltip.2=  §oҚосулы§r - жұлдыздар көрінеді (баяуырақ)
+of.options.STARS.tooltip.3=  Сөндірулі - жұлдыздар көрінбейді (жылдамырақ)
+
+of.options.SUN_MOON=Күн мен ай
+of.options.SUN_MOON.tooltip.1=Күн мен айды көрсету
+of.options.SUN_MOON.tooltip.2=  §oҚосулы§r - күн мен ай көрінеді
+of.options.SUN_MOON.tooltip.3=  Сөндірулі - күн мен ай көрінбейді (жылдамырақ)
+
+of.options.SHOW_CAPES=Шапандар
+of.options.SHOW_CAPES.tooltip.1=Ойыншылардың шапандарын көрсету
+of.options.SHOW_CAPES.tooltip.2=  §oҚосулы§r - шапандар көрінеді
+of.options.SHOW_CAPES.tooltip.3=  Сөндірулі - шапандар көрінбейді
+
+of.options.TRANSLUCENT_BLOCKS=Мөлдірлік
+of.options.TRANSLUCENT_BLOCKS.tooltip.1=Блоктардың мөлдірлігі
+of.options.TRANSLUCENT_BLOCKS.tooltip.2=  §oӘдепкі§r - графика баптауларына сәйкес
+of.options.TRANSLUCENT_BLOCKS.tooltip.3=  Егжей-тегжейлі - дұрыс араластыру (баяуырақ)
+of.options.TRANSLUCENT_BLOCKS.tooltip.4=  Жылдам - жылдам араластыру (жылдамырақ)
+of.options.TRANSLUCENT_BLOCKS.tooltip.5=Түрлі түсті мөлдір блоктардың түстерін
+of.options.TRANSLUCENT_BLOCKS.tooltip.6=араластыруды басқарады (шыны, су, мұз),
+of.options.TRANSLUCENT_BLOCKS.tooltip.7=бір-бірінің артында ауамен орналасқанда.
+
+of.options.HELD_ITEM_TOOLTIPS=Зат туралы кеңес
+of.options.HELD_ITEM_TOOLTIPS.tooltip.1=Ұстап тұрған зат туралы қалқымалы кеңес
+of.options.HELD_ITEM_TOOLTIPS.tooltip.2=  §oҚосулы§r - қалқымалы кеңесті көрсету
+of.options.HELD_ITEM_TOOLTIPS.tooltip.3=  Сөндірулі - қалқымалы кеңесті көрсетпеу
+
+of.options.ADVANCED_TOOLTIPS=Толық кеңестер
+of.options.ADVANCED_TOOLTIPS.tooltip.1=Толық қалқымалы кеңестер
+of.options.ADVANCED_TOOLTIPS.tooltip.2=  Қосулы - қосымша ақпарат қосулы
+of.options.ADVANCED_TOOLTIPS.tooltip.3=  §oСөндірулі§r - қосымша ақпарат өшірулі
+of.options.ADVANCED_TOOLTIPS.tooltip.4=Заттар туралы қосымша ақпаратты
+of.options.ADVANCED_TOOLTIPS.tooltip.5=және шейдер параметрлері туралы (ID, файл және т.б.) көрсетеді.
+of.options.ADVANCED_TOOLTIPS.tooltip.6=
+
+of.options.DROPPED_ITEMS=Заттар
+of.options.DROPPED_ITEMS.tooltip.1=Әлемдегі заттарды көрсету
+of.options.DROPPED_ITEMS.tooltip.2=  §oӘдепкі§r - графика баптауларына сәйкес
+of.options.DROPPED_ITEMS.tooltip.3=  Жылдам - екі өлшемді заттар (жылдамырақ)
+of.options.DROPPED_ITEMS.tooltip.4=  Егжей-тегжейлі - үш өлшемді заттар (баяуырақ)
+
+options.entityShadows.tooltip.1=Нысан көлеңкелері
+options.entityShadows.tooltip.2=  Қосулы - нысан көлеңкелері көрінеді
+options.entityShadows.tooltip.3=  Сөндірулі - нысан көлеңкелері көрінбейді
+
+of.options.VIGNETTE=Виньетка
+of.options.VIGNETTE.tooltip.1=Виньеттеу
+of.options.VIGNETTE.tooltip.2=  §oӘдепкі§r - графика баптауларына сәйкес
+of.options.VIGNETTE.tooltip.3=  Жылдам - виньеттеу өшірілген (жылдамырақ)
+of.options.VIGNETTE.tooltip.4=  Егжей-тегжейлі - виньеттеу қосулы (баяуырақ)
+of.options.VIGNETTE.tooltip.5=Экранның шеттерін сәл күңгірттендіреді.
+of.options.VIGNETTE.tooltip.6=Кадр жиілігіне айтарлықтай әсер етуі
+of.options.VIGNETTE.tooltip.7=мүмкін, әсіресе толық экран режимінде ойнағанда.
+of.options.VIGNETTE.tooltip.8=
+
+of.options.DYNAMIC_FOV=Динамикалық көру аясы
+of.options.DYNAMIC_FOV.tooltip.1=Динамикалық көру аясы
+of.options.DYNAMIC_FOV.tooltip.2=  §oҚосулы§r - қозғалмалы көру аясы
+of.options.DYNAMIC_FOV.tooltip.3=  Сөндірулі - бекітілген көру аясы
+of.options.DYNAMIC_FOV.tooltip.4=Ұшу, жүгіру және садақпен ату кезінде
+of.options.DYNAMIC_FOV.tooltip.5=көру аясын өзгертеді.
+
+of.options.DYNAMIC_LIGHTS=Заттардың жарығы
+of.options.DYNAMIC_LIGHTS.tooltip.1=Заттардан динамикалық жарықтандыру
+of.options.DYNAMIC_LIGHTS.tooltip.2=  §oСөндірулі§r - динамикалық жарықтандыру өшірілген
+of.options.DYNAMIC_LIGHTS.tooltip.3=  Жылдам - әр 500 мс сайын жаңартылады (баяуырақ)
+of.options.DYNAMIC_LIGHTS.tooltip.4=  Егжей-тегжейлі - нақты уақытта жаңартылады (одан да баяу)
+of.options.DYNAMIC_LIGHTS.tooltip.5=Киілген және лақтырылған жарық шығаратын заттарды
+of.options.DYNAMIC_LIGHTS.tooltip.6=(алау, жарық тас және т.б.) айналаны
+of.options.DYNAMIC_LIGHTS.tooltip.7=жарықтандыруға мәжбүр етеді.
+
+options.biomeBlendRadius.tooltip.1=Биомдар арасындағы түс ауысуын тегістеу
+options.biomeBlendRadius.tooltip.2=  Сөндірулі - тегістеу өшірілген (одан да жылдам)
+options.biomeBlendRadius.tooltip.3=  §o5×5§r - стандартты тегістеу
+options.biomeBlendRadius.tooltip.4=  15×15 - максималды тегістеу (одан да баяу)
+options.biomeBlendRadius.tooltip.5=Мән неғұрлым жоғары болса, чанктарды жүктеудің
+options.biomeBlendRadius.tooltip.6=баяулауы мен кідірістердің пайда болу ықтималдығы соғұрлым жоғары.
+
+# Өнімділік
+
+of.options.SMOOTH_FPS=FPS тұрақтандыру
+of.options.SMOOTH_FPS.tooltip.1=Кадр жиілігін тұрақтандыру
+of.options.SMOOTH_FPS.tooltip.2=  Сөндірулі - кадр жиілігі ауытқуы мүмкін
+of.options.SMOOTH_FPS.tooltip.3=  Қосулы - кадр жиілігі тұрақтандырылады
+of.options.SMOOTH_FPS.tooltip.4=Бейнекарта буферін тазарту арқылы
+of.options.SMOOTH_FPS.tooltip.5=кадр жиілігін тұрақтандырады. Бейнедрайверге байланысты;
+of.options.SMOOTH_FPS.tooltip.6=тұрақтандыру нәтижесі әрдайым көріне бермейді.
+
+of.options.SMOOTH_WORLD=Әлемді тұрақтандыру
+of.options.SMOOTH_WORLD.tooltip.1=Әлемді тұрақтандыру
+of.options.SMOOTH_WORLD.tooltip.2=  Сөндірулі - кадр жиілігі ауытқуы мүмкін
+of.options.SMOOTH_WORLD.tooltip.3=  Қосулы - кадр жиілігі тұрақтандырылады
+of.options.SMOOTH_WORLD.tooltip.4=Ішкі сервер тудырған кідірістерді жояды.
+of.options.SMOOTH_WORLD.tooltip.5=Ішкі сервердегі жүктемені таратады.
+of.options.SMOOTH_WORLD.tooltip.6=Тек жергілікті әлемдерде (жеке ойын) әрекет етеді.
+
+of.options.FAST_RENDER=Жылдам рендер
+of.options.FAST_RENDER.tooltip.1=Жылдам рендеринг
+of.options.FAST_RENDER.tooltip.2= §oСөндірулі§r - стандартты рендеринг
+of.options.FAST_RENDER.tooltip.3= Қосулы - оңтайландырылған рендеринг (жылдамырақ)
+of.options.FAST_RENDER.tooltip.4=Оңтайландырылған рендеринг алгоритмін пайдаланады,
+of.options.FAST_RENDER.tooltip.5=ол процессорға түсетін жүктемені азайтады және кадр
+of.options.FAST_RENDER.tooltip.6=жиілігін айтарлықтай арттыра алады.
+of.options.FAST_RENDER.tooltip.7=Кейбір модификациялармен қақтығысуы мүмкін.
+
+of.options.FAST_MATH=Жылдам есептеу
+of.options.FAST_MATH.tooltip.1=Жылдам есептеу
+of.options.FAST_MATH.tooltip.2= §oСөндірулі§r - стандартты есептеу
+of.options.FAST_MATH.tooltip.3= Қосулы - жылдам есептеу
+of.options.FAST_MATH.tooltip.4=Оңтайландырылған sin() және cos() функцияларын пайдаланады,
+of.options.FAST_MATH.tooltip.5=соның арқасында процессордың кэшін пайдалану
+of.options.FAST_MATH.tooltip.6=жақсарып, кадр жиілігі артуы мүмкін.
+of.options.FAST_MATH.tooltip.7=Әлем генерациясына сәл әсер етуі мүмкін.
+
+of.options.CHUNK_UPDATES=Чанк жаңартуы
+of.options.CHUNK_UPDATES.tooltip.1=Чанктарды жаңарту жиілігі
+of.options.CHUNK_UPDATES.tooltip.2= §o1§r - стандартты әлем жүктеу (жоғары FPS)
+of.options.CHUNK_UPDATES.tooltip.3= 3 - жылдам әлем жүктеу (төмен FPS)
+of.options.CHUNK_UPDATES.tooltip.4= 5 - ең жылдам әлем жүктеу (өте төмен FPS)
+of.options.CHUNK_UPDATES.tooltip.5=Бір кадрдағы чанк жаңартуларының саны.
+of.options.CHUNK_UPDATES.tooltip.6=Жоғары мәндер FPS-ті тұрақсыздандыруы мүмкін.
+
+of.options.CHUNK_UPDATES_DYNAMIC=Динамикалық чанктар
+of.options.CHUNK_UPDATES_DYNAMIC.tooltip.1=Чанктарды динамикалық жаңарту
+of.options.CHUNK_UPDATES_DYNAMIC.tooltip.2= §oСөндірулі§r - стандартты чанк жаңартуы
+of.options.CHUNK_UPDATES_DYNAMIC.tooltip.3= Қосулы - динамикалық чанк жаңартуы
+of.options.CHUNK_UPDATES_DYNAMIC.tooltip.4=Ойыншы бір орында тұрғанда, әлем тезірек
+of.options.CHUNK_UPDATES_DYNAMIC.tooltip.5=жүктелуі үшін чанктар жиірек жаңартылады.
+
+of.options.LAZY_CHUNK_LOADING=Баяу чанктар
+of.options.LAZY_CHUNK_LOADING.tooltip.1=Чанктарды баяу жүктеу
+of.options.LAZY_CHUNK_LOADING.tooltip.2= §oСөндірулі§r - стандартты сервер чанктарын жүктеу
+of.options.LAZY_CHUNK_LOADING.tooltip.3= Қосулы - баяу сервер чанктарын жүктеу (біркелкі)
+of.options.LAZY_CHUNK_LOADING.tooltip.4=Ішкі сервердің чанк жүктеуін тұрақтандырады,
+of.options.LAZY_CHUNK_LOADING.tooltip.5=оны бірнеше тактіге бөледі.
+of.options.LAZY_CHUNK_LOADING.tooltip.6=Егер әлем бөліктері дұрыс жүктелмесе, өшіріңіз.
+of.options.LAZY_CHUNK_LOADING.tooltip.7=Тек жергілікті әлемдерде (жеке ойын) әрекет етеді.
+
+of.options.RENDER_REGIONS=Рендер аймақтары
+of.options.RENDER_REGIONS.tooltip.1=Рендер аймақтары
+of.options.RENDER_REGIONS.tooltip.2= §oСөндірулі§r - рендер аймақтарын қолданбау
+of.options.RENDER_REGIONS.tooltip.3= Қосулы - рендер аймақтарын қолдану
+of.options.RENDER_REGIONS.tooltip.4=GPU-ға түсетін жүктемені оңтайландыру арқылы
+of.options.RENDER_REGIONS.tooltip.5=жер бедерінің рендерингін жылдамдатуға мүмкіндік береді.
+of.options.RENDER_REGIONS.tooltip.6=Жоғары салу қашықтығы мәндерінде тиімдірек.
+of.options.RENDER_REGIONS.tooltip.7=Кіріктірілген бейнекартамен қолдану ұсынылмайды.
+
+# Анимация
+
+of.options.animation.allOn=Барлығын қосу
+of.options.animation.allOff=Барлығын өшіру
+of.options.animation.dynamic=Динамикалық
+
+of.options.ANIMATED_WATER=Су анимациясы
+of.options.ANIMATED_LAVA=Лава анимациясы
+of.options.ANIMATED_FIRE=От анимациясы
+of.options.ANIMATED_PORTAL=Портал анимациясы
+of.options.ANIMATED_REDSTONE=Редстоун анимациясы
+of.options.ANIMATED_EXPLOSION=Жарылыс анимациясы
+of.options.ANIMATED_FLAME=Жалын анимациясы
+of.options.ANIMATED_SMOKE=Түтін анимациясы
+of.options.VOID_PARTICLES=Бос кеңістік бөлшектері
+of.options.WATER_PARTICLES=Су бөлшектері
+of.options.RAIN_SPLASH=Жаңбыр шашырандылары
+of.options.PORTAL_PARTICLES=Портал бөлшектері
+of.options.POTION_PARTICLES=Демауыз бөлшектері
+of.options.DRIPPING_WATER_LAVA=Таматын су/лава
+of.options.ANIMATED_TERRAIN=Жер бедері анимациясы
+of.options.ANIMATED_TEXTURES=Текстура анимациясы
+of.options.FIREWORK_PARTICLES=Отшашу бөлшектері
+
+# Басқа
+
+of.options.LAGOMETER=Лагометр
+of.options.LAGOMETER.tooltip.1=Түзету экранында (F3) лагометрді көрсетеді.
+of.options.LAGOMETER.tooltip.2=* §4Қызыл§r - чанк жаңартуы
+of.options.LAGOMETER.tooltip.3=* §6Қызғылт сары§r - жад қоқысын жинаушы
+of.options.LAGOMETER.tooltip.4=* §eСары§r - көрінуді тексеру
+of.options.LAGOMETER.tooltip.5=* §aЖасыл§r - жер бедерін рендерингтеу
+of.options.LAGOMETER.tooltip.6=* §bКөгілдір§r - такт
+of.options.LAGOMETER.tooltip.7=* §9Көк§r - жоспарланған орындалатын файлдар
+of.options.LAGOMETER.tooltip.8=* §5Күлгін§r - чанктарды жүктеу
+
+of.options.PROFILER=Профайлер
+of.options.PROFILER.tooltip.1=Түзету профайлері
+of.options.PROFILER.tooltip.2=  Қосулы - профайлер белсенді (баяуырақ)
+of.options.PROFILER.tooltip.3=  Сөндірулі - профайлер белсенді емес (жылдамырақ)
+of.options.PROFILER.tooltip.4=Түзету экранында (F3) қосымша ақпарат
+of.options.PROFILER.tooltip.5=жинап, көрсетеді.
+
+of.options.WEATHER=Ауа райы
+of.options.WEATHER.tooltip.1=Ауа райы
+of.options.WEATHER.tooltip.2=  Қосулы - ауа райы белсенді (баяуырақ)
+of.options.WEATHER.tooltip.3=  Сөндірулі - ауа райы белсенді емес (жылдамырақ)
+of.options.WEATHER.tooltip.4=Жаңбыр, қар және найзағайды басқарады.
+of.options.WEATHER.tooltip.5=Тек жергілікті әлемдерде әрекет етеді.
+
+of.options.time.dayOnly=Әрдайым күндіз
+of.options.time.nightOnly=Әрдайым түн
+
+of.options.TIME=Тәулік уақыты
+of.options.TIME.tooltip.1=Тәулік уақыты
+of.options.TIME.tooltip.2= §oӘдепкі§r - қалыпты күн мен түн циклі
+of.options.TIME.tooltip.3= Әрдайым күндіз - тек күндізгі уақыт
+of.options.TIME.tooltip.4= Әрдайым түн - тек түнгі уақыт
+of.options.TIME.tooltip.5=Тек ШЫҒАРМАШЫЛЫҚ ойын режимінде және тек
+of.options.TIME.tooltip.6=жергілікті әлемдерде әрекет етеді.
+
+options.fullscreen.tooltip.1=Толық экран режимі
+options.fullscreen.tooltip.2=  Қосулы - толық экран режимін қолдану
+options.fullscreen.tooltip.3=  Сөндірулі - терезе режимін қолдану
+options.fullscreen.tooltip.4=Толық экран режимі терезе режиміне қарағанда
+options.fullscreen.tooltip.5=өнімдірек те, өнімділігі төмен де болуы мүмкін — бәрі бейнекартаға байланысты.
+
+of.options.FULLSCREEN_MODE=Ажыратымдылық
+of.options.FULLSCREEN_MODE.tooltip.1=Толық экран режиміндегі экран ажыратымдылығы
+of.options.FULLSCREEN_MODE.tooltip.2=  §oӘдепкі§r - жұмыс үстелінің ажыратымдылығы (баяуырақ)
+of.options.FULLSCREEN_MODE.tooltip.3=  ЕxБ - таңдалған ажыратымдылық (мүмкін жылдамырақ)
+
+of.options.SHOW_FPS=FPS көрсету
+# Чат баптаулары
+
+of.options.CHAT_BACKGROUND=Чат фоны
+of.options.CHAT_BACKGROUND.tooltip.1=Чат фоны
+of.options.CHAT_BACKGROUND.tooltip.2=  §oӘдепкі§r - чаттың бекітілген ені
+of.options.CHAT_BACKGROUND.tooltip.3=  Ықшам - чат ені жол ұзындығына тең
+of.options.CHAT_BACKGROUND.tooltip.4=  Сөндірулі - фон жасырын
+
+options.new_render.tooltip.1=Жаңа рендерингті қосу заманауи
+options.new_render.tooltip.2=бейнекартасы бар жүйелерге ұсынылады
+options.new_render.tooltip.3=
+options.new_render.tooltip.4=§e!!! §rЖаңа рендерингті openGL 3.0+ қолдауы жоқ
+options.new_render.tooltip.5=өте ескі жүйелерде қосу мүмкін емес
+
+options.render_regions.tooltip.1=Чанктарды бейнекартаға бір шақырумен
+options.render_regions.tooltip.2=жинау арқылы олардың салынуына әсер ететін опция
+options.render_regions.tooltip.3=
+options.render_regions.tooltip.4=§e!!! §rКіріктірілген бейнекартада қолдану ұсынылмайды
+options.render_regions.tooltip.5=
+
+options.tree_quality.tooltip.1=Жапырақ сапасына әсер ететін опция
+options.tree_quality.tooltip.2=
+options.tree_quality.tooltip.3=§aЖоғары§r: әдемі жартылай мөлдір жапырақ
+options.tree_quality.tooltip.4=§cТөмен§r: тұтас мөлдір емес жапырақ
+
+options.fancy_map.tooltip.1=Миникарта сапасына әсер ететін опция
+options.fancy_map.tooltip.2=
+options.fancy_map.tooltip.3=§aЖоғары§r: картаны жоғары ажыратымдылықта салу
+options.fancy_map.tooltip.4=§cТөмен§r: картаны төмен ажыратымдылықта салу
+
+options.fog_quality.tooltip.1=Тұман сапасына әсер ететін опция
+options.fog_quality.tooltip.2=
+options.fog_quality.tooltip.3=§aЖоғары§r: үш өлшемді тұман
+options.fog_quality.tooltip.4=§cТөмен§r: екі өлшемді тұман
+options.fog_quality.tooltip.5=§cСөндірулі§r: тұман өшірілген
+
+options.ao_quality.tooltip.1=Жарықтандыру сапасына әсер ететін опция
+options.ao_quality.tooltip.2=
+options.ao_quality.tooltip.3=§aЖоғары§r: тегіс ауысулары бар әдемі жарықтандыру
+options.ao_quality.tooltip.4=   және блоктардың ішкі күңгірттенуі
+options.ao_quality.tooltip.5=§cТөмен§r: ішкі күңгірттенусіз кенет жарық
+options.ao_quality.tooltip.6=   ауысулары
+
+options.fast_math.tooltip.1=cos() және sin() функцияларын есептеу
+options.fast_math.tooltip.2=сапасына әсер ететін опция
+options.fast_math.tooltip.3=
+options.fast_math.tooltip.4=§aЖоғары§r: дәлірек есептеулер
+options.fast_math.tooltip.5=§cТөмен§r: дәл емес есептеулер. Артефактілер болуы мүмкін,
+options.fast_math.tooltip.6=    мысалы, анимацияларда
+options.fast_math.tooltip.7=
+options.fast_math.tooltip.8=§e!!! §rЗаманауи процессорларда жоғары сапаны
+options.fast_math.tooltip.9=қосу ұсынылады
+
+options.biome_blend_quality.tooltip.1=Биомдардың араласуына әсер ететін опция
+options.biome_blend_quality.tooltip.2=
+options.biome_blend_quality.tooltip.3=§aЖоғары§r: биомдар арасындағы әдемі ауысулар
+options.biome_blend_quality.tooltip.4=§cТөмен§r: ауысулардың болмауы
+
+options.sky_quality.tooltip.1=Аспан сапасына әсер ететін опция
+options.sky_quality.tooltip.2=
+options.sky_quality.tooltip.3=§aЖоғары§r: бұлттар, аспан денелері, аспан түсі және жұлдыздар қосулы
+options.sky_quality.tooltip.4=§eОрташа§r: аспан денелері, аспан түсі және жұлдыздар қосулы.
+options.sky_quality.tooltip.5=  Бұлттар өшірулі
+options.sky_quality.tooltip.6=§cТөмен§r: барлық аспан нысандары мен оның түсі өшірулі
+
+options.debug_mode.tooltip.1=Диагностика үшін қажетті қателерді түзетуді қосады
+
+options.window_type.tooltip.1=Ойынды мониторға шығарудың таңдаулы режимі
+options.window_type.tooltip.2=
+options.window_type.tooltip.3=§aЖақтаусыз §r(§eұсынылады§r): ойын бүкіл белсенді мониторда. Ойынды жию
+options.window_type.tooltip.4=  мүмкіндігі. Тегіс сурет және жақсы өнімділік
+options.window_type.tooltip.5=
+options.window_type.tooltip.6=§aТерезелі §r(§cұсынылмайды§r): кескінді созу мүмкіндігі бар терезе режиміндегі ойын.
+options.window_type.tooltip.7=  Тегістіктің болмауына және нашар өнімділікке байланысты ұсынылмайды
+options.window_type.tooltip.8=
+options.window_type.tooltip.9=
+options.window_type.tooltip.10=§aТолық экранды§r: эксклюзивті толық экраны бар ойын. FPS-ті аздап арттыру
+options.window_type.tooltip.11=  үшін кескін ажыратымдылығын төмендету мүмкіндігі
+options.window_type.tooltip.12=
+options.window_type.tooltip.13=§e!!! §rӨзгерістер ойынды қайта жүктегеннен кейін ғана күшіне енеді!
+
+options.borderless_active_monitor.tooltip.1=Ойын көрсетілетін белсенді мониторды таңдау
+
+of.options.CHAT_SHADOW=Чат мәтінінің көлеңкесі
+of.options.CHAT_SHADOW.tooltip.1=Чат мәтінінің көлеңкесі
+of.options.CHAT_SHADOW.tooltip.2=  §oҚосулы§r - көлеңке көрінеді
+of.options.CHAT_SHADOW.tooltip.3=  Сөндірулі - көлеңке жасырын
+
+# Ванильді жолдарды батырма өлшеміне сәйкестендіру
+
+options.biomeBlendRadius.1=Сөндірулі
+options.biomeBlendRadius.3=3×3
+options.biomeBlendRadius.5=5×5
+options.biomeBlendRadius.7=7×7
+options.biomeBlendRadius.9=9×9
+options.biomeBlendRadius.11=11×11
+options.biomeBlendRadius.13=13×13
+options.biomeBlendRadius.15=15×15

@@ -1,0 +1,157 @@
+{
+ "GetStringUTFChars": 146,
+ "GetObjectField": 115,
+ "CallStaticObjectMethodA": 167,
+ "NewStringUTF": 26,
+ "CallObjectMethodA": 66,
+ "Throw": 93,
+ "CallStaticFloatMethodA": 161,
+ "GetLongField": 150,
+ "GetIntField": 127,
+ "GetObjectArrayElement": 37,
+ "GetStaticIntField": 204,
+ "GetStaticObjectField": 81,
+ "DeleteGlobalRef": null,
+ "CallStaticDoubleMethodA": 108,
+ "IsInstanceOf": 158,
+ "CallStaticShortMethodA": 125,
+ "GetDoubleField": 208,
+ "GetStaticBooleanField": [
+  118,
+  207
+ ],
+ "SetDoubleArrayRegion": [
+  74,
+  94
+ ],
+ "SetObjectArrayElement": 159,
+ "CallNonvirtualDoubleMethodA": 43,
+ "GetShortArrayRegion": [
+  166,
+  174
+ ],
+ "GetSuperclass": 110,
+ "NewWeakGlobalRef": 177,
+ "GetStaticLongField": 175,
+ "CallDoubleMethodA": 113,
+ "GetByteArrayRegion": [
+  56,
+  206
+ ],
+ "CallNonvirtualFloatMethodA": 27,
+ "GetFloatField": 196,
+ "CallVoidMethodA": 138,
+ "SetIntArrayRegion": [
+  58,
+  202
+ ],
+ "GetMethodID": 233,
+ "DeleteLocalRef": 186,
+ "GetDoubleArrayRegion": [
+  104,
+  109
+ ],
+ "NewGlobalRef": 12,
+ "CallNonvirtualLongMethodA": 178,
+ "GetFloatArrayRegion": [
+  61,
+  218
+ ],
+ "CallObjectMethod": 211,
+ "CallNonvirtualShortMethodA": 201,
+ "IsAssignableFrom": 133,
+ "SetBooleanArrayRegion": [
+  131,
+  165
+ ],
+ "CallLongMethodA": 195,
+ "SetCharArrayRegion": [
+  83,
+  157
+ ],
+ "CallNonvirtualVoidMethodA": 172,
+ "GetBooleanArrayRegion": [
+  56,
+  206
+ ],
+ "DeleteWeakGlobalRef": 225,
+ "CallNonvirtualCharMethodA": 215,
+ "CallStaticVoidMethodA": 92,
+ "SetFloatArrayRegion": [
+  58,
+  202
+ ],
+ "GetStaticFloatField": 24,
+ "SetShortArrayRegion": [
+  83,
+  157
+ ],
+ "IsSameObject": 34,
+ "PopLocalFrame": 111,
+ "CallIntMethodA": 52,
+ "CallNonvirtualBooleanMethodA": 141,
+ "GetStaticShortField": [
+  42,
+  209
+ ],
+ "CallFloatMethodA": 194,
+ "GetStaticCharField": [
+  42,
+  209
+ ],
+ "GetBooleanField": 22,
+ "NewObject": 23,
+ "GetCharArrayRegion": [
+  166,
+  174
+ ],
+ "CallStaticBooleanMethodA": 72,
+ "CallBooleanMethodA": 80,
+ "GetArrayLength": 73,
+ "GetCharField": 36,
+ "PushLocalFrame": 123,
+ "NewObjectA": 120,
+ "IsVirtualThread": 144,
+ "GetStaticMethodID": 135,
+ "CallVoidMethod": 192,
+ "CallStaticIntMethodA": 32,
+ "GetLongArrayRegion": [
+  104,
+  109
+ ],
+ "CallByteMethodA": 200,
+ "CallNonvirtualObjectMethodA": 5,
+ "GetIntArrayRegion": [
+  61,
+  218
+ ],
+ "SetLongArrayRegion": [
+  74,
+  94
+ ],
+ "CallShortMethodA": 57,
+ "GetStaticByteField": [
+  118,
+  207
+ ],
+ "CallCharMethodA": 117,
+ "GetByteField": 182,
+ "CallStaticCharMethodA": 28,
+ "ExceptionOccurred": 216,
+ "ExceptionClear": 46,
+ "GetShortField": 134,
+ "GetJavaVM": 137,
+ "CallNonvirtualByteMethodA": 136,
+ "FindClass": 230,
+ "CallNonvirtualIntMethodA": 8,
+ "NewLocalRef": 227,
+ "SetByteArrayRegion": [
+  131,
+  165
+ ],
+ "CallStaticByteMethodA": 9,
+ "GetStaticDoubleField": 25,
+ "GetObjectClass": 149,
+ "CallStaticLongMethodA": 85,
+ "ReleaseStringUTFChars": 229
+}

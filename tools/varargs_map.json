@@ -1,0 +1,12 @@
+{
+ "CallBooleanMethodA": 54,
+ "CallByteMethodA": 200,
+ "CallCharMethodA": 117,
+ "CallShortMethodA": 57,
+ "CallObjectMethodA": 66,
+ "CallIntMethodA": 52,
+ "CallLongMethodA": 195,
+ "CallFloatMethodA": 194,
+ "CallDoubleMethodA": 113,
+ "CallVoidMethodA": 20
+}

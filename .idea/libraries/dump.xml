@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="dump">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/dump/RMLLoader_FULL_DEOBF.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dump/minecraft_FULL_DEOBF.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dump/classes_FULL_DEOBF.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

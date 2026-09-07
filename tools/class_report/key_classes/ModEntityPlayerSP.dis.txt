@@ -1,0 +1,2812 @@
+Warning: Binary file rustme.ModEntityPlayerSP contains rustme.liIililiiI
+public class rustme.liIililiiI extends rustme.iiIililiiI {
+  public float IlIIiiil;
+
+  public float llIIiiil;
+
+  public float iilIiiil;
+
+  public final java.lang.Object lIlilIIl;
+
+  public boolean lilIiiil;
+
+  public boolean iIlIiiil;
+
+  public java.lang.Object iIliIlilI;
+
+  public double lIlIiiil;
+
+  public java.lang.Object illIiiil;
+
+  public boolean IllIiiil;
+
+  public int lllIiiil;
+
+  public float iiiliiil;
+
+  public float Iiiliiil;
+
+  public java.lang.Object liiliiil;
+
+  public java.lang.Object iIiliiil;
+
+  public boolean IIiliiil;
+
+  public int lIiliiil;
+
+  public float ililiiil;
+
+  public double Ililiiil;
+
+  public double lliliiil;
+
+  public float iiIliiil;
+
+  public int IiIliiil;
+
+  public boolean liIliiil;
+
+  public float iIIliiil;
+
+  public int IIIliiil;
+
+  public boolean lIIliiil;
+
+  public boolean ilIliiil;
+
+  public int IlIliiil;
+
+  public float llIliiil;
+
+  public void iIilliiilI(rustme.lIiIlilIiI, float, float);
+    Code:
+       0: aload_0
+       1: getfield      #45                 // Field llIIiIllI:Lrustme/IIlllIlIiI;
+       4: aload_0
+       5: invokevirtual #49                 // Method IlIiillIII:()D
+       8: aload_0
+       9: invokevirtual #52                 // Method liiiIllIII:()D
+      12: aload_0
+      13: invokevirtual #55                 // Method lIilillIII:()D
+      16: aload_1
+      17: aload_0
+      18: invokevirtual #59                 // Method lIIIiliilI:()Lrustme/IIiIlilIiI;
+      21: fload_2
+      22: fload_3
+      23: iconst_0
+      24: invokevirtual #65                 // Method rustme/IIlllIlIiI.IIillllllI:(DDDLrustme/lIiIlilIiI;Lrustme/IIiIlilIiI;FFZ)V
+      27: return
+
+  public void iIliiIiilI(rustme.IIllIliIiI);
+    Code:
+       0: aload_0
+       1: getfield      #72                 // Field iIliIlilI:Ljava/lang/Object;
+       4: checkcast     #74                 // class rustme/iilliIliiI
+       7: new           #76                 // class rustme/IIlIliliiI
+      10: dup
+      11: aload_0
+      12: getfield      #80                 // Field iIliiIiII:Lrustme/iiIIIiIIiI;
+      15: aload_1
+      16: aload_0
+      17: getfield      #45                 // Field llIIiIllI:Lrustme/IIlllIlIiI;
+      20: invokespecial #84                 // Method rustme/IIlIliliiI."<init>":(Lrustme/iiIIIiIIiI;Lrustme/IIllIliIiI;Lrustme/IIlllIlIiI;)V
+      23: invokevirtual #88                 // Method rustme/iilliIliiI.IIlIiilliI:(Lrustme/IlIlliliiI;)V
+      26: return
+
+  public void liIIIiiilI();
+    Code:
+       0: aload_0
+       1: dup
+       2: getfield      #93                 // Field IlIliiil:I
+       5: iconst_1
+       6: iadd
+       7: putfield      #93                 // Field IlIliiil:I
+      10: aload_0
+      11: getfield      #95                 // Field IIIliiil:I
+      14: ifle          27
+      17: aload_0
+      18: dup
+      19: getfield      #95                 // Field IIIliiil:I
+      22: iconst_1
+      23: isub
+      24: putfield      #95                 // Field IIIliiil:I
+      27: aload_0
+      28: aload_0
+      29: getfield      #97                 // Field llIIiiil:F
+      32: putfield      #99                 // Field ililiiil:F
+      35: aload_0
+      36: getfield      #102                // Field lIilIiliI:Z
+      39: ifeq          188
+      42: aload_0
+      43: getfield      #72                 // Field iIliIlilI:Ljava/lang/Object;
+      46: checkcast     #74                 // class rustme/iilliIliiI
+      49: getfield      #105                // Field rustme/iilliIliiI.IiliiiIl:Ljava/lang/Object;
+      52: checkcast     #107                // class rustme/IlIlliliiI
+      55: ifnull        114
+      58: aload_0
+      59: getfield      #72                 // Field iIliIlilI:Ljava/lang/Object;
+      62: checkcast     #74                 // class rustme/iilliIliiI
+      65: getfield      #105                // Field rustme/iilliIliiI.IiliiiIl:Ljava/lang/Object;
+      68: checkcast     #107                // class rustme/IlIlliliiI
+      71: invokevirtual #111                // Method rustme/IlIlliliiI.lliIilIliI:()Z
+      74: ifne          114
+      77: aload_0
+      78: getfield      #72                 // Field iIliIlilI:Ljava/lang/Object;
+      81: checkcast     #74                 // class rustme/iilliIliiI
+      84: getfield      #105                // Field rustme/iilliIliiI.IiliiiIl:Ljava/lang/Object;
+      87: checkcast     #107                // class rustme/IlIlliliiI
+      90: instanceof    #113                // class rustme/IiliiIliiI
+      93: ifeq          100
+      96: aload_0
+      97: invokevirtual #116                // Method liliilIlil:()V
+     100: aload_0
+     101: getfield      #72                 // Field iIliIlilI:Ljava/lang/Object;
+     104: checkcast     #74                 // class rustme/iilliIliiI
+     107: aconst_null
+     108: checkcast     #107                // class rustme/IlIlliliiI
+     111: invokevirtual #88                 // Method rustme/iilliIliiI.IIlIiilliI:(Lrustme/IlIlliliiI;)V
+     114: aload_0
+     115: getfield      #97                 // Field llIIiiil:F
+     118: fconst_0
+     119: fcmpl
+     120: ifne          155
+     123: aload_0
+     124: getfield      #72                 // Field iIliIlilI:Ljava/lang/Object;
+     127: checkcast     #74                 // class rustme/iilliIliiI
+     130: invokevirtual #120                // Method rustme/iilliIliiI.iiliIilliI:()Lrustme/IIiililiiI;
+     133: getstatic     #125                // Field rustme/iIIiliIIiI.iiIillIII:Lrustme/lIiIlilIiI;
+     136: aload_0
+     137: getfield      #129                // Field llliiiiil:Ljava/util/Random;
+     140: invokevirtual #135                // Method java/util/Random.nextFloat:()F
+     143: ldc           #136                // float 0.4f
+     145: fmul
+     146: ldc           #137                // float 0.8f
+     148: fadd
+     149: invokestatic  #143                // Method rustme/illlIiliiI.IllilIiliI:(Lrustme/lIiIlilIiI;F)Lrustme/illlIiliiI;
+     152: invokevirtual #149                // Method rustme/IIiililiiI.lIillIiliI:(Lrustme/IIIlIiliiI;)V
+     155: aload_0
+     156: dup
+     157: getfield      #97                 // Field llIIiiil:F
+     160: ldc           #150                // float 0.0125f
+     162: fadd
+     163: putfield      #97                 // Field llIIiiil:F
+     166: aload_0
+     167: getfield      #97                 // Field llIIiiil:F
+     170: fconst_1
+     171: fcmpl
+     172: iflt          180
+     175: aload_0
+     176: fconst_1
+     177: putfield      #97                 // Field llIIiiil:F
+     180: aload_0
+     181: iconst_0
+     182: putfield      #102                // Field lIilIiliI:Z
+     185: goto          275
+     188: aload_0
+     189: getstatic     #156                // Field rustme/iiIiliIIiI.IlIIiIIII:Lrustme/iillIlIIiI;
+     192: invokevirtual #160                // Method IiIiiIilII:(Lrustme/iillIlIIiI;)Z
+     195: ifeq          241
+     198: aload_0
+     199: getstatic     #156                // Field rustme/iiIiliIIiI.IlIIiIIII:Lrustme/iillIlIIiI;
+     202: invokevirtual #164                // Method IiIIIiilII:(Lrustme/iillIlIIiI;)Lrustme/iIllIlIIiI;
+     205: invokevirtual #170                // Method rustme/iIllIlIIiI.IiiilIIIlI:()I
+     208: bipush        60
+     210: if_icmple     241
+     213: aload_0
+     214: dup
+     215: getfield      #97                 // Field llIIiiil:F
+     218: ldc           #171                // float 0.006666667f
+     220: fadd
+     221: putfield      #97                 // Field llIIiiil:F
+     224: aload_0
+     225: getfield      #97                 // Field llIIiiil:F
+     228: fconst_1
+     229: fcmpl
+     230: ifle          275
+     233: aload_0
+     234: fconst_1
+     235: putfield      #97                 // Field llIIiiil:F
+     238: goto          275
+     241: aload_0
+     242: getfield      #97                 // Field llIIiiil:F
+     245: fconst_0
+     246: fcmpl
+     247: ifle          261
+     250: aload_0
+     251: dup
+     252: getfield      #97                 // Field llIIiiil:F
+     255: ldc           #172                // float 0.05f
+     257: fsub
+     258: putfield      #97                 // Field llIIiiil:F
+     261: aload_0
+     262: getfield      #97                 // Field llIIiiil:F
+     265: fconst_0
+     266: fcmpg
+     267: ifge          275
+     270: aload_0
+     271: fconst_0
+     272: putfield      #97                 // Field llIIiiil:F
+     275: aload_0
+     276: getfield      #175                // Field iiiIliliI:I
+     279: ifle          292
+     282: aload_0
+     283: dup
+     284: getfield      #175                // Field iiiIliliI:I
+     287: iconst_1
+     288: isub
+     289: putfield      #175                // Field iiiIliliI:I
+     292: aload_0
+     293: getfield      #177                // Field illIiiil:Ljava/lang/Object;
+     296: checkcast     #179                // class rustme/IIIililIiI
+     299: getfield      #182                // Field rustme/IIIililIiI.IilIIlIlI:Z
+     302: istore_1
+     303: aload_0
+     304: getfield      #177                // Field illIiiil:Ljava/lang/Object;
+     307: checkcast     #179                // class rustme/IIIililIiI
+     310: getfield      #185                // Field rustme/IIIililIiI.illIIlIlI:Z
+     313: istore_2
+     314: ldc           #137                // float 0.8f
+     316: fstore_3
+     317: aload_0
+     318: getfield      #177                // Field illIiiil:Ljava/lang/Object;
+     321: checkcast     #179                // class rustme/IIIililIiI
+     324: getfield      #188                // Field rustme/IIIililIiI.lilIIlIlI:F
+     327: ldc           #137                // float 0.8f
+     329: fcmpl
+     330: iflt          337
+     333: iconst_1
+     334: goto          338
+     337: iconst_0
+     338: istore        4
+     340: aload_0
+     341: getfield      #177                // Field illIiiil:Ljava/lang/Object;
+     344: checkcast     #179                // class rustme/IIIililIiI
+     347: invokevirtual #191                // Method rustme/IIIililIiI.IiiIllillI:()V
+     350: aload_0
+     351: invokevirtual #194                // Method liilIiilII:()Z
+     354: ifeq          403
+     357: aload_0
+     358: invokevirtual #197                // Method IlIIillIII:()Z
+     361: ifne          403
+     364: aload_0
+     365: getfield      #177                // Field illIiiil:Ljava/lang/Object;
+     368: checkcast     #179                // class rustme/IIIililIiI
+     371: dup
+     372: getfield      #200                // Field rustme/IIIililIiI.iilIIlIlI:F
+     375: ldc           #201                // float 0.2f
+     377: fmul
+     378: putfield      #200                // Field rustme/IIIililIiI.iilIIlIlI:F
+     381: aload_0
+     382: getfield      #177                // Field illIiiil:Ljava/lang/Object;
+     385: checkcast     #179                // class rustme/IIIililIiI
+     388: dup
+     389: getfield      #188                // Field rustme/IIIililIiI.lilIIlIlI:F
+     392: ldc           #201                // float 0.2f
+     394: fmul
+     395: putfield      #188                // Field rustme/IIIililIiI.lilIIlIlI:F
+     398: aload_0
+     399: iconst_0
+     400: putfield      #95                 // Field IIIliiil:I
+     403: iconst_0
+     404: istore        5
+     406: aload_0
+     407: invokevirtual #205                // Method iiIlIIlIII:()Lrustme/ilIlIilIiI;
+     410: astore        6
+     412: aload_0
+     413: aload_0
+     414: invokevirtual #49                 // Method IlIiillIII:()D
+     417: aload_0
+     418: getfield      #208                // Field llIililiI:F
+     421: f2d
+     422: ldc2_w        #209                // double 0.35d
+     425: dmul
+     426: dsub
+     427: aload         6
+     429: getfield      #215                // Field rustme/ilIlIilIiI.IiiIilIlI:D
+     432: ldc2_w        #216                // double 0.5d
+     435: dadd
+     436: aload_0
+     437: invokevirtual #55                 // Method lIilillIII:()D
+     440: aload_0
+     441: getfield      #208                // Field llIililiI:F
+     444: f2d
+     445: ldc2_w        #209                // double 0.35d
+     448: dmul
+     449: dadd
+     450: invokevirtual #221                // Method IililIlIII:(DDD)Z
+     453: pop
+     454: aload_0
+     455: aload_0
+     456: invokevirtual #49                 // Method IlIiillIII:()D
+     459: aload_0
+     460: getfield      #208                // Field llIililiI:F
+     463: f2d
+     464: ldc2_w        #209                // double 0.35d
+     467: dmul
+     468: dsub
+     469: aload         6
+     471: getfield      #215                // Field rustme/ilIlIilIiI.IiiIilIlI:D
+     474: ldc2_w        #216                // double 0.5d
+     477: dadd
+     478: aload_0
+     479: invokevirtual #55                 // Method lIilillIII:()D
+     482: aload_0
+     483: getfield      #208                // Field llIililiI:F
+     486: f2d
+     487: ldc2_w        #209                // double 0.35d
+     490: dmul
+     491: dsub
+     492: invokevirtual #221                // Method IililIlIII:(DDD)Z
+     495: pop
+     496: aload_0
+     497: aload_0
+     498: invokevirtual #49                 // Method IlIiillIII:()D
+     501: aload_0
+     502: getfield      #208                // Field llIililiI:F
+     505: f2d
+     506: ldc2_w        #209                // double 0.35d
+     509: dmul
+     510: dadd
+     511: aload         6
+     513: getfield      #215                // Field rustme/ilIlIilIiI.IiiIilIlI:D
+     516: ldc2_w        #216                // double 0.5d
+     519: dadd
+     520: aload_0
+     521: invokevirtual #55                 // Method lIilillIII:()D
+     524: aload_0
+     525: getfield      #208                // Field llIililiI:F
+     528: f2d
+     529: ldc2_w        #209                // double 0.35d
+     532: dmul
+     533: dsub
+     534: invokevirtual #221                // Method IililIlIII:(DDD)Z
+     537: pop
+     538: aload_0
+     539: aload_0
+     540: invokevirtual #49                 // Method IlIiillIII:()D
+     543: aload_0
+     544: getfield      #208                // Field llIililiI:F
+     547: f2d
+     548: ldc2_w        #209                // double 0.35d
+     551: dmul
+     552: dadd
+     553: aload         6
+     555: getfield      #215                // Field rustme/ilIlIilIiI.IiiIilIlI:D
+     558: ldc2_w        #216                // double 0.5d
+     561: dadd
+     562: aload_0
+     563: invokevirtual #55                 // Method lIilillIII:()D
+     566: aload_0
+     567: getfield      #208                // Field llIililiI:F
+     570: f2d
+     571: ldc2_w        #209                // double 0.35d
+     574: dmul
+     575: dadd
+     576: invokevirtual #221                // Method IililIlIII:(DDD)Z
+     579: pop
+     580: aload_0
+     581: invokevirtual #225                // Method IllIIiiilI:()Lrustme/IIlIIilIiI;
+     584: invokevirtual #230                // Method rustme/IIlIIilIiI.lIilIIillI:()I
+     587: i2f
+     588: ldc           #231                // float 6.0f
+     590: fcmpl
+     591: ifgt          604
+     594: aload_0
+     595: getfield      #235                // Field iiliiIiII:Lrustme/liIIIiIIiI;
+     598: getfield      #240                // Field rustme/liIIIiIIiI.iiIiIIiII:Z
+     601: ifeq          608
+     604: iconst_1
+     605: goto          609
+     608: iconst_0
+     609: istore        7
+     611: aload_0
+     612: getfield      #243                // Field lliililiI:Z
+     615: ifeq          724
+     618: iload_2
+     619: ifne          724
+     622: iload         4
+     624: ifne          724
+     627: aload_0
+     628: getfield      #177                // Field illIiiil:Ljava/lang/Object;
+     631: checkcast     #179                // class rustme/IIIililIiI
+     634: getfield      #188                // Field rustme/IIIililIiI.lilIIlIlI:F
+     637: ldc           #137                // float 0.8f
+     639: fcmpl
+     640: iflt          724
+     643: aload_0
+     644: invokevirtual #246                // Method iiiilIlIII:()Z
+     647: ifne          724
+     650: iload         7
+     652: ifeq          724
+     655: aload_0
+     656: invokevirtual #194                // Method liilIiilII:()Z
+     659: ifne          724
+     662: aload_0
+     663: getstatic     #249                // Field rustme/iiIiliIIiI.lIIIiIIII:Lrustme/iillIlIIiI;
+     666: invokevirtual #160                // Method IiIiiIilII:(Lrustme/iillIlIIiI;)Z
+     669: ifne          724
+     672: aload_0
+     673: getfield      #95                 // Field IIIliiil:I
+     676: ifgt          719
+     679: aload_0
+     680: getfield      #72                 // Field iIliIlilI:Ljava/lang/Object;
+     683: checkcast     #74                 // class rustme/iilliIliiI
+     686: getfield      #252                // Field rustme/iilliIliiI.IiIIllil:Ljava/lang/Object;
+     689: checkcast     #254                // class rustme/llIIiIiIiI
+     692: getfield      #258                // Field rustme/llIIiIiIiI.lliliiIiI:Lru/rustme/settings/Settings;
+     695: invokevirtual #264                // Method ru/rustme/settings/Settings.getData:()Lru/rustme/settings/data/MainSettingsCategory;
+     698: invokevirtual #270                // Method ru/rustme/settings/data/MainSettingsCategory.getKeybindingSettings:()Lru/rustme/settings/data/KeyBindingsCategory;
+     701: invokevirtual #276                // Method ru/rustme/settings/data/KeyBindingsCategory.getKeySprint:()Lru/rustme/settings/KeyBindNode;
+     704: invokevirtual #281                // Method ru/rustme/settings/KeyBindNode.isKeyDown:()Z
+     707: ifne          719
+     710: aload_0
+     711: bipush        7
+     713: putfield      #95                 // Field IIIliiil:I
+     716: goto          724
+     719: aload_0
+     720: iconst_1
+     721: invokevirtual #285                // Method llllIiiilI:(Z)V
+     724: aload_0
+     725: invokevirtual #246                // Method iiiilIlIII:()Z
+     728: ifne          805
+     731: aload_0
+     732: getfield      #177                // Field illIiiil:Ljava/lang/Object;
+     735: checkcast     #179                // class rustme/IIIililIiI
+     738: getfield      #188                // Field rustme/IIIililIiI.lilIIlIlI:F
+     741: ldc           #137                // float 0.8f
+     743: fcmpl
+     744: iflt          805
+     747: iload         7
+     749: ifeq          805
+     752: aload_0
+     753: invokevirtual #194                // Method liilIiilII:()Z
+     756: ifne          805
+     759: aload_0
+     760: getstatic     #249                // Field rustme/iiIiliIIiI.lIIIiIIII:Lrustme/iillIlIIiI;
+     763: invokevirtual #160                // Method IiIiiIilII:(Lrustme/iillIlIIiI;)Z
+     766: ifne          805
+     769: aload_0
+     770: getfield      #72                 // Field iIliIlilI:Ljava/lang/Object;
+     773: checkcast     #74                 // class rustme/iilliIliiI
+     776: getfield      #252                // Field rustme/iilliIliiI.IiIIllil:Ljava/lang/Object;
+     779: checkcast     #254                // class rustme/llIIiIiIiI
+     782: getfield      #258                // Field rustme/llIIiIiIiI.lliliiIiI:Lru/rustme/settings/Settings;
+     785: invokevirtual #264                // Method ru/rustme/settings/Settings.getData:()Lru/rustme/settings/data/MainSettingsCategory;
+     788: invokevirtual #270                // Method ru/rustme/settings/data/MainSettingsCategory.getKeybindingSettings:()Lru/rustme/settings/data/KeyBindingsCategory;
+     791: invokevirtual #276                // Method ru/rustme/settings/data/KeyBindingsCategory.getKeySprint:()Lru/rustme/settings/KeyBindNode;
+     794: invokevirtual #281                // Method ru/rustme/settings/KeyBindNode.isKeyDown:()Z
+     797: ifeq          805
+     800: aload_0
+     801: iconst_1
+     802: invokevirtual #285                // Method llllIiiilI:(Z)V
+     805: aload_0
+     806: invokevirtual #246                // Method iiiilIlIII:()Z
+     809: ifeq          845
+     812: aload_0
+     813: getfield      #177                // Field illIiiil:Ljava/lang/Object;
+     816: checkcast     #179                // class rustme/IIIililIiI
+     819: getfield      #188                // Field rustme/IIIililIiI.lilIIlIlI:F
+     822: ldc           #137                // float 0.8f
+     824: fcmpg
+     825: iflt          840
+     828: aload_0
+     829: getfield      #288                // Field IliIIiliI:Z
+     832: ifne          840
+     835: iload         7
+     837: ifne          845
+     840: aload_0
+     841: iconst_0
+     842: invokevirtual #285                // Method llllIiiilI:(Z)V
+     845: aload_0
+     846: getfield      #235                // Field iiliiIiII:Lrustme/liIIIiIIiI;
+     849: getfield      #240                // Field rustme/liIIIiIIiI.iiIiIIiII:Z
+     852: ifeq          968
+     855: aload_0
+     856: getfield      #72                 // Field iIliIlilI:Ljava/lang/Object;
+     859: checkcast     #74                 // class rustme/iilliIliiI
+     862: getfield      #291                // Field rustme/iilliIliiI.iIiIiiIl:Ljava/lang/Object;
+     865: checkcast     #293                // class rustme/liIlIIliiI
+     868: invokevirtual #296                // Method rustme/liIlIIliiI.liIiIIlliI:()Z
+     871: ifeq          899
+     874: aload_0
+     875: getfield      #235                // Field iiliiIiII:Lrustme/liIIIiIIiI;
+     878: getfield      #299                // Field rustme/liIIIiIIiI.liIiIIiII:Z
+     881: ifne          968
+     884: aload_0
+     885: getfield      #235                // Field iiliiIiII:Lrustme/liIIIiIIiI;
+     888: iconst_1
+     889: putfield      #299                // Field rustme/liIIIiIIiI.liIiIIiII:Z
+     892: aload_0
+     893: invokevirtual #302                // Method lliiiIiilI:()V
+     896: goto          968
+     899: iload_1
+     900: ifne          968
+     903: aload_0
+     904: getfield      #177                // Field illIiiil:Ljava/lang/Object;
+     907: checkcast     #179                // class rustme/IIIililIiI
+     910: getfield      #182                // Field rustme/IIIililIiI.IilIIlIlI:Z
+     913: ifeq          968
+     916: iload         5
+     918: ifne          968
+     921: aload_0
+     922: getfield      #305                // Field lliiiIiII:I
+     925: ifne          937
+     928: aload_0
+     929: bipush        7
+     931: putfield      #305                // Field lliiiIiII:I
+     934: goto          968
+     937: aload_0
+     938: getfield      #235                // Field iiliiIiII:Lrustme/liIIIiIIiI;
+     941: aload_0
+     942: getfield      #235                // Field iiliiIiII:Lrustme/liIIIiIIiI;
+     945: getfield      #299                // Field rustme/liIIIiIIiI.liIiIIiII:Z
+     948: ifne          955
+     951: iconst_1
+     952: goto          956
+     955: iconst_0
+     956: putfield      #299                // Field rustme/liIIIiIIiI.liIiIIiII:Z
+     959: aload_0
+     960: invokevirtual #302                // Method lliiiIiilI:()V
+     963: aload_0
+     964: iconst_0
+     965: putfield      #305                // Field lliiiIiII:I
+     968: aload_0
+     969: getfield      #177                // Field illIiiil:Ljava/lang/Object;
+     972: checkcast     #179                // class rustme/IIIililIiI
+     975: getfield      #182                // Field rustme/IIIililIiI.IilIIlIlI:Z
+     978: ifeq          1067
+     981: iload_1
+     982: ifne          1067
+     985: aload_0
+     986: getfield      #243                // Field lliililiI:Z
+     989: ifne          1067
+     992: aload_0
+     993: getfield      #308                // Field iIIlIiliI:D
+     996: dconst_0
+     997: dcmpg
+     998: ifge          1067
+    1001: aload_0
+    1002: invokevirtual #311                // Method iIIlliilII:()Z
+    1005: ifne          1067
+    1008: aload_0
+    1009: getfield      #235                // Field iiliiIiII:Lrustme/liIIIiIIiI;
+    1012: getfield      #299                // Field rustme/liIIIiIIiI.liIiIIiII:Z
+    1015: ifne          1067
+    1018: aload_0
+    1019: getstatic     #317                // Field rustme/iilliilliI.lllIIliiiI:Lrustme/iilliilliI;
+    1022: invokevirtual #321                // Method IiliIiiilI:(Lrustme/iilliilliI;)Lrustme/liIIIIIIiI;
+    1025: astore        8
+    1027: aload         8
+    1029: invokevirtual #327                // Method rustme/liIIIIIIiI.iiiiIililI:()Lrustme/llliiIIIiI;
+    1032: getstatic     #333                // Field rustme/lliiliIIiI.IIllIiIII:Lrustme/llliiIIIiI;
+    1035: if_acmpne     1067
+    1038: aload         8
+    1040: invokestatic  #339                // Method rustme/ililiIIIiI.iiilIlIilI:(Lrustme/liIIIIIIiI;)Z
+    1043: ifeq          1067
+    1046: aload_0
+    1047: getfield      #341                // Field lIlilIIl:Ljava/lang/Object;
+    1050: checkcast     #343                // class rustme/iliilIliiI
+    1053: new           #345                // class rustme/IllllIIIiI
+    1056: dup
+    1057: aload_0
+    1058: getstatic     #351                // Field rustme/illllIIIiI.llIilllII:Lrustme/illllIIIiI;
+    1061: invokespecial #354                // Method rustme/IllllIIIiI."<init>":(Lrustme/IIlIIliIiI;Lrustme/illllIIIiI;)V
+    1064: invokevirtual #358                // Method rustme/iliilIliiI.llIlIllilI:(Lrustme/llillIIIiI;)V
+    1067: aload_0
+    1068: aload_0
+    1069: invokevirtual #311                // Method iIIlliilII:()Z
+    1072: putfield      #360                // Field IllIiiil:Z
+    1075: aload_0
+    1076: getfield      #235                // Field iiliiIiII:Lrustme/liIIIiIIiI;
+    1079: getfield      #299                // Field rustme/liIIIiIIiI.liIiIIiII:Z
+    1082: ifeq          1212
+    1085: aload_0
+    1086: invokevirtual #363                // Method IiiiIliliI:()Z
+    1089: ifeq          1212
+    1092: aload_0
+    1093: getfield      #177                // Field illIiiil:Ljava/lang/Object;
+    1096: checkcast     #179                // class rustme/IIIililIiI
+    1099: getfield      #185                // Field rustme/IIIililIiI.illIIlIlI:Z
+    1102: ifeq          1178
+    1105: aload_0
+    1106: getfield      #177                // Field illIiiil:Ljava/lang/Object;
+    1109: checkcast     #179                // class rustme/IIIililIiI
+    1112: aload_0
+    1113: getfield      #177                // Field illIiiil:Ljava/lang/Object;
+    1116: checkcast     #179                // class rustme/IIIililIiI
+    1119: getfield      #200                // Field rustme/IIIililIiI.iilIIlIlI:F
+    1122: f2d
+    1123: ldc2_w        #364                // double 0.3d
+    1126: ddiv
+    1127: d2f
+    1128: putfield      #200                // Field rustme/IIIililIiI.iilIIlIlI:F
+    1131: aload_0
+    1132: getfield      #177                // Field illIiiil:Ljava/lang/Object;
+    1135: checkcast     #179                // class rustme/IIIililIiI
+    1138: aload_0
+    1139: getfield      #177                // Field illIiiil:Ljava/lang/Object;
+    1142: checkcast     #179                // class rustme/IIIililIiI
+    1145: getfield      #188                // Field rustme/IIIililIiI.lilIIlIlI:F
+    1148: f2d
+    1149: ldc2_w        #364                // double 0.3d
+    1152: ddiv
+    1153: d2f
+    1154: putfield      #188                // Field rustme/IIIililIiI.lilIIlIlI:F
+    1157: aload_0
+    1158: dup
+    1159: getfield      #308                // Field iIIlIiliI:D
+    1162: aload_0
+    1163: getfield      #235                // Field iiliiIiII:Lrustme/liIIIiIIiI;
+    1166: invokevirtual #368                // Method rustme/liIIIiIIiI.IlilIIiilI:()F
+    1169: ldc_w         #369                // float 3.0f
+    1172: fmul
+    1173: f2d
+    1174: dsub
+    1175: putfield      #308                // Field iIIlIiliI:D
+    1178: aload_0
+    1179: getfield      #177                // Field illIiiil:Ljava/lang/Object;
+    1182: checkcast     #179                // class rustme/IIIililIiI
+    1185: getfield      #182                // Field rustme/IIIililIiI.IilIIlIlI:Z
+    1188: ifeq          1212
+    1191: aload_0
+    1192: dup
+    1193: getfield      #308                // Field iIIlIiliI:D
+    1196: aload_0
+    1197: getfield      #235                // Field iiliiIiII:Lrustme/liIIIiIIiI;
+    1200: invokevirtual #368                // Method rustme/liIIIiIIiI.IlilIIiilI:()F
+    1203: ldc_w         #369                // float 3.0f
+    1206: fmul
+    1207: f2d
+    1208: dadd
+    1209: putfield      #308                // Field iIIlIiliI:D
+    1212: aload_0
+    1213: invokevirtual #372                // Method IlllililiI:()Z
+    1216: ifeq          1398
+    1219: aload_0
+    1220: invokevirtual #376                // Method iiIlillIII:()Lrustme/IIlIIliIiI;
+    1223: checkcast     #378                // class rustme/iIllIliIiI
+    1226: astore        8
+    1228: aload_0
+    1229: getfield      #380                // Field lIiliiil:I
+    1232: ifge          1257
+    1235: aload_0
+    1236: dup
+    1237: getfield      #380                // Field lIiliiil:I
+    1240: iconst_1
+    1241: iadd
+    1242: putfield      #380                // Field lIiliiil:I
+    1245: aload_0
+    1246: getfield      #380                // Field lIiliiil:I
+    1249: ifne          1257
+    1252: aload_0
+    1253: fconst_0
+    1254: putfield      #382                // Field iiIliiil:F
+    1257: iload_1
+    1258: ifeq          1305
+    1261: aload_0
+    1262: getfield      #177                // Field illIiiil:Ljava/lang/Object;
+    1265: checkcast     #179                // class rustme/IIIililIiI
+    1268: getfield      #182                // Field rustme/IIIililIiI.IilIIlIlI:Z
+    1271: ifne          1305
+    1274: aload_0
+    1275: bipush        -10
+    1277: putfield      #380                // Field lIiliiil:I
+    1280: aload         8
+    1282: aload_0
+    1283: invokevirtual #385                // Method liilililiI:()F
+    1286: ldc_w         #386                // float 100.0f
+    1289: fmul
+    1290: invokestatic  #392                // Method rustme/liiililIiI.IIIiIlillI:(F)I
+    1293: invokeinterface #396,  2          // InterfaceMethod rustme/iIllIliIiI.IlIllillII:(I)V
+    1298: aload_0
+    1299: invokevirtual #399                // Method iilIililiI:()V
+    1302: goto          1395
+    1305: iload_1
+    1306: ifne          1335
+    1309: aload_0
+    1310: getfield      #177                // Field illIiiil:Ljava/lang/Object;
+    1313: checkcast     #179                // class rustme/IIIililIiI
+    1316: getfield      #182                // Field rustme/IIIililIiI.IilIIlIlI:Z
+    1319: ifeq          1335
+    1322: aload_0
+    1323: iconst_0
+    1324: putfield      #380                // Field lIiliiil:I
+    1327: aload_0
+    1328: fconst_0
+    1329: putfield      #382                // Field iiIliiil:F
+    1332: goto          1395
+    1335: iload_1
+    1336: ifeq          1395
+    1339: aload_0
+    1340: dup
+    1341: getfield      #380                // Field lIiliiil:I
+    1344: iconst_1
+    1345: iadd
+    1346: putfield      #380                // Field lIiliiil:I
+    1349: aload_0
+    1350: getfield      #380                // Field lIiliiil:I
+    1353: bipush        10
+    1355: if_icmpge     1374
+    1358: aload_0
+    1359: aload_0
+    1360: getfield      #380                // Field lIiliiil:I
+    1363: i2f
+    1364: ldc_w         #400                // float 0.1f
+    1367: fmul
+    1368: putfield      #382                // Field iiIliiil:F
+    1371: goto          1395
+    1374: aload_0
+    1375: ldc           #137                // float 0.8f
+    1377: fconst_2
+    1378: aload_0
+    1379: getfield      #380                // Field lIiliiil:I
+    1382: bipush        9
+    1384: isub
+    1385: i2f
+    1386: fdiv
+    1387: ldc_w         #400                // float 0.1f
+    1390: fmul
+    1391: fadd
+    1392: putfield      #382                // Field iiIliiil:F
+    1395: goto          1403
+    1398: aload_0
+    1399: fconst_0
+    1400: putfield      #382                // Field iiIliiil:F
+    1403: aload_0
+    1404: invokespecial #402                // Method rustme/iiIililiiI.liIIIiiilI:()V
+    1407: aload_0
+    1408: getfield      #243                // Field lliililiI:Z
+    1411: ifeq          1455
+    1414: aload_0
+    1415: getfield      #235                // Field iiliiIiII:Lrustme/liIIIiIIiI;
+    1418: getfield      #299                // Field rustme/liIIIiIIiI.liIiIIiII:Z
+    1421: ifeq          1455
+    1424: aload_0
+    1425: getfield      #72                 // Field iIliIlilI:Ljava/lang/Object;
+    1428: checkcast     #74                 // class rustme/iilliIliiI
+    1431: getfield      #291                // Field rustme/iilliIliiI.iIiIiiIl:Ljava/lang/Object;
+    1434: checkcast     #293                // class rustme/liIlIIliiI
+    1437: invokevirtual #296                // Method rustme/liIlIIliiI.liIiIIlliI:()Z
+    1440: ifne          1455
+    1443: aload_0
+    1444: getfield      #235                // Field iiliiIiII:Lrustme/liIIIiIIiI;
+    1447: iconst_0
+    1448: putfield      #299                // Field rustme/liIIIiIIiI.liIiIIiII:Z
+    1451: aload_0
+    1452: invokevirtual #302                // Method lliiiIiilI:()V
+    1455: return
+
+  public void illlliiilI(rustme.lIIIliIIiI);
+    Code:
+       0: aload_1
+       1: instanceof    #409                // class rustme/IilIIIlIiI
+       4: ifeq          19
+       7: aload_1
+       8: checkcast     #409                // class rustme/IilIIIlIiI
+      11: invokeinterface #413,  1          // InterfaceMethod rustme/IilIIIlIiI.liIIiiillI:()Ljava/lang/String;
+      16: goto          22
+      19: getstatic     #419                // Field rustme/IillIlIiII.lIlIIllliI:Ljava/lang/String;
+      22: astore_2
+      23: aload_2
+      24: astore        4
+      26: iconst_m1
+      27: istore        5
+      29: aload         4
+      31: invokevirtual #424                // Method java/lang/String.hashCode:()I
+      34: lookupswitch  { // 23
+           -2037486445: 456
+           -1719356277: 245
+           -1293651279: 279
+           -1112182111: 228
+            -645202747: 402
+            -498776924: 564
+             -58362841: 510
+             237704573: 438
+             294396674: 528
+             384952378: 384
+             428295456: 348
+             642162646: 366
+             712019713: 618
+             877190574: 420
+            1027539489: 492
+            1033050473: 330
+            1321103395: 296
+            1374330859: 582
+            1531795622: 313
+            1649065834: 262
+            1684300903: 474
+            1801604840: 546
+            2090881320: 600
+               default: 633
+          }
+     228: aload         4
+     230: getstatic     #429                // Field rustme/IillIlIiII.lIIlIllliI:Ljava/lang/String;
+     233: invokevirtual #433                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     236: ifeq          633
+     239: iconst_0
+     240: istore        5
+     242: goto          633
+     245: aload         4
+     247: getstatic     #436                // Field rustme/IillIlIiII.iIIlIllliI:Ljava/lang/String;
+     250: invokevirtual #433                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     253: ifeq          633
+     256: iconst_1
+     257: istore        5
+     259: goto          633
+     262: aload         4
+     264: getstatic     #439                // Field rustme/IillIlIiII.iiilIllliI:Ljava/lang/String;
+     267: invokevirtual #433                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     270: ifeq          633
+     273: iconst_2
+     274: istore        5
+     276: goto          633
+     279: aload         4
+     281: getstatic     #442                // Field rustme/IillIlIiII.llilIllliI:Ljava/lang/String;
+     284: invokevirtual #433                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     287: ifeq          633
+     290: iconst_3
+     291: istore        5
+     293: goto          633
+     296: aload         4
+     298: getstatic     #445                // Field rustme/IillIlIiII.IllIIllliI:Ljava/lang/String;
+     301: invokevirtual #433                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     304: ifeq          633
+     307: iconst_4
+     308: istore        5
+     310: goto          633
+     313: aload         4
+     315: getstatic     #448                // Field rustme/IillIlIiII.lllIIllliI:Ljava/lang/String;
+     318: invokevirtual #433                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     321: ifeq          633
+     324: iconst_5
+     325: istore        5
+     327: goto          633
+     330: aload         4
+     332: getstatic     #451                // Field rustme/IillIlIiII.lilIIllliI:Ljava/lang/String;
+     335: invokevirtual #433                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     338: ifeq          633
+     341: bipush        6
+     343: istore        5
+     345: goto          633
+     348: aload         4
+     350: getstatic     #454                // Field rustme/IillIlIiII.liIlIllliI:Ljava/lang/String;
+     353: invokevirtual #433                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     356: ifeq          633
+     359: bipush        7
+     361: istore        5
+     363: goto          633
+     366: aload         4
+     368: getstatic     #457                // Field rustme/IillIlIiII.iIilIllliI:Ljava/lang/String;
+     371: invokevirtual #433                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     374: ifeq          633
+     377: bipush        8
+     379: istore        5
+     381: goto          633
+     384: aload         4
+     386: getstatic     #460                // Field rustme/IillIlIiII.ilIlIllliI:Ljava/lang/String;
+     389: invokevirtual #433                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     392: ifeq          633
+     395: bipush        9
+     397: istore        5
+     399: goto          633
+     402: aload         4
+     404: getstatic     #463                // Field rustme/IillIlIiII.iilIIllliI:Ljava/lang/String;
+     407: invokevirtual #433                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     410: ifeq          633
+     413: bipush        10
+     415: istore        5
+     417: goto          633
+     420: aload         4
+     422: getstatic     #466                // Field rustme/IillIlIiII.IiilIllliI:Ljava/lang/String;
+     425: invokevirtual #433                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     428: ifeq          633
+     431: bipush        11
+     433: istore        5
+     435: goto          633
+     438: aload         4
+     440: getstatic     #469                // Field rustme/IillIlIiII.IIlIIllliI:Ljava/lang/String;
+     443: invokevirtual #433                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     446: ifeq          633
+     449: bipush        12
+     451: istore        5
+     453: goto          633
+     456: aload         4
+     458: getstatic     #472                // Field rustme/IillIlIiII.IlilIllliI:Ljava/lang/String;
+     461: invokevirtual #433                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     464: ifeq          633
+     467: bipush        13
+     469: istore        5
+     471: goto          633
+     474: aload         4
+     476: getstatic     #475                // Field rustme/IillIlIiII.lIilIllliI:Ljava/lang/String;
+     479: invokevirtual #433                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     482: ifeq          633
+     485: bipush        14
+     487: istore        5
+     489: goto          633
+     492: aload         4
+     494: getstatic     #478                // Field rustme/IillIlIiII.IiIlIllliI:Ljava/lang/String;
+     497: invokevirtual #433                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     500: ifeq          633
+     503: bipush        15
+     505: istore        5
+     507: goto          633
+     510: aload         4
+     512: getstatic     #481                // Field rustme/IillIlIiII.IlIlIllliI:Ljava/lang/String;
+     515: invokevirtual #433                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     518: ifeq          633
+     521: bipush        16
+     523: istore        5
+     525: goto          633
+     528: aload         4
+     530: getstatic     #484                // Field rustme/IillIlIiII.IilIIllliI:Ljava/lang/String;
+     533: invokevirtual #433                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     536: ifeq          633
+     539: bipush        17
+     541: istore        5
+     543: goto          633
+     546: aload         4
+     548: getstatic     #487                // Field rustme/IillIlIiII.IIilIllliI:Ljava/lang/String;
+     551: invokevirtual #433                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     554: ifeq          633
+     557: bipush        18
+     559: istore        5
+     561: goto          633
+     564: aload         4
+     566: getstatic     #490                // Field rustme/IillIlIiII.liilIllliI:Ljava/lang/String;
+     569: invokevirtual #433                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     572: ifeq          633
+     575: bipush        19
+     577: istore        5
+     579: goto          633
+     582: aload         4
+     584: getstatic     #493                // Field rustme/IillIlIiII.iiIlIllliI:Ljava/lang/String;
+     587: invokevirtual #433                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     590: ifeq          633
+     593: bipush        20
+     595: istore        5
+     597: goto          633
+     600: aload         4
+     602: getstatic     #496                // Field rustme/IillIlIiII.iIlIIllliI:Ljava/lang/String;
+     605: invokevirtual #433                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     608: ifeq          633
+     611: bipush        21
+     613: istore        5
+     615: goto          633
+     618: aload         4
+     620: getstatic     #499                // Field rustme/IillIlIiII.illIIllliI:Ljava/lang/String;
+     623: invokevirtual #433                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     626: ifeq          633
+     629: bipush        22
+     631: istore        5
+     633: iload         5
+     635: tableswitch   { // 0 to 22
+                     0: 740
+                     1: 755
+                     2: 770
+                     3: 785
+                     4: 800
+                     5: 822
+                     6: 844
+                     7: 866
+                     8: 888
+                     9: 910
+                    10: 932
+                    11: 954
+                    12: 976
+                    13: 998
+                    14: 1020
+                    15: 1042
+                    16: 1064
+                    17: 1086
+                    18: 1108
+                    19: 1130
+                    20: 1145
+                    21: 1160
+                    22: 1160
+               default: 1175
+          }
+     740: new           #501                // class rustme/iiIIliliiI
+     743: dup
+     744: aload_0
+     745: getfield      #80                 // Field iIliiIiII:Lrustme/iiIIIiIIiI;
+     748: aload_1
+     749: invokespecial #504                // Method rustme/iiIIliliiI."<init>":(Lrustme/iiIIIiIIiI;Lrustme/lIIIliIIiI;)V
+     752: goto          1187
+     755: new           #506                // class rustme/liiIiIliiI
+     758: dup
+     759: aload_0
+     760: getfield      #80                 // Field iIliiIiII:Lrustme/iiIIIiIIiI;
+     763: aload_1
+     764: invokespecial #507                // Method rustme/liiIiIliiI."<init>":(Lrustme/iiIIIiIIiI;Lrustme/lIIIliIIiI;)V
+     767: goto          1187
+     770: new           #509                // class rustme/llIiiIliiI
+     773: dup
+     774: aload_0
+     775: getfield      #80                 // Field iIliiIiII:Lrustme/iiIIIiIIiI;
+     778: aload_1
+     779: invokespecial #510                // Method rustme/llIiiIliiI."<init>":(Lrustme/iiIIIiIIiI;Lrustme/lIIIliIIiI;)V
+     782: goto          1187
+     785: new           #512                // class rustme/IlIiiIliiI
+     788: dup
+     789: aload_0
+     790: getfield      #80                 // Field iIliiIiII:Lrustme/iiIIIiIIiI;
+     793: aload_1
+     794: invokespecial #513                // Method rustme/IlIiiIliiI."<init>":(Lrustme/iiIIIiIIiI;Lrustme/lIIIliIIiI;)V
+     797: goto          1187
+     800: new           #515                // class rustme/liIllliliI
+     803: dup
+     804: new           #517                // class rustme/iliIliiliI
+     807: dup
+     808: aload_0
+     809: getfield      #80                 // Field iIliiIiII:Lrustme/iiIIIiIIiI;
+     812: aload_1
+     813: invokespecial #518                // Method rustme/iliIliiliI."<init>":(Lrustme/iiIIIiIIiI;Lrustme/lIIIliIIiI;)V
+     816: invokespecial #521                // Method rustme/liIllliliI."<init>":(Lrustme/iliIliiliI;)V
+     819: goto          1187
+     822: new           #523                // class rustme/IIIlIliliI
+     825: dup
+     826: new           #525                // class rustme/IllIIiiliI
+     829: dup
+     830: aload_0
+     831: getfield      #80                 // Field iIliiIiII:Lrustme/iiIIIiIIiI;
+     834: aload_1
+     835: invokespecial #526                // Method rustme/IllIIiiliI."<init>":(Lrustme/iiIIIiIIiI;Lrustme/lIIIliIIiI;)V
+     838: invokespecial #529                // Method rustme/IIIlIliliI."<init>":(Lrustme/IllIIiiliI;)V
+     841: goto          1187
+     844: new           #531                // class rustme/iiIilliliI
+     847: dup
+     848: new           #533                // class rustme/iIilIiiliI
+     851: dup
+     852: aload_0
+     853: getfield      #80                 // Field iIliiIiII:Lrustme/iiIIIiIIiI;
+     856: aload_1
+     857: invokespecial #534                // Method rustme/iIilIiiliI."<init>":(Lrustme/iiIIIiIIiI;Lrustme/lIIIliIIiI;)V
+     860: invokespecial #537                // Method rustme/iiIilliliI."<init>":(Lrustme/iIilIiiliI;)V
+     863: goto          1187
+     866: new           #539                // class rustme/lIiilliliI
+     869: dup
+     870: new           #541                // class rustme/IiilIiiliI
+     873: dup
+     874: aload_0
+     875: getfield      #80                 // Field iIliiIiII:Lrustme/iiIIIiIIiI;
+     878: aload_1
+     879: invokespecial #542                // Method rustme/IiilIiiliI."<init>":(Lrustme/iiIIIiIIiI;Lrustme/lIIIliIIiI;)V
+     882: invokespecial #545                // Method rustme/lIiilliliI."<init>":(Lrustme/IiilIiiliI;)V
+     885: goto          1187
+     888: new           #547                // class rustme/IlllIliliI
+     891: dup
+     892: new           #549                // class rustme/lllIIiiliI
+     895: dup
+     896: aload_0
+     897: getfield      #80                 // Field iIliiIiII:Lrustme/iiIIIiIIiI;
+     900: aload_1
+     901: invokespecial #550                // Method rustme/lllIIiiliI."<init>":(Lrustme/iiIIIiIIiI;Lrustme/lIIIliIIiI;)V
+     904: invokespecial #553                // Method rustme/IlllIliliI."<init>":(Lrustme/lllIIiiliI;)V
+     907: goto          1187
+     910: new           #555                // class rustme/liIlIliliI
+     913: dup
+     914: new           #557                // class rustme/illIIiiliI
+     917: dup
+     918: aload_0
+     919: getfield      #80                 // Field iIliiIiII:Lrustme/iiIIIiIIiI;
+     922: aload_1
+     923: invokespecial #558                // Method rustme/illIIiiliI."<init>":(Lrustme/iiIIIiIIiI;Lrustme/lIIIliIIiI;)V
+     926: invokespecial #561                // Method rustme/liIlIliliI."<init>":(Lrustme/illIIiiliI;)V
+     929: goto          1187
+     932: new           #563                // class rustme/lllIlliliI
+     935: dup
+     936: new           #565                // class rustme/lIilIiiliI
+     939: dup
+     940: aload_0
+     941: getfield      #80                 // Field iIliiIiII:Lrustme/iiIIIiIIiI;
+     944: aload_1
+     945: invokespecial #568                // Method rustme/lIilIiiliI."<init>":(Lrustme/lIIIliIIiI;Lrustme/lIIIliIIiI;)V
+     948: invokespecial #571                // Method rustme/lllIlliliI."<init>":(Lrustme/lIilIiiliI;)V
+     951: goto          1187
+     954: new           #573                // class rustme/IIIllliliI
+     957: dup
+     958: new           #575                // class rustme/IliIliiliI
+     961: dup
+     962: aload_0
+     963: getfield      #80                 // Field iIliiIiII:Lrustme/iiIIIiIIiI;
+     966: aload_1
+     967: invokespecial #576                // Method rustme/IliIliiliI."<init>":(Lrustme/iiIIIiIIiI;Lrustme/lIIIliIIiI;)V
+     970: invokespecial #579                // Method rustme/IIIllliliI."<init>":(Lrustme/IliIliiliI;)V
+     973: goto          1187
+     976: new           #581                // class rustme/illIlliliI
+     979: dup
+     980: new           #583                // class rustme/IIilIiiliI
+     983: dup
+     984: aload_0
+     985: getfield      #80                 // Field iIliiIiII:Lrustme/iiIIIiIIiI;
+     988: aload_1
+     989: invokespecial #584                // Method rustme/IIilIiiliI."<init>":(Lrustme/lIIIliIIiI;Lrustme/lIIIliIIiI;)V
+     992: invokespecial #587                // Method rustme/illIlliliI."<init>":(Lrustme/IIilIiiliI;)V
+     995: goto          1187
+     998: new           #589                // class rustme/iIiilliliI
+    1001: dup
+    1002: new           #591                // class rustme/iiilIiiliI
+    1005: dup
+    1006: aload_0
+    1007: getfield      #80                 // Field iIliiIiII:Lrustme/iiIIIiIIiI;
+    1010: aload_1
+    1011: invokespecial #592                // Method rustme/iiilIiiliI."<init>":(Lrustme/iiIIIiIIiI;Lrustme/lIIIliIIiI;)V
+    1014: invokespecial #595                // Method rustme/iIiilliliI."<init>":(Lrustme/iiilIiiliI;)V
+    1017: goto          1187
+    1020: new           #597                // class rustme/IilllliliI
+    1023: dup
+    1024: new           #599                // class rustme/IiIIliiliI
+    1027: dup
+    1028: aload_0
+    1029: getfield      #80                 // Field iIliiIiII:Lrustme/iiIIIiIIiI;
+    1032: aload_1
+    1033: invokespecial #600                // Method rustme/IiIIliiliI."<init>":(Lrustme/lIIIliIIiI;Lrustme/lIIIliIIiI;)V
+    1036: invokespecial #603                // Method rustme/IilllliliI."<init>":(Lrustme/IiIIliiliI;)V
+    1039: goto          1187
+    1042: new           #605                // class rustme/iIillliliI
+    1045: dup
+    1046: new           #607                // class rustme/IiIlIiiliI
+    1049: dup
+    1050: aload_0
+    1051: getfield      #80                 // Field iIliiIiII:Lrustme/iiIIIiIIiI;
+    1054: aload_1
+    1055: invokespecial #608                // Method rustme/IiIlIiiliI."<init>":(Lrustme/iiIIIiIIiI;Lrustme/lIIIliIIiI;)V
+    1058: invokespecial #611                // Method rustme/iIillliliI."<init>":(Lrustme/IiIlIiiliI;)V
+    1061: goto          1187
+    1064: new           #613                // class rustme/llIllliliI
+    1067: dup
+    1068: new           #615                // class rustme/iiIIliiliI
+    1071: dup
+    1072: aload_0
+    1073: getfield      #80                 // Field iIliiIiII:Lrustme/iiIIIiIIiI;
+    1076: aload_1
+    1077: invokespecial #616                // Method rustme/iiIIliiliI."<init>":(Lrustme/iiIIIiIIiI;Lrustme/lIIIliIIiI;)V
+    1080: invokespecial #619                // Method rustme/llIllliliI."<init>":(Lrustme/iiIIliiliI;)V
+    1083: goto          1187
+    1086: new           #621                // class rustme/IlillliliI
+    1089: dup
+    1090: new           #623                // class rustme/lIiIliiliI
+    1093: dup
+    1094: aload_0
+    1095: getfield      #80                 // Field iIliiIiII:Lrustme/iiIIIiIIiI;
+    1098: aload_1
+    1099: invokespecial #624                // Method rustme/lIiIliiliI."<init>":(Lrustme/lIIIliIIiI;Lrustme/lIIIliIIiI;)V
+    1102: invokespecial #627                // Method rustme/IlillliliI."<init>":(Lrustme/lIiIliiliI;)V
+    1105: goto          1187
+    1108: new           #629                // class rustme/IiillliliI
+    1111: dup
+    1112: new           #631                // class rustme/llilIiiliI
+    1115: dup
+    1116: aload_0
+    1117: getfield      #80                 // Field iIliiIiII:Lrustme/iiIIIiIIiI;
+    1120: aload_1
+    1121: invokespecial #632                // Method rustme/llilIiiliI."<init>":(Lrustme/iiIIIiIIiI;Lrustme/lIIIliIIiI;)V
+    1124: invokespecial #635                // Method rustme/IiillliliI."<init>":(Lrustme/llilIiiliI;)V
+    1127: goto          1187
+    1130: new           #637                // class rustme/lIillliliI
+    1133: dup
+    1134: aload_0
+    1135: getfield      #80                 // Field iIliiIiII:Lrustme/iiIIIiIIiI;
+    1138: aload_1
+    1139: invokespecial #638                // Method rustme/lIillliliI."<init>":(Lrustme/lIIIliIIiI;Lrustme/lIIIliIIiI;)V
+    1142: goto          1187
+    1145: new           #640                // class rustme/lIiIiIliiI
+    1148: dup
+    1149: aload_0
+    1150: getfield      #80                 // Field iIliiIiII:Lrustme/iiIIIiIIiI;
+    1153: aload_1
+    1154: invokespecial #641                // Method rustme/lIiIiIliiI."<init>":(Lrustme/iiIIIiIIiI;Lrustme/lIIIliIIiI;)V
+    1157: goto          1187
+    1160: new           #643                // class rustme/IlliiIliiI
+    1163: dup
+    1164: aload_0
+    1165: getfield      #80                 // Field iIliiIiII:Lrustme/iiIIIiIIiI;
+    1168: aload_1
+    1169: invokespecial #644                // Method rustme/IlliiIliiI."<init>":(Lrustme/iiIIIiIIiI;Lrustme/lIIIliIIiI;)V
+    1172: goto          1187
+    1175: new           #646                // class rustme/iiliiIliiI
+    1178: dup
+    1179: aload_0
+    1180: getfield      #80                 // Field iIliiIiII:Lrustme/iiIIIiIIiI;
+    1183: aload_1
+    1184: invokespecial #647                // Method rustme/iiliiIliiI."<init>":(Lrustme/lIIIliIIiI;Lrustme/lIIIliIIiI;)V
+    1187: astore_3
+    1188: aload_0
+    1189: getfield      #72                 // Field iIliIlilI:Ljava/lang/Object;
+    1192: checkcast     #74                 // class rustme/iilliIliiI
+    1195: aload_3
+    1196: invokevirtual #88                 // Method rustme/iilliIliiI.IIlIiilliI:(Lrustme/IlIlliliiI;)V
+    1199: return
+
+  public void lilIiIiilI(rustme.iiliiilIiI);
+    Code:
+       0: aload_0
+       1: getfield      #72                 // Field iIliIlilI:Ljava/lang/Object;
+       4: checkcast     #74                 // class rustme/iilliIliiI
+       7: new           #653                // class rustme/liiIliliiI
+      10: dup
+      11: aload_1
+      12: invokespecial #655                // Method rustme/liiIliliiI."<init>":(Lrustme/iiliiilIiI;)V
+      15: invokevirtual #88                 // Method rustme/iilliIliiI.IIlIiilliI:(Lrustme/IlIlliliiI;)V
+      18: return
+
+  public void llllIiiilI(boolean);
+    Code:
+       0: aload_0
+       1: iload_1
+       2: invokespecial #657                // Method rustme/iiIililiiI.llllIiiilI:(Z)V
+       5: aload_0
+       6: iconst_0
+       7: putfield      #93                 // Field IlIliiil:I
+      10: return
+
+  public void iiIliIiilI(rustme.iiiliiIIiI, rustme.lIIIliIIiI);
+    Code:
+       0: aload_0
+       1: getfield      #72                 // Field iIliIlilI:Ljava/lang/Object;
+       4: checkcast     #74                 // class rustme/iilliIliiI
+       7: new           #661                // class rustme/IIiIiIliiI
+      10: dup
+      11: aload_0
+      12: getfield      #80                 // Field iIliiIiII:Lrustme/iiIIIiIIiI;
+      15: aload_2
+      16: aload_1
+      17: invokespecial #664                // Method rustme/IIiIiIliiI."<init>":(Lrustme/lIIIliIIiI;Lrustme/lIIIliIIiI;Lrustme/iiiliiIIiI;)V
+      20: invokevirtual #88                 // Method rustme/iilliIliiI.IIlIiilliI:(Lrustme/IlIlliliiI;)V
+      23: return
+
+  public rustme.llIIIilIiI iiiIIiilII();
+    Code:
+       0: aload_0
+       1: getfield      #669                // Field liiliiil:Ljava/lang/Object;
+       4: checkcast     #671                // class rustme/llIIIilIiI
+       7: areturn
+
+  public void lIIliIiilI(rustme.IIlIIliIiI);
+    Code:
+       0: aload_0
+       1: getfield      #72                 // Field iIliIlilI:Ljava/lang/Object;
+       4: checkcast     #74                 // class rustme/iilliIliiI
+       7: getfield      #676                // Field rustme/iilliIliiI.IlllilIl:Ljava/lang/Object;
+      10: checkcast     #678                // class rustme/lilllIliiI
+      13: aload_1
+      14: getstatic     #684                // Field rustme/IilIIilIiI.IilIlIIlI:Lrustme/IilIIilIiI;
+      17: invokevirtual #688                // Method rustme/lilllIliiI.llIIlllliI:(Lrustme/IIlIIliIiI;Lrustme/IilIIilIiI;)V
+      20: return
+
+  public void IllliliilI(byte);
+    Code:
+       0: iload_1
+       1: bipush        24
+       3: if_icmplt     23
+       6: iload_1
+       7: bipush        28
+       9: if_icmpgt     23
+      12: aload_0
+      13: iload_1
+      14: bipush        24
+      16: isub
+      17: invokevirtual #694                // Method iIllililiI:(I)V
+      20: goto          28
+      23: aload_0
+      24: iload_1
+      25: invokespecial #696                // Method rustme/iiIililiiI.IllliliilI:(B)V
+      28: return
+
+  public void IIIliIiilI(rustme.llIIIilIiI);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokespecial #701                // Method rustme/iiIililiiI.IIIliIiilI:(Lrustme/llIIIilIiI;)V
+       5: aload_0
+       6: getfield      #341                // Field lIlilIIl:Ljava/lang/Object;
+       9: checkcast     #343                // class rustme/iliilIliiI
+      12: new           #703                // class rustme/iIIllIIIiI
+      15: dup
+      16: aload_1
+      17: invokespecial #705                // Method rustme/iIIllIIIiI."<init>":(Lrustme/llIIIilIiI;)V
+      20: invokevirtual #358                // Method rustme/iliilIliiI.llIlIllilI:(Lrustme/llillIIIiI;)V
+      23: return
+
+  public void lliiiIiilI();
+    Code:
+       0: aload_0
+       1: getfield      #341                // Field lIlilIIl:Ljava/lang/Object;
+       4: checkcast     #343                // class rustme/iliilIliiI
+       7: new           #708                // class rustme/IliiilIIiI
+      10: dup
+      11: aload_0
+      12: getfield      #235                // Field iiliiIiII:Lrustme/liIIIiIIiI;
+      15: invokespecial #711                // Method rustme/IliiilIIiI."<init>":(Lrustme/liIIIiIIiI;)V
+      18: invokevirtual #358                // Method rustme/iliilIliiI.llIlIllilI:(Lrustme/llillIIIiI;)V
+      21: return
+
+  public rustme.liIilliIiI ilIiIiiilI(boolean);
+    Code:
+       0: iload_1
+       1: ifeq          10
+       4: getstatic     #720                // Field rustme/lliiilIIiI.lIlIlllII:Lrustme/lliiilIIiI;
+       7: goto          13
+      10: getstatic     #723                // Field rustme/lliiilIIiI.illIlllII:Lrustme/lliiilIIiI;
+      13: astore_2
+      14: aload_0
+      15: getfield      #341                // Field lIlilIIl:Ljava/lang/Object;
+      18: checkcast     #343                // class rustme/iliilIliiI
+      21: new           #725                // class rustme/iiIiilIIiI
+      24: dup
+      25: aload_2
+      26: getstatic     #731                // Field rustme/lIllIilIiI.lIililIlI:Lrustme/lIllIilIiI;
+      29: getstatic     #737                // Field rustme/IlIIIilIiI.iIiilIIlI:Lrustme/IlIIIilIiI;
+      32: invokespecial #740                // Method rustme/iiIiilIIiI."<init>":(Lrustme/lliiilIIiI;Lrustme/lIllIilIiI;Lrustme/IlIIIilIiI;)V
+      35: invokevirtual #358                // Method rustme/iliilIliiI.llIlIllilI:(Lrustme/llillIIIiI;)V
+      38: aconst_null
+      39: areturn
+
+  public boolean lliIililiI(rustme.lIllIilIiI);
+    Code:
+       0: aload_0
+       1: getfield      #45                 // Field llIIiIllI:Lrustme/IIlllIlIiI;
+       4: aload_1
+       5: invokevirtual #746                // Method rustme/IIlllIlIiI.lIlIIiliil:(Lrustme/lIllIilIiI;)Lrustme/lllIIiliiI;
+       8: invokeinterface #751,  1          // InterfaceMethod rustme/lllIIiliiI.iiiiIIiliI:()Z
+      13: ifne          39
+      16: aload_0
+      17: getfield      #45                 // Field llIIiIllI:Lrustme/IIlllIlIiI;
+      20: aload_1
+      21: invokevirtual #755                // Method rustme/lIllIilIiI.IiililillI:()Lrustme/lIllIilIiI;
+      24: invokevirtual #746                // Method rustme/IIlllIlIiI.lIlIIiliil:(Lrustme/lIllIilIiI;)Lrustme/lllIIiliiI;
+      27: invokeinterface #751,  1          // InterfaceMethod rustme/lllIIiliiI.iiiiIIiliI:()Z
+      32: ifne          39
+      35: iconst_1
+      36: goto          40
+      39: iconst_0
+      40: ireturn
+
+  public boolean liilIiilII();
+    Code:
+       0: aload_0
+       1: getfield      #757                // Field liIliiil:Z
+       4: ireturn
+
+  public int IiIIililiI();
+    Code:
+       0: aload_0
+       1: getfield      #760                // Field IiIliiil:I
+       4: ireturn
+
+  public void liIIililiI(float, int, int);
+    Code:
+       0: aload_0
+       1: fload_1
+       2: putfield      #765                // Field IiIiiIiII:F
+       5: aload_0
+       6: iload_2
+       7: putfield      #768                // Field IIliiIiII:I
+      10: aload_0
+      11: iload_3
+      12: putfield      #771                // Field IlllliiII:I
+      15: return
+
+  public rustme.liIIIIIIiI IIIIIiiilI(rustme.liIilliIiI);
+    Code:
+       0: getstatic     #776                // Field rustme/liIIIIIIiI.IiiIlIlII:Lrustme/liIIIIIIiI;
+       3: areturn
+
+  public rustme.liIililiiI(rustme.iilliIliiI, rustme.IIlllIlIiI, rustme.iliilIliiI);
+    Code:
+       0: aload_0
+       1: aload_2
+       2: aload_3
+       3: invokevirtual #782                // Method rustme/iliilIliiI.IlIiIiiilI:()Lcom/mojang/authlib/GameProfile;
+       6: invokespecial #785                // Method rustme/iiIililiiI."<init>":(Lrustme/IIlllIlIiI;Lcom/mojang/authlib/GameProfile;)V
+       9: aload_0
+      10: iconst_0
+      11: putfield      #760                // Field IiIliiil:I
+      14: aload_0
+      15: aload_3
+      16: checkcast     #343                // class rustme/iliilIliiI
+      19: putfield      #341                // Field lIlilIIl:Ljava/lang/Object;
+      22: aload_0
+      23: aload_1
+      24: checkcast     #74                 // class rustme/iilliIliiI
+      27: putfield      #72                 // Field iIliIlilI:Ljava/lang/Object;
+      30: aload_0
+      31: iconst_0
+      32: putfield      #788                // Field liiIIiliI:I
+      35: return
+
+  public boolean IliiIliilI(rustme.liiliilIiI, float);
+    Code:
+       0: iconst_0
+       1: ireturn
+
+  public void IliiiIiilI(rustme.liIIIIIIiI, rustme.llIIIilIiI);
+    Code:
+       0: aload_1
+       1: invokevirtual #327                // Method rustme/liIIIIIIiI.iiiiIililI:()Lrustme/llliiIIIiI;
+       4: astore_3
+       5: aload_3
+       6: getstatic     #798                // Field rustme/lliiliIIiI.iIIiIiIII:Lrustme/llliiIIIiI;
+       9: if_acmpne     32
+      12: aload_0
+      13: getfield      #72                 // Field iIliIlilI:Ljava/lang/Object;
+      16: checkcast     #74                 // class rustme/iilliIliiI
+      19: new           #800                // class rustme/lillliliiI
+      22: dup
+      23: aload_0
+      24: aload_1
+      25: iconst_1
+      26: invokespecial #803                // Method rustme/lillliliiI."<init>":(Lrustme/IIiIIiIIiI;Lrustme/liIIIIIIiI;Z)V
+      29: invokevirtual #88                 // Method rustme/iilliIliiI.IIlIiilliI:(Lrustme/IlIlliliiI;)V
+      32: return
+
+  public boolean IililIlIII(double, double, double);
+    Code:
+       0: aload_0
+       1: getfield      #808                // Field lIliIiliI:Z
+       4: ifeq          9
+       7: iconst_0
+       8: ireturn
+       9: new           #727                // class rustme/lIllIilIiI
+      12: dup
+      13: dload_1
+      14: dload_3
+      15: dload         5
+      17: invokespecial #811                // Method rustme/lIllIilIiI."<init>":(DDD)V
+      20: astore        7
+      22: dload_1
+      23: aload         7
+      25: invokevirtual #814                // Method rustme/lIllIilIiI.illIliiiil:()I
+      28: i2d
+      29: dsub
+      30: dstore        8
+      32: dload         5
+      34: aload         7
+      36: invokevirtual #817                // Method rustme/lIllIilIiI.liilliiiil:()I
+      39: i2d
+      40: dsub
+      41: dstore        10
+      43: aload_0
+      44: aload         7
+      46: invokevirtual #819                // Method lliIililiI:(Lrustme/lIllIilIiI;)Z
+      49: ifne          232
+      52: iconst_m1
+      53: istore        12
+      55: ldc2_w        #820                // double 9999.0d
+      58: dstore        13
+      60: aload_0
+      61: aload         7
+      63: invokevirtual #824                // Method rustme/lIllIilIiI.IIIlilillI:()Lrustme/lIllIilIiI;
+      66: invokevirtual #819                // Method lliIililiI:(Lrustme/lIllIilIiI;)Z
+      69: ifeq          87
+      72: dload         8
+      74: dload         13
+      76: dcmpg
+      77: ifge          87
+      80: dload         8
+      82: dstore        13
+      84: iconst_0
+      85: istore        12
+      87: aload_0
+      88: aload         7
+      90: invokevirtual #827                // Method rustme/lIllIilIiI.llililillI:()Lrustme/lIllIilIiI;
+      93: invokevirtual #819                // Method lliIililiI:(Lrustme/lIllIilIiI;)Z
+      96: ifeq          118
+      99: dconst_1
+     100: dload         8
+     102: dsub
+     103: dload         13
+     105: dcmpg
+     106: ifge          118
+     109: dconst_1
+     110: dload         8
+     112: dsub
+     113: dstore        13
+     115: iconst_1
+     116: istore        12
+     118: aload_0
+     119: aload         7
+     121: invokevirtual #830                // Method rustme/lIllIilIiI.IIililillI:()Lrustme/lIllIilIiI;
+     124: invokevirtual #819                // Method lliIililiI:(Lrustme/lIllIilIiI;)Z
+     127: ifeq          145
+     130: dload         10
+     132: dload         13
+     134: dcmpg
+     135: ifge          145
+     138: dload         10
+     140: dstore        13
+     142: iconst_4
+     143: istore        12
+     145: aload_0
+     146: aload         7
+     148: invokevirtual #833                // Method rustme/lIllIilIiI.iiililillI:()Lrustme/lIllIilIiI;
+     151: invokevirtual #819                // Method lliIililiI:(Lrustme/lIllIilIiI;)Z
+     154: ifeq          176
+     157: dconst_1
+     158: dload         10
+     160: dsub
+     161: dload         13
+     163: dcmpg
+     164: ifge          176
+     167: dconst_1
+     168: dload         10
+     170: dsub
+     171: dstore        13
+     173: iconst_5
+     174: istore        12
+     176: ldc_w         #400                // float 0.1f
+     179: fstore        15
+     181: iload         12
+     183: ifne          193
+     186: aload_0
+     187: ldc2_w        #834                // double -0.10000000149011612d
+     190: putfield      #838                // Field IIiIIiliI:D
+     193: iload         12
+     195: iconst_1
+     196: if_icmpne     206
+     199: aload_0
+     200: ldc2_w        #839                // double 0.10000000149011612d
+     203: putfield      #838                // Field IIiIIiliI:D
+     206: iload         12
+     208: iconst_4
+     209: if_icmpne     219
+     212: aload_0
+     213: ldc2_w        #834                // double -0.10000000149011612d
+     216: putfield      #843                // Field IiiIIiliI:D
+     219: iload         12
+     221: iconst_5
+     222: if_icmpne     232
+     225: aload_0
+     226: ldc2_w        #839                // double 0.10000000149011612d
+     229: putfield      #843                // Field IiiIIiliI:D
+     232: iconst_0
+     233: ireturn
+
+  public void lIIlliiilI(rustme.IiiiiilIiI);
+    Code:
+       0: aload_0
+       1: getfield      #72                 // Field iIliIlilI:Ljava/lang/Object;
+       4: checkcast     #74                 // class rustme/iilliIliiI
+       7: new           #847                // class rustme/iiiIiIliiI
+      10: dup
+      11: aload_1
+      12: invokespecial #849                // Method rustme/iiiIiIliiI."<init>":(Lrustme/IiiiiilIiI;)V
+      15: invokevirtual #88                 // Method rustme/iilliIliiI.IIlIiilliI:(Lrustme/IlIlliliiI;)V
+      18: return
+
+  public void liIliIiilI(rustme.IilIIIlIiI);
+    Code:
+       0: aload_1
+       1: invokeinterface #413,  1          // InterfaceMethod rustme/IilIIIlIiI.liIIiiillI:()Ljava/lang/String;
+       6: astore_2
+       7: getstatic     #855                // Field rustme/IillIlIiII.ililIllliI:Ljava/lang/String;
+      10: aload_2
+      11: invokevirtual #433                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+      14: ifeq          45
+      17: aload_0
+      18: getfield      #72                 // Field iIliIlilI:Ljava/lang/Object;
+      21: checkcast     #74                 // class rustme/iilliIliiI
+      24: new           #857                // class rustme/illiiIliiI
+      27: dup
+      28: aload_0
+      29: getfield      #80                 // Field iIliiIiII:Lrustme/iiIIIiIIiI;
+      32: aload_0
+      33: getfield      #45                 // Field llIIiIllI:Lrustme/IIlllIlIiI;
+      36: invokespecial #860                // Method rustme/illiiIliiI."<init>":(Lrustme/iiIIIiIIiI;Lrustme/IIlllIlIiI;)V
+      39: invokevirtual #88                 // Method rustme/iilliIliiI.IIlIiilliI:(Lrustme/IlIlliliiI;)V
+      42: goto          119
+      45: getstatic     #863                // Field rustme/IillIlIiII.IIIlIllliI:Ljava/lang/String;
+      48: aload_2
+      49: invokevirtual #433                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+      52: ifeq          84
+      55: aload_0
+      56: getfield      #72                 // Field iIliIlilI:Ljava/lang/Object;
+      59: checkcast     #74                 // class rustme/iilliIliiI
+      62: new           #865                // class rustme/IliIliliiI
+      65: dup
+      66: aload_0
+      67: getfield      #80                 // Field iIliiIiII:Lrustme/iiIIIiIIiI;
+      70: aload_0
+      71: getfield      #45                 // Field llIIiIllI:Lrustme/IIlllIlIiI;
+      74: aload_1
+      75: invokespecial #868                // Method rustme/IliIliliiI."<init>":(Lrustme/iiIIIiIIiI;Lrustme/IIlllIlIiI;Lrustme/IIlIIIlIiI;)V
+      78: invokevirtual #88                 // Method rustme/iilliIliiI.IIlIiilliI:(Lrustme/IlIlliliiI;)V
+      81: goto          119
+      84: getstatic     #871                // Field rustme/IillIlIiII.llIIIllliI:Ljava/lang/String;
+      87: aload_2
+      88: invokevirtual #433                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+      91: ifeq          119
+      94: aload_0
+      95: getfield      #72                 // Field iIliIlilI:Ljava/lang/Object;
+      98: checkcast     #74                 // class rustme/iilliIliiI
+     101: new           #873                // class rustme/iIIlliliiI
+     104: dup
+     105: aload_0
+     106: getfield      #80                 // Field iIliiIiII:Lrustme/iiIIIiIIiI;
+     109: aload_0
+     110: getfield      #45                 // Field llIIiIllI:Lrustme/IIlllIlIiI;
+     113: invokespecial #874                // Method rustme/iIIlliliiI."<init>":(Lrustme/iiIIIiIIiI;Lrustme/IIlllIlIiI;)V
+     116: invokevirtual #88                 // Method rustme/iilliIliiI.IIlIiilliI:(Lrustme/IlIlliliiI;)V
+     119: return
+
+  public void iilIililiI();
+    Code:
+       0: aload_0
+       1: getfield      #341                // Field lIlilIIl:Ljava/lang/Object;
+       4: checkcast     #343                // class rustme/iliilIliiI
+       7: new           #345                // class rustme/IllllIIIiI
+      10: dup
+      11: aload_0
+      12: getstatic     #878                // Field rustme/illllIIIiI.iIlilllII:Lrustme/illllIIIiI;
+      15: aload_0
+      16: invokevirtual #385                // Method liilililiI:()F
+      19: ldc_w         #386                // float 100.0f
+      22: fmul
+      23: invokestatic  #392                // Method rustme/liiililIiI.IIIiIlillI:(F)I
+      26: invokespecial #881                // Method rustme/IllllIIIiI."<init>":(Lrustme/IIlIIliIiI;Lrustme/illllIIIiI;I)V
+      29: invokevirtual #358                // Method rustme/iliilIliiI.llIlIllilI:(Lrustme/llillIIIiI;)V
+      32: return
+
+  public boolean IIIliIilII();
+    Code:
+       0: iconst_1
+       1: ireturn
+
+  public void iiliiIiilI(rustme.ilIIlilIiI, boolean);
+    Code:
+       0: iload_2
+       1: ifeq          25
+       4: aload_0
+       5: getfield      #72                 // Field iIliIlilI:Ljava/lang/Object;
+       8: checkcast     #74                 // class rustme/iilliIliiI
+      11: getfield      #887                // Field rustme/iilliIliiI.liliiiIl:Ljava/lang/Object;
+      14: checkcast     #889                // class rustme/liIIliliiI
+      17: aload_1
+      18: iconst_0
+      19: invokevirtual #892                // Method rustme/liIIliliiI.IliiiiIliI:(Lrustme/ilIIlilIiI;Z)V
+      22: goto          45
+      25: aload_0
+      26: getfield      #72                 // Field iIliIlilI:Ljava/lang/Object;
+      29: checkcast     #74                 // class rustme/iilliIliiI
+      32: getfield      #887                // Field rustme/iilliIliiI.liliiiIl:Ljava/lang/Object;
+      35: checkcast     #889                // class rustme/liIIliliiI
+      38: invokevirtual #896                // Method rustme/liIIliliiI.liliiiIliI:()Lrustme/illIliliiI;
+      41: aload_1
+      42: invokevirtual #902                // Method rustme/illIliliiI.iIIIIiIliI:(Lrustme/ilIIlilIiI;)V
+      45: return
+
+  public void iIlIililiI();
+    Code:
+       0: aload_0
+       1: getfield      #80                 // Field iIliiIiII:Lrustme/iiIIIiIIiI;
+       4: getstatic     #776                // Field rustme/liIIIIIIiI.IiiIlIlII:Lrustme/liIIIIIIiI;
+       7: invokevirtual #910                // Method rustme/iiIIIiIIiI.ilIiIllIlI:(Lrustme/liIIIIIIiI;)V
+      10: aload_0
+      11: invokespecial #911                // Method rustme/iiIililiiI.liliilIlil:()V
+      14: aload_0
+      15: getfield      #72                 // Field iIliIlilI:Ljava/lang/Object;
+      18: checkcast     #74                 // class rustme/iilliIliiI
+      21: aconst_null
+      22: checkcast     #107                // class rustme/IlIlliliiI
+      25: invokevirtual #88                 // Method rustme/iilliIliiI.IIlIiilliI:(Lrustme/IlIlliliiI;)V
+      28: return
+
+  public void lIllIIiilI(rustme.iIlIiiIIiI, double, double, double);
+    Code:
+       0: aload_0
+       1: invokevirtual #49                 // Method IlIiillIII:()D
+       4: dstore        8
+       6: aload_0
+       7: invokevirtual #55                 // Method lIilillIII:()D
+      10: dstore        10
+      12: aload_0
+      13: aload_1
+      14: dload_2
+      15: dload         4
+      17: dload         6
+      19: invokespecial #915                // Method rustme/iiIililiiI.lIllIIiilI:(Lrustme/iIlIiiIIiI;DDD)V
+      22: return
+
+  public void lIlIililiI(float);
+    Code:
+       0: aload_0
+       1: getfield      #920                // Field iIlIiiil:Z
+       4: ifeq          90
+       7: aload_0
+       8: invokevirtual #923                // Method lillliilII:()F
+      11: fload_1
+      12: fsub
+      13: fstore_2
+      14: fload_2
+      15: fconst_0
+      16: fcmpg
+      17: ifgt          44
+      20: aload_0
+      21: fload_1
+      22: invokevirtual #926                // Method iiIlIiilII:(F)V
+      25: fload_2
+      26: fconst_0
+      27: fcmpg
+      28: ifge          87
+      31: aload_0
+      32: aload_0
+      33: getfield      #929                // Field liIiIIliI:I
+      36: iconst_2
+      37: idiv
+      38: putfield      #932                // Field illlIiliI:I
+      41: goto          87
+      44: aload_0
+      45: fload_2
+      46: putfield      #935                // Field lIlliIliI:F
+      49: aload_0
+      50: aload_0
+      51: invokevirtual #923                // Method lillliilII:()F
+      54: invokevirtual #926                // Method iiIlIiilII:(F)V
+      57: aload_0
+      58: aload_0
+      59: getfield      #929                // Field liIiIIliI:I
+      62: putfield      #932                // Field illlIiliI:I
+      65: aload_0
+      66: getstatic     #940                // Field rustme/liiliilIiI.iIIliIIlI:Lrustme/liiliilIiI;
+      69: fload_2
+      70: invokevirtual #944                // Method IilIIiiilI:(Lrustme/liiliilIiI;F)V
+      73: aload_0
+      74: bipush        10
+      76: putfield      #947                // Field lilliIliI:I
+      79: aload_0
+      80: aload_0
+      81: getfield      #947                // Field lilliIliI:I
+      84: putfield      #950                // Field iIIiIIliI:I
+      87: goto          100
+      90: aload_0
+      91: fload_1
+      92: invokevirtual #926                // Method iiIlIiilII:(F)V
+      95: aload_0
+      96: iconst_1
+      97: putfield      #920                // Field iIlIiiil:Z
+     100: return
+
+  public static {};
+    Code:
+       0: invokestatic  #954                // Method IllIililiI:()V
+       3: return
+
+  public void IlliliiilI();
+    Code:
+       0: aload_0
+       1: invokespecial #957                // Method rustme/iiIililiiI.IlliliiilI:()V
+       4: aload_0
+       5: iconst_0
+       6: putfield      #959                // Field ilIliiil:Z
+       9: aload_0
+      10: invokevirtual #376                // Method iiIlillIII:()Lrustme/IIlIIliIiI;
+      13: instanceof    #961                // class rustme/IIiilliIiI
+      16: ifeq          137
+      19: aload_0
+      20: invokevirtual #376                // Method iiIlillIII:()Lrustme/IIlIIliIiI;
+      23: checkcast     #961                // class rustme/IIiilliIiI
+      26: astore_1
+      27: aload_1
+      28: aload_0
+      29: getfield      #177                // Field illIiiil:Ljava/lang/Object;
+      32: checkcast     #179                // class rustme/IIIililIiI
+      35: getfield      #964                // Field rustme/IIIililIiI.lIlIIlIlI:Z
+      38: aload_0
+      39: getfield      #177                // Field illIiiil:Ljava/lang/Object;
+      42: checkcast     #179                // class rustme/IIIililIiI
+      45: getfield      #967                // Field rustme/IIIililIiI.iIlIIlIlI:Z
+      48: aload_0
+      49: getfield      #177                // Field illIiiil:Ljava/lang/Object;
+      52: checkcast     #179                // class rustme/IIIililIiI
+      55: getfield      #970                // Field rustme/IIIililIiI.IIlIIlIlI:Z
+      58: aload_0
+      59: getfield      #177                // Field illIiiil:Ljava/lang/Object;
+      62: checkcast     #179                // class rustme/IIIililIiI
+      65: getfield      #973                // Field rustme/IIIililIiI.llIIIlIlI:Z
+      68: invokevirtual #977                // Method rustme/IIiilliIiI.illlIIilII:(ZZZZ)V
+      71: aload_0
+      72: dup
+      73: getfield      #959                // Field ilIliiil:Z
+      76: aload_0
+      77: getfield      #177                // Field illIiiil:Ljava/lang/Object;
+      80: checkcast     #179                // class rustme/IIIililIiI
+      83: getfield      #964                // Field rustme/IIIililIiI.lIlIIlIlI:Z
+      86: ifne          128
+      89: aload_0
+      90: getfield      #177                // Field illIiiil:Ljava/lang/Object;
+      93: checkcast     #179                // class rustme/IIIililIiI
+      96: getfield      #967                // Field rustme/IIIililIiI.iIlIIlIlI:Z
+      99: ifne          128
+     102: aload_0
+     103: getfield      #177                // Field illIiiil:Ljava/lang/Object;
+     106: checkcast     #179                // class rustme/IIIililIiI
+     109: getfield      #970                // Field rustme/IIIililIiI.IIlIIlIlI:Z
+     112: ifne          128
+     115: aload_0
+     116: getfield      #177                // Field illIiiil:Ljava/lang/Object;
+     119: checkcast     #179                // class rustme/IIIililIiI
+     122: getfield      #973                // Field rustme/IIIililIiI.llIIIlIlI:Z
+     125: ifeq          132
+     128: iconst_1
+     129: goto          133
+     132: iconst_0
+     133: ior
+     134: putfield      #959                // Field ilIliiil:Z
+     137: return
+
+  public static void IllIililiI();
+    Code:
+       0: ldc_w         #980                // String minecraft:container
+       3: nop
+       4: nop
+       5: nop
+       6: putstatic     #419                // Field rustme/IillIlIiII.lIlIIllliI:Ljava/lang/String;
+       9: ldc_w         #988                // String minecraft:hopper
+      12: nop
+      13: nop
+      14: nop
+      15: putstatic     #429                // Field rustme/IillIlIiII.lIIlIllliI:Ljava/lang/String;
+      18: ldc_w         #990                // String minecraft:furnace
+      21: nop
+      22: nop
+      23: nop
+      24: putstatic     #436                // Field rustme/IillIlIiII.iIIlIllliI:Ljava/lang/String;
+      27: ldc_w         #992                // String minecraft:brewing_stand
+      30: nop
+      31: nop
+      32: nop
+      33: putstatic     #439                // Field rustme/IillIlIiII.iiilIllliI:Ljava/lang/String;
+      36: ldc_w         #994                // String minecraft:beacon
+      39: nop
+      40: nop
+      41: nop
+      42: putstatic     #442                // Field rustme/IillIlIiII.llilIllliI:Ljava/lang/String;
+      45: ldc_w         #996                // String rustme:trading
+      48: nop
+      49: nop
+      50: nop
+      51: putstatic     #445                // Field rustme/IillIlIiII.IllIIllliI:Ljava/lang/String;
+      54: ldc_w         #998                // String rustme:cupboard
+      57: nop
+      58: nop
+      59: nop
+      60: putstatic     #448                // Field rustme/IillIlIiII.lllIIllliI:Ljava/lang/String;
+      63: ldc_w         #1000               // String rustme:modular_car_lift
+      66: nop
+      67: nop
+      68: nop
+      69: putstatic     #451                // Field rustme/IillIlIiII.lilIIllliI:Ljava/lang/String;
+      72: ldc_w         #1002               // String rustme:modular_car_engine
+      75: nop
+      76: nop
+      77: nop
+      78: putstatic     #454                // Field rustme/IillIlIiII.liIlIllliI:Ljava/lang/String;
+      81: ldc_w         #1004               // String rustme:locker
+      84: nop
+      85: nop
+      86: nop
+      87: putstatic     #457                // Field rustme/IillIlIiII.iIilIllliI:Ljava/lang/String;
+      90: ldc_w         #1006               // String rustme:corpse
+      93: nop
+      94: nop
+      95: nop
+      96: putstatic     #460                // Field rustme/IillIlIiII.ilIlIllliI:Ljava/lang/String;
+      99: ldc_w         #1008               // String rustme:repairbench
+     102: nop
+     103: nop
+     104: nop
+     105: putstatic     #463                // Field rustme/IillIlIiII.iilIIllliI:Ljava/lang/String;
+     108: ldc_w         #1010               // String rustme:turret
+     111: nop
+     112: nop
+     113: nop
+     114: putstatic     #466                // Field rustme/IillIlIiII.IiilIllliI:Ljava/lang/String;
+     117: ldc_w         #1012               // String rustme:recycler
+     120: nop
+     121: nop
+     122: nop
+     123: putstatic     #469                // Field rustme/IillIlIiII.IIlIIllliI:Ljava/lang/String;
+     126: ldc_w         #1014               // String rustme:mixing_table
+     129: nop
+     130: nop
+     131: nop
+     132: putstatic     #472                // Field rustme/IillIlIiII.IlilIllliI:Ljava/lang/String;
+     135: ldc_w         #1016               // String rustme:water_collector
+     138: nop
+     139: nop
+     140: nop
+     141: putstatic     #475                // Field rustme/IillIlIiII.lIilIllliI:Ljava/lang/String;
+     144: ldc_w         #1018               // String minecraft:roulette
+     147: nop
+     148: nop
+     149: nop
+     150: putstatic     #478                // Field rustme/IillIlIiII.IiIlIllliI:Ljava/lang/String;
+     153: ldc_w         #1020               // String rustme:vending_machine
+     156: nop
+     157: nop
+     158: nop
+     159: putstatic     #481                // Field rustme/IillIlIiII.IlIlIllliI:Ljava/lang/String;
+     162: ldc_w         #1022               // String rustme:smelter
+     165: nop
+     166: nop
+     167: nop
+     168: putstatic     #484                // Field rustme/IillIlIiII.IilIIllliI:Ljava/lang/String;
+     171: ldc_w         #1024               // String rustme:research_table
+     174: nop
+     175: nop
+     176: nop
+     177: putstatic     #487                // Field rustme/IillIlIiII.IIilIllliI:Ljava/lang/String;
+     180: ldc_w         #1026               // String rustme:rust_chest
+     183: nop
+     184: nop
+     185: nop
+     186: putstatic     #490                // Field rustme/IillIlIiII.liilIllliI:Ljava/lang/String;
+     189: ldc_w         #1028               // String minecraft:shulker_box
+     192: nop
+     193: nop
+     194: nop
+     195: putstatic     #493                // Field rustme/IillIlIiII.iiIlIllliI:Ljava/lang/String;
+     198: ldc_w         #1030               // String minecraft:dispenser
+     201: nop
+     202: nop
+     203: nop
+     204: putstatic     #496                // Field rustme/IillIlIiII.iIlIIllliI:Ljava/lang/String;
+     207: ldc_w         #1032               // String minecraft:dropper
+     210: nop
+     211: nop
+     212: nop
+     213: putstatic     #499                // Field rustme/IillIlIiII.illIIllliI:Ljava/lang/String;
+     216: ldc_w         #1034               // String minecraft:crafting_table
+     219: nop
+     220: nop
+     221: nop
+     222: putstatic     #855                // Field rustme/IillIlIiII.ililIllliI:Ljava/lang/String;
+     225: ldc_w         #1036               // String minecraft:enchanting_table
+     228: nop
+     229: nop
+     230: nop
+     231: putstatic     #863                // Field rustme/IillIlIiII.IIIlIllliI:Ljava/lang/String;
+     234: ldc_w         #1038               // String minecraft:anvil
+     237: nop
+     238: nop
+     239: nop
+     240: putstatic     #871                // Field rustme/IillIlIiII.llIIIllliI:Ljava/lang/String;
+     243: return
+
+  public void IlIIliilII(float);
+    Code:
+       0: return
+
+  public void IIilliilII();
+    Code:
+       0: aload_0
+       1: invokespecial #1042               // Method rustme/iiIililiiI.IIilliilII:()V
+       4: aload_0
+       5: iconst_0
+       6: putfield      #757                // Field liIliiil:Z
+       9: return
+
+  public rustme.lIllIilIiI iiiliiillI();
+    Code:
+       0: new           #727                // class rustme/lIllIilIiI
+       3: dup
+       4: aload_0
+       5: invokevirtual #49                 // Method IlIiillIII:()D
+       8: ldc2_w        #216                // double 0.5d
+      11: dadd
+      12: aload_0
+      13: invokevirtual #52                 // Method liiiIllIII:()D
+      16: ldc2_w        #216                // double 0.5d
+      19: dadd
+      20: aload_0
+      21: invokevirtual #55                 // Method lIilillIII:()D
+      24: ldc2_w        #216                // double 0.5d
+      27: dadd
+      28: invokespecial #811                // Method rustme/lIllIilIiI."<init>":(DDD)V
+      31: areturn
+
+  public float liilililiI();
+    Code:
+       0: aload_0
+       1: getfield      #382                // Field iiIliiil:F
+       4: freturn
+
+  public void ililIiiilI();
+    Code:
+       0: aload_0
+       1: invokespecial #1046               // Method rustme/iiIililiiI.ililIiiilI:()V
+       4: invokestatic  #1052               // Method rustme/lliiiIiliI.lllllIiIil:()Lrustme/IIiiiIiliI;
+       7: aload_0
+       8: invokevirtual #1058               // Method rustme/IIiiiIiliI.IlIiIIIIll:(Lrustme/IllIlilliI;)V
+      11: return
+
+  public java.lang.String IIilililiI();
+    Code:
+       0: aload_0
+       1: getfield      #1061               // Field iIiliiil:Ljava/lang/Object;
+       4: checkcast     #421                // class java/lang/String
+       7: areturn
+
+  public void lIilililiI(java.lang.String);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: checkcast     #421                // class java/lang/String
+       5: putfield      #1061               // Field iIiliiil:Ljava/lang/Object;
+       8: return
+
+  public void iilIliilII(rustme.llIIIilIiI);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokevirtual #1068               // Method iIIlIiilII:(Lrustme/llIIIilIiI;)Lrustme/liIIIIIIiI;
+       5: astore_2
+       6: aload_2
+       7: invokevirtual #1071               // Method rustme/liIIIIIIiI.isEmpty:()Z
+      10: ifne          38
+      13: aload_0
+      14: invokevirtual #194                // Method liilIiilII:()Z
+      17: ifne          38
+      20: aload_0
+      21: aload_1
+      22: invokespecial #1073               // Method rustme/iiIililiiI.iilIliilII:(Lrustme/llIIIilIiI;)V
+      25: aload_0
+      26: iconst_1
+      27: putfield      #757                // Field liIliiil:Z
+      30: aload_0
+      31: aload_1
+      32: checkcast     #671                // class rustme/llIIIilIiI
+      35: putfield      #669                // Field liiliiil:Ljava/lang/Object;
+      38: return
+
+  public boolean IlilililiI();
+    Code:
+       0: aload_0
+       1: getfield      #959                // Field ilIliiil:Z
+       4: ireturn
+
+  public void IilillIiil(java.lang.String);
+    Code:
+       0: aload_0
+       1: getfield      #341                // Field lIlilIIl:Ljava/lang/Object;
+       4: checkcast     #343                // class rustme/iliilIliiI
+       7: new           #1077               // class rustme/IIIllIIIiI
+      10: dup
+      11: aload_1
+      12: invokespecial #1079               // Method rustme/IIIllIIIiI."<init>":(Ljava/lang/String;)V
+      15: invokevirtual #358                // Method rustme/iliilIliiI.llIlIllilI:(Lrustme/llillIIIiI;)V
+      18: return
+
+  public void iiIlililiI();
+    Code:
+       0: aload_0
+       1: invokevirtual #246                // Method iiiilIlIII:()Z
+       4: istore_1
+       5: iload_1
+       6: aload_0
+       7: getfield      #1082               // Field lilIiiil:Z
+      10: if_icmpeq     67
+      13: iload_1
+      14: ifeq          41
+      17: aload_0
+      18: getfield      #341                // Field lIlilIIl:Ljava/lang/Object;
+      21: checkcast     #343                // class rustme/iliilIliiI
+      24: new           #345                // class rustme/IllllIIIiI
+      27: dup
+      28: aload_0
+      29: getstatic     #1085               // Field rustme/illllIIIiI.iililllII:Lrustme/illllIIIiI;
+      32: invokespecial #354                // Method rustme/IllllIIIiI."<init>":(Lrustme/IIlIIliIiI;Lrustme/illllIIIiI;)V
+      35: invokevirtual #358                // Method rustme/iliilIliiI.llIlIllilI:(Lrustme/llillIIIiI;)V
+      38: goto          62
+      41: aload_0
+      42: getfield      #341                // Field lIlilIIl:Ljava/lang/Object;
+      45: checkcast     #343                // class rustme/iliilIliiI
+      48: new           #345                // class rustme/IllllIIIiI
+      51: dup
+      52: aload_0
+      53: getstatic     #1088               // Field rustme/illllIIIiI.IililllII:Lrustme/illllIIIiI;
+      56: invokespecial #354                // Method rustme/IllllIIIiI."<init>":(Lrustme/IIlIIliIiI;Lrustme/illllIIIiI;)V
+      59: invokevirtual #358                // Method rustme/iliilIliiI.llIlIllilI:(Lrustme/llillIIIiI;)V
+      62: aload_0
+      63: iload_1
+      64: putfield      #1082               // Field lilIiiil:Z
+      67: aload_0
+      68: invokevirtual #1091               // Method liiIillIII:()Z
+      71: istore_2
+      72: iload_2
+      73: aload_0
+      74: getfield      #1093               // Field lIIliiil:Z
+      77: if_icmpeq     134
+      80: iload_2
+      81: ifeq          108
+      84: aload_0
+      85: getfield      #341                // Field lIlilIIl:Ljava/lang/Object;
+      88: checkcast     #343                // class rustme/iliilIliiI
+      91: new           #345                // class rustme/IllllIIIiI
+      94: dup
+      95: aload_0
+      96: getstatic     #1096               // Field rustme/illllIIIiI.IIIilllII:Lrustme/illllIIIiI;
+      99: invokespecial #354                // Method rustme/IllllIIIiI."<init>":(Lrustme/IIlIIliIiI;Lrustme/illllIIIiI;)V
+     102: invokevirtual #358                // Method rustme/iliilIliiI.llIlIllilI:(Lrustme/llillIIIiI;)V
+     105: goto          129
+     108: aload_0
+     109: getfield      #341                // Field lIlilIIl:Ljava/lang/Object;
+     112: checkcast     #343                // class rustme/iliilIliiI
+     115: new           #345                // class rustme/IllllIIIiI
+     118: dup
+     119: aload_0
+     120: getstatic     #1099               // Field rustme/illllIIIiI.lililllII:Lrustme/illllIIIiI;
+     123: invokespecial #354                // Method rustme/IllllIIIiI."<init>":(Lrustme/IIlIIliIiI;Lrustme/illllIIIiI;)V
+     126: invokevirtual #358                // Method rustme/iliilIliiI.llIlIllilI:(Lrustme/llillIIIiI;)V
+     129: aload_0
+     130: iload_2
+     131: putfield      #1093               // Field lIIliiil:Z
+     134: aload_0
+     135: invokevirtual #363                // Method IiiiIliliI:()Z
+     138: ifeq          554
+     141: aload_0
+     142: invokevirtual #205                // Method iiIlIIlIII:()Lrustme/ilIlIilIiI;
+     145: astore_3
+     146: aload_0
+     147: invokevirtual #49                 // Method IlIiillIII:()D
+     150: aload_0
+     151: getfield      #1101               // Field lliliiil:D
+     154: dsub
+     155: dstore        4
+     157: aload_3
+     158: getfield      #215                // Field rustme/ilIlIilIiI.IiiIilIlI:D
+     161: aload_0
+     162: getfield      #1103               // Field lIlIiiil:D
+     165: dsub
+     166: dstore        6
+     168: aload_0
+     169: invokevirtual #55                 // Method lIilillIII:()D
+     172: aload_0
+     173: getfield      #1105               // Field Ililiiil:D
+     176: dsub
+     177: dstore        8
+     179: aload_0
+     180: invokevirtual #1108               // Method IIiIillIII:()F
+     183: aload_0
+     184: getfield      #1110               // Field Iiiliiil:F
+     187: fsub
+     188: f2d
+     189: dstore        10
+     191: aload_0
+     192: invokevirtual #1113               // Method iilIIIlIII:()F
+     195: aload_0
+     196: getfield      #1115               // Field iIIliiil:F
+     199: fsub
+     200: f2d
+     201: dstore        12
+     203: aload_0
+     204: dup
+     205: getfield      #1117               // Field lllIiiil:I
+     208: iconst_1
+     209: iadd
+     210: putfield      #1117               // Field lllIiiil:I
+     213: dload         4
+     215: dload         4
+     217: dmul
+     218: dload         6
+     220: dload         6
+     222: dmul
+     223: dadd
+     224: dload         8
+     226: dload         8
+     228: dmul
+     229: dadd
+     230: ldc2_w        #1118               // double 9.0E-4d
+     233: dcmpl
+     234: ifgt          246
+     237: aload_0
+     238: getfield      #1117               // Field lllIiiil:I
+     241: bipush        20
+     243: if_icmplt     250
+     246: iconst_1
+     247: goto          251
+     250: iconst_0
+     251: istore        14
+     253: dload         10
+     255: dconst_0
+     256: dcmpl
+     257: ifne          267
+     260: dload         12
+     262: dconst_0
+     263: dcmpl
+     264: ifeq          271
+     267: iconst_1
+     268: goto          272
+     271: iconst_0
+     272: istore        15
+     274: aload_0
+     275: invokevirtual #197                // Method IlIIillIII:()Z
+     278: ifeq          327
+     281: aload_0
+     282: getfield      #341                // Field lIlilIIl:Ljava/lang/Object;
+     285: checkcast     #343                // class rustme/iliilIliiI
+     288: new           #1121               // class rustme/IIiiilIIiI
+     291: dup
+     292: aload_0
+     293: getfield      #838                // Field IIiIIiliI:D
+     296: ldc2_w        #1122               // double -999.0d
+     299: aload_0
+     300: getfield      #843                // Field IiiIIiliI:D
+     303: aload_0
+     304: invokevirtual #1108               // Method IIiIillIII:()F
+     307: aload_0
+     308: invokevirtual #1113               // Method iilIIIlIII:()F
+     311: aload_0
+     312: getfield      #243                // Field lliililiI:Z
+     315: invokespecial #1126               // Method rustme/IIiiilIIiI."<init>":(DDDFFZ)V
+     318: invokevirtual #358                // Method rustme/iliilIliiI.llIlIllilI:(Lrustme/llillIIIiI;)V
+     321: iconst_0
+     322: istore        14
+     324: goto          491
+     327: iload         14
+     329: ifeq          381
+     332: iload         15
+     334: ifeq          381
+     337: aload_0
+     338: getfield      #341                // Field lIlilIIl:Ljava/lang/Object;
+     341: checkcast     #343                // class rustme/iliilIliiI
+     344: new           #1121               // class rustme/IIiiilIIiI
+     347: dup
+     348: aload_0
+     349: invokevirtual #49                 // Method IlIiillIII:()D
+     352: aload_3
+     353: getfield      #215                // Field rustme/ilIlIilIiI.IiiIilIlI:D
+     356: aload_0
+     357: invokevirtual #55                 // Method lIilillIII:()D
+     360: aload_0
+     361: invokevirtual #1108               // Method IIiIillIII:()F
+     364: aload_0
+     365: invokevirtual #1113               // Method iilIIIlIII:()F
+     368: aload_0
+     369: getfield      #243                // Field lliililiI:Z
+     372: invokespecial #1126               // Method rustme/IIiiilIIiI."<init>":(DDDFFZ)V
+     375: invokevirtual #358                // Method rustme/iliilIliiI.llIlIllilI:(Lrustme/llillIIIiI;)V
+     378: goto          491
+     381: iload         14
+     383: ifeq          422
+     386: aload_0
+     387: getfield      #341                // Field lIlilIIl:Ljava/lang/Object;
+     390: checkcast     #343                // class rustme/iliilIliiI
+     393: new           #1128               // class rustme/iIiiilIIiI
+     396: dup
+     397: aload_0
+     398: invokevirtual #49                 // Method IlIiillIII:()D
+     401: aload_3
+     402: getfield      #215                // Field rustme/ilIlIilIiI.IiiIilIlI:D
+     405: aload_0
+     406: invokevirtual #55                 // Method lIilillIII:()D
+     409: aload_0
+     410: getfield      #243                // Field lliililiI:Z
+     413: invokespecial #1131               // Method rustme/iIiiilIIiI."<init>":(DDDZ)V
+     416: invokevirtual #358                // Method rustme/iliilIliiI.llIlIllilI:(Lrustme/llillIIIiI;)V
+     419: goto          491
+     422: iload         15
+     424: ifeq          459
+     427: aload_0
+     428: getfield      #341                // Field lIlilIIl:Ljava/lang/Object;
+     431: checkcast     #343                // class rustme/iliilIliiI
+     434: new           #1133               // class rustme/lIiiilIIiI
+     437: dup
+     438: aload_0
+     439: invokevirtual #1108               // Method IIiIillIII:()F
+     442: aload_0
+     443: invokevirtual #1113               // Method iilIIIlIII:()F
+     446: aload_0
+     447: getfield      #243                // Field lliililiI:Z
+     450: invokespecial #1136               // Method rustme/lIiiilIIiI."<init>":(FFZ)V
+     453: invokevirtual #358                // Method rustme/iliilIliiI.llIlIllilI:(Lrustme/llillIIIiI;)V
+     456: goto          491
+     459: aload_0
+     460: getfield      #1138               // Field IIiliiil:Z
+     463: aload_0
+     464: getfield      #243                // Field lliililiI:Z
+     467: if_icmpeq     491
+     470: aload_0
+     471: getfield      #341                // Field lIlilIIl:Ljava/lang/Object;
+     474: checkcast     #343                // class rustme/iliilIliiI
+     477: new           #1140               // class rustme/iliiilIIiI
+     480: dup
+     481: aload_0
+     482: getfield      #243                // Field lliililiI:Z
+     485: invokespecial #1142               // Method rustme/iliiilIIiI."<init>":(Z)V
+     488: invokevirtual #358                // Method rustme/iliilIliiI.llIlIllilI:(Lrustme/llillIIIiI;)V
+     491: iload         14
+     493: ifeq          525
+     496: aload_0
+     497: aload_0
+     498: invokevirtual #49                 // Method IlIiillIII:()D
+     501: putfield      #1101               // Field lliliiil:D
+     504: aload_0
+     505: aload_3
+     506: getfield      #215                // Field rustme/ilIlIilIiI.IiiIilIlI:D
+     509: putfield      #1103               // Field lIlIiiil:D
+     512: aload_0
+     513: aload_0
+     514: invokevirtual #55                 // Method lIilillIII:()D
+     517: putfield      #1105               // Field Ililiiil:D
+     520: aload_0
+     521: iconst_0
+     522: putfield      #1117               // Field lllIiiil:I
+     525: iload         15
+     527: ifeq          546
+     530: aload_0
+     531: aload_0
+     532: invokevirtual #1108               // Method IIiIillIII:()F
+     535: putfield      #1110               // Field Iiiliiil:F
+     538: aload_0
+     539: aload_0
+     540: invokevirtual #1113               // Method iilIIIlIII:()F
+     543: putfield      #1115               // Field iIIliiil:F
+     546: aload_0
+     547: aload_0
+     548: getfield      #243                // Field lliililiI:Z
+     551: putfield      #1138               // Field IIiliiil:Z
+     554: return
+
+  public void IiIlliiilI();
+    Code:
+       0: aload_0
+       1: invokespecial #1145               // Method rustme/iiIililiiI.IiIlliiilI:()V
+       4: aload_0
+       5: invokevirtual #363                // Method IiiiIliliI:()Z
+       8: ifeq          119
+      11: aload_0
+      12: aload_0
+      13: getfield      #177                // Field illIiiil:Ljava/lang/Object;
+      16: checkcast     #179                // class rustme/IIIililIiI
+      19: getfield      #200                // Field rustme/IIIililIiI.iilIIlIlI:F
+      22: putfield      #1148               // Field IiliIIliI:F
+      25: aload_0
+      26: aload_0
+      27: getfield      #177                // Field illIiiil:Ljava/lang/Object;
+      30: checkcast     #179                // class rustme/IIIililIiI
+      33: getfield      #188                // Field rustme/IIIililIiI.lilIIlIlI:F
+      36: putfield      #1151               // Field llIliIliI:F
+      39: aload_0
+      40: aload_0
+      41: getfield      #177                // Field illIiiil:Ljava/lang/Object;
+      44: checkcast     #179                // class rustme/IIIililIiI
+      47: getfield      #182                // Field rustme/IIIililIiI.IilIIlIlI:Z
+      50: putfield      #1154               // Field IilIiIliI:Z
+      53: aload_0
+      54: aload_0
+      55: getfield      #1156               // Field llIliiil:F
+      58: putfield      #1158               // Field iilIiiil:F
+      61: aload_0
+      62: aload_0
+      63: getfield      #1160               // Field IlIIiiil:F
+      66: putfield      #1162               // Field iiiliiil:F
+      69: aload_0
+      70: aload_0
+      71: getfield      #1160               // Field IlIIiiil:F
+      74: f2d
+      75: aload_0
+      76: invokevirtual #1113               // Method iilIIIlIII:()F
+      79: aload_0
+      80: getfield      #1160               // Field IlIIiiil:F
+      83: fsub
+      84: f2d
+      85: ldc2_w        #216                // double 0.5d
+      88: dmul
+      89: dadd
+      90: d2f
+      91: putfield      #1160               // Field IlIIiiil:F
+      94: aload_0
+      95: aload_0
+      96: getfield      #1156               // Field llIliiil:F
+      99: f2d
+     100: aload_0
+     101: invokevirtual #1108               // Method IIiIillIII:()F
+     104: aload_0
+     105: getfield      #1156               // Field llIliiil:F
+     108: fsub
+     109: f2d
+     110: ldc2_w        #216                // double 0.5d
+     113: dmul
+     114: dadd
+     115: d2f
+     116: putfield      #1156               // Field llIliiil:F
+     119: return
+
+  public void liilIiiilI();
+    Code:
+       0: aload_0
+       1: getfield      #341                // Field lIlilIIl:Ljava/lang/Object;
+       4: checkcast     #343                // class rustme/iliilIliiI
+       7: new           #1165               // class rustme/llIllIIIiI
+      10: dup
+      11: getstatic     #1171               // Field rustme/IlIllIIIiI.llllIllII:Lrustme/IlIllIIIiI;
+      14: invokespecial #1174               // Method rustme/llIllIIIiI."<init>":(Lrustme/IlIllIIIiI;)V
+      17: invokevirtual #358                // Method rustme/iliilIliiI.llIlIllilI:(Lrustme/llillIIIiI;)V
+      20: return
+
+  public void IilIiiillI(rustme.ilIIlilIiI);
+    Code:
+       0: aload_0
+       1: getfield      #72                 // Field iIliIlilI:Ljava/lang/Object;
+       4: checkcast     #74                 // class rustme/iilliIliiI
+       7: getfield      #887                // Field rustme/iilliIliiI.liliiiIl:Ljava/lang/Object;
+      10: checkcast     #889                // class rustme/liIIliliiI
+      13: invokevirtual #896                // Method rustme/liIIliliiI.liliiiIliI:()Lrustme/illIliliiI;
+      16: aload_1
+      17: invokevirtual #902                // Method rustme/illIliliiI.iIIIIiIliI:(Lrustme/ilIIlilIiI;)V
+      20: return
+
+  public boolean iIlIiiillI(int, java.lang.String);
+    Code:
+       0: iload_1
+       1: aload_0
+       2: invokevirtual #1179               // Method IiIIililiI:()I
+       5: if_icmpgt     12
+       8: iconst_1
+       9: goto          13
+      12: iconst_0
+      13: ireturn
+
+  public void IilIIiiilI(rustme.liiliilIiI, float);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokevirtual #1183               // Method liliiIiilI:(Lrustme/liiliilIiI;)Z
+       5: ifne          18
+       8: aload_0
+       9: aload_0
+      10: invokevirtual #923                // Method lillliilII:()F
+      13: fload_2
+      14: fsub
+      15: invokevirtual #926                // Method iiIlIiilII:(F)V
+      18: return
+
+  public rustme.lliililIiI IiiiiIilII(float);
+    Code:
+       0: aload_0
+       1: aload_0
+       2: invokevirtual #1113               // Method iilIIIlIII:()F
+       5: aload_0
+       6: invokevirtual #1108               // Method IIiIillIII:()F
+       9: invokevirtual #1189               // Method llIIlIlIII:(FF)Lrustme/lliililIiI;
+      12: areturn
+
+  public boolean liiIillIII();
+    Code:
+       0: new           #1191               // class rustme/liIlliiliI
+       3: dup
+       4: aload_0
+       5: aload_0
+       6: getfield      #177                // Field illIiiil:Ljava/lang/Object;
+       9: checkcast     #179                // class rustme/IIIililIiI
+      12: ifnull        39
+      15: aload_0
+      16: getfield      #177                // Field illIiiil:Ljava/lang/Object;
+      19: checkcast     #179                // class rustme/IIIililIiI
+      22: getfield      #185                // Field rustme/IIIililIiI.illIIlIlI:Z
+      25: ifeq          39
+      28: aload_0
+      29: getfield      #1194               // Field ilIiiIiII:Z
+      32: ifne          39
+      35: iconst_1
+      36: goto          40
+      39: iconst_0
+      40: invokespecial #1197               // Method rustme/liIlliiliI."<init>":(Lrustme/IIiIIiIIiI;Z)V
+      43: astore_1
+      44: aload_1
+      45: invokestatic  #1203               // Method rustme/lIllIilliI.ilIIIIlIIl:(Ljava/lang/Object;)V
+      48: aload_1
+      49: invokevirtual #1206               // Method rustme/liIlliiliI.iIIlIIiIil:()Z
+      52: ireturn
+
+  public void lIIIiIiilI(rustme.IIlIIliIiI);
+    Code:
+       0: aload_0
+       1: getfield      #72                 // Field iIliIlilI:Ljava/lang/Object;
+       4: checkcast     #74                 // class rustme/iilliIliiI
+       7: getfield      #676                // Field rustme/iilliIliiI.IlllilIl:Ljava/lang/Object;
+      10: checkcast     #678                // class rustme/lilllIliiI
+      13: aload_1
+      14: getstatic     #1211               // Field rustme/IilIIilIiI.iiiIlIIlI:Lrustme/IilIIilIiI;
+      17: invokevirtual #688                // Method rustme/lilllIliiI.llIIlllliI:(Lrustme/IIlIIliIiI;Lrustme/IilIIilIiI;)V
+      20: return
+
+  public rustme.iIllIlIIiI ilIlliilII(rustme.iillIlIIiI);
+    Code:
+       0: aload_1
+       1: getstatic     #156                // Field rustme/iiIiliIIiI.IlIIiIIII:Lrustme/iillIlIIiI;
+       4: if_acmpne     17
+       7: aload_0
+       8: fconst_0
+       9: putfield      #99                 // Field ililiiil:F
+      12: aload_0
+      13: fconst_0
+      14: putfield      #97                 // Field llIIiiil:F
+      17: aload_0
+      18: aload_1
+      19: invokespecial #1214               // Method rustme/iiIililiiI.ilIlliilII:(Lrustme/iillIlIIiI;)Lrustme/iIllIlIIiI;
+      22: areturn
+
+  public void IillililiI();
+    Code:
+       0: aload_0
+       1: getfield      #341                // Field lIlilIIl:Ljava/lang/Object;
+       4: checkcast     #343                // class rustme/iliilIliiI
+       7: new           #345                // class rustme/IllllIIIiI
+      10: dup
+      11: aload_0
+      12: getstatic     #1218               // Field rustme/illllIIIiI.IIlilllII:Lrustme/illllIIIiI;
+      15: invokespecial #354                // Method rustme/IllllIIIiI."<init>":(Lrustme/IIlIIliIiI;Lrustme/illllIIIiI;)V
+      18: invokevirtual #358                // Method rustme/iliilIliiI.llIlIllilI:(Lrustme/llillIIIiI;)V
+      21: return
+
+  public void llIllIiilI(rustme.ilIlIIIIiI<?>);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokespecial #1223               // Method rustme/iiIililiiI.llIllIiilI:(Lrustme/ilIlIIIIiI;)V
+       5: getstatic     #1227               // Field iIIIiIliI:Lrustme/ilIlIIIIiI;
+       8: aload_1
+       9: invokevirtual #1230               // Method rustme/ilIlIIIIiI.equals:(Ljava/lang/Object;)Z
+      12: ifeq          107
+      15: aload_0
+      16: getfield      #1234               // Field iIlIIiliI:Lrustme/iliilIIIiI;
+      19: getstatic     #1227               // Field iIIIiIliI:Lrustme/ilIlIIIIiI;
+      22: invokevirtual #1240               // Method rustme/iliilIIIiI.lillillilI:(Lrustme/ilIlIIIIiI;)Ljava/lang/Object;
+      25: checkcast     #1242               // class java/lang/Byte
+      28: invokevirtual #1246               // Method java/lang/Byte.byteValue:()B
+      31: iconst_1
+      32: iand
+      33: ifle          40
+      36: iconst_1
+      37: goto          41
+      40: iconst_0
+      41: istore_2
+      42: aload_0
+      43: getfield      #1234               // Field iIlIIiliI:Lrustme/iliilIIIiI;
+      46: getstatic     #1227               // Field iIIIiIliI:Lrustme/ilIlIIIIiI;
+      49: invokevirtual #1240               // Method rustme/iliilIIIiI.lillillilI:(Lrustme/ilIlIIIIiI;)Ljava/lang/Object;
+      52: checkcast     #1242               // class java/lang/Byte
+      55: invokevirtual #1246               // Method java/lang/Byte.byteValue:()B
+      58: iconst_2
+      59: iand
+      60: ifle          69
+      63: getstatic     #1249               // Field rustme/llIIIilIiI.iiIilIIlI:Lrustme/llIIIilIiI;
+      66: goto          72
+      69: getstatic     #1252               // Field rustme/llIIIilIiI.lliilIIlI:Lrustme/llIIIilIiI;
+      72: astore_3
+      73: iload_2
+      74: ifeq          92
+      77: aload_0
+      78: getfield      #757                // Field liIliiil:Z
+      81: ifne          92
+      84: aload_0
+      85: aload_3
+      86: invokevirtual #1253               // Method iilIliilII:(Lrustme/llIIIilIiI;)V
+      89: goto          107
+      92: iload_2
+      93: ifne          107
+      96: aload_0
+      97: getfield      #757                // Field liIliiil:Z
+     100: ifeq          107
+     103: aload_0
+     104: invokevirtual #1254               // Method IIilliilII:()V
+     107: getstatic     #1257               // Field IlliIiliI:Lrustme/ilIlIIIIiI;
+     110: aload_1
+     111: invokevirtual #1230               // Method rustme/ilIlIIIIiI.equals:(Ljava/lang/Object;)Z
+     114: ifeq          152
+     117: aload_0
+     118: invokevirtual #311                // Method iIIlliilII:()Z
+     121: ifeq          152
+     124: aload_0
+     125: getfield      #360                // Field IllIiiil:Z
+     128: ifne          152
+     131: aload_0
+     132: getfield      #72                 // Field iIliIlilI:Ljava/lang/Object;
+     135: checkcast     #74                 // class rustme/iilliIliiI
+     138: invokevirtual #120                // Method rustme/iilliIliiI.iiliIilliI:()Lrustme/IIiililiiI;
+     141: new           #1259               // class rustme/IiIlIiliiI
+     144: dup
+     145: aload_0
+     146: invokespecial #1262               // Method rustme/IiIlIiliiI."<init>":(Lrustme/liIililiiI;)V
+     149: invokevirtual #149                // Method rustme/IIiililiiI.lIillIiliI:(Lrustme/IIIlIiliiI;)V
+     152: return
+
+  public void iIllililiI(int);
+    Code:
+       0: aload_0
+       1: iload_1
+       2: putfield      #760                // Field IiIliiil:I
+       5: return
+
+  public void iIlliIiilI(rustme.llIIiilIiI);
+    Code:
+       0: aload_0
+       1: getfield      #72                 // Field iIliIlilI:Ljava/lang/Object;
+       4: checkcast     #74                 // class rustme/iilliIliiI
+       7: new           #1267               // class rustme/IiiIiIliiI
+      10: dup
+      11: aload_1
+      12: invokespecial #1269               // Method rustme/IiiIiIliiI."<init>":(Lrustme/llIIiilIiI;)V
+      15: invokevirtual #88                 // Method rustme/iilliIliiI.IIlIiilliI:(Lrustme/IlIlliliiI;)V
+      18: return
+
+  public void IiiliIiilI();
+    Code:
+       0: aload_0
+       1: invokespecial #1273               // Method rustme/iiIililiiI.IiiliIiilI:()V
+       4: aload_0
+       5: iconst_0
+       6: putfield      #959                // Field ilIliiil:Z
+       9: return
+
+  public void IliiIIiIil();
+    Code:
+       0: aload_0
+       1: getfield      #45                 // Field llIIiIllI:Lrustme/IIlllIlIiI;
+       4: new           #727                // class rustme/lIllIilIiI
+       7: dup
+       8: aload_0
+       9: invokevirtual #49                 // Method IlIiillIII:()D
+      12: dconst_0
+      13: aload_0
+      14: invokevirtual #55                 // Method lIilillIII:()D
+      17: invokespecial #811                // Method rustme/lIllIilIiI."<init>":(DDD)V
+      20: invokevirtual #1277               // Method rustme/IIlllIlIiI.IIIIillllI:(Lrustme/lIllIilIiI;)Z
+      23: ifeq          153
+      26: aload_0
+      27: invokespecial #1279               // Method rustme/iiIililiiI.IliiIIiIil:()V
+      30: aload_0
+      31: invokevirtual #197                // Method IlIIillIII:()Z
+      34: ifeq          149
+      37: aload_0
+      38: getfield      #341                // Field lIlilIIl:Ljava/lang/Object;
+      41: checkcast     #343                // class rustme/iliilIliiI
+      44: new           #1133               // class rustme/lIiiilIIiI
+      47: dup
+      48: aload_0
+      49: invokevirtual #1108               // Method IIiIillIII:()F
+      52: aload_0
+      53: invokevirtual #1113               // Method iilIIIlIII:()F
+      56: aload_0
+      57: getfield      #243                // Field lliililiI:Z
+      60: invokespecial #1136               // Method rustme/lIiiilIIiI."<init>":(FFZ)V
+      63: invokevirtual #358                // Method rustme/iliilIliiI.llIlIllilI:(Lrustme/llillIIIiI;)V
+      66: aload_0
+      67: getfield      #341                // Field lIlilIIl:Ljava/lang/Object;
+      70: checkcast     #343                // class rustme/iliilIliiI
+      73: new           #1281               // class rustme/iiiiilIIiI
+      76: dup
+      77: aload_0
+      78: getfield      #1148               // Field IiliIIliI:F
+      81: aload_0
+      82: getfield      #1151               // Field llIliIliI:F
+      85: aload_0
+      86: getfield      #177                // Field illIiiil:Ljava/lang/Object;
+      89: checkcast     #179                // class rustme/IIIililIiI
+      92: getfield      #182                // Field rustme/IIIililIiI.IilIIlIlI:Z
+      95: aload_0
+      96: getfield      #177                // Field illIiiil:Ljava/lang/Object;
+      99: checkcast     #179                // class rustme/IIIililIiI
+     102: getfield      #185                // Field rustme/IIIililIiI.illIIlIlI:Z
+     105: invokespecial #1284               // Method rustme/iiiiilIIiI."<init>":(FFZZ)V
+     108: invokevirtual #358                // Method rustme/iliilIliiI.llIlIllilI:(Lrustme/llillIIIiI;)V
+     111: aload_0
+     112: invokevirtual #1287               // Method IiiilIlIII:()Lrustme/IIlIIliIiI;
+     115: astore_1
+     116: aload_1
+     117: aload_0
+     118: if_acmpeq     146
+     121: aload_1
+     122: invokevirtual #1292               // Method rustme/IIlIIliIiI.iIIiIiilII:()Z
+     125: ifeq          146
+     128: aload_0
+     129: getfield      #341                // Field lIlilIIl:Ljava/lang/Object;
+     132: checkcast     #343                // class rustme/iliilIliiI
+     135: new           #1294               // class rustme/IIliilIIiI
+     138: dup
+     139: aload_1
+     140: invokespecial #1296               // Method rustme/IIliilIIiI."<init>":(Lrustme/IIlIIliIiI;)V
+     143: invokevirtual #358                // Method rustme/iliilIliiI.llIlIllilI:(Lrustme/llillIIIiI;)V
+     146: goto          153
+     149: aload_0
+     150: invokevirtual #1298               // Method iiIlililiI:()V
+     153: return
+
+  public boolean IlllililiI();
+    Code:
+       0: aload_0
+       1: invokevirtual #376                // Method iiIlillIII:()Lrustme/IIlIIliIiI;
+       4: astore_1
+       5: aload_0
+       6: invokevirtual #197                // Method IlIIillIII:()Z
+       9: ifeq          35
+      12: aload_1
+      13: instanceof    #378                // class rustme/iIllIliIiI
+      16: ifeq          35
+      19: aload_1
+      20: checkcast     #378                // class rustme/iIllIliIiI
+      23: invokeinterface #1301,  1         // InterfaceMethod rustme/iIllIliIiI.iilIlillII:()Z
+      28: ifeq          35
+      31: iconst_1
+      32: goto          36
+      35: iconst_0
+      36: ireturn
+
+  public boolean IlllliiilI(rustme.IIlIIliIiI, boolean);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: iload_2
+       3: invokespecial #1305               // Method rustme/iiIililiiI.IlllliiilI:(Lrustme/IIlIIliIiI;Z)Z
+       6: ifne          11
+       9: iconst_0
+      10: ireturn
+      11: aload_1
+      12: instanceof    #1307               // class rustme/ilIilliIiI
+      15: ifeq          43
+      18: aload_0
+      19: getfield      #72                 // Field iIliIlilI:Ljava/lang/Object;
+      22: checkcast     #74                 // class rustme/iilliIliiI
+      25: invokevirtual #120                // Method rustme/iilliIliiI.iiliIilliI:()Lrustme/IIiililiiI;
+      28: new           #1309               // class rustme/IillIiliiI
+      31: dup
+      32: aload_0
+      33: aload_1
+      34: checkcast     #1307               // class rustme/ilIilliIiI
+      37: invokespecial #1312               // Method rustme/IillIiliiI."<init>":(Lrustme/IIiIIiIIiI;Lrustme/ilIilliIiI;)V
+      40: invokevirtual #149                // Method rustme/IIiililiiI.lIillIiliI:(Lrustme/IIIlIiliiI;)V
+      43: aload_1
+      44: instanceof    #961                // class rustme/IIiilliIiI
+      47: ifeq          74
+      50: aload_0
+      51: aload_1
+      52: invokevirtual #1313               // Method rustme/IIlIIliIiI.IIiIillIII:()F
+      55: invokevirtual #1316               // Method illllIlIII:(F)V
+      58: aload_0
+      59: aload_1
+      60: invokevirtual #1313               // Method rustme/IIlIIliIiI.IIiIillIII:()F
+      63: invokevirtual #1319               // Method lIIIlIlIII:(F)V
+      66: aload_0
+      67: aload_1
+      68: invokevirtual #1313               // Method rustme/IIlIIliIiI.IIiIillIII:()F
+      71: invokevirtual #1322               // Method lliliIilII:(F)V
+      74: iconst_1
+      75: ireturn
+
+  public void liliilIlil();
+    Code:
+       0: aload_0
+       1: getfield      #341                // Field lIlilIIl:Ljava/lang/Object;
+       4: checkcast     #343                // class rustme/iliilIliiI
+       7: new           #1324               // class rustme/iilllIIIiI
+      10: dup
+      11: aload_0
+      12: getfield      #1328               // Field IlliiIiII:Lrustme/IIIiliIIiI;
+      15: getfield      #1333               // Field rustme/IIIiliIIiI.iliililII:I
+      18: invokespecial #1335               // Method rustme/iilllIIIiI."<init>":(I)V
+      21: invokevirtual #358                // Method rustme/iliilIliiI.llIlIllilI:(Lrustme/llillIIIiI;)V
+      24: aload_0
+      25: invokevirtual #1337               // Method iIlIililiI:()V
+      28: return
+
+  public boolean IiiiIliliI();
+    Code:
+       0: aload_0
+       1: getfield      #72                 // Field iIliIlilI:Ljava/lang/Object;
+       4: checkcast     #74                 // class rustme/iilliIliiI
+       7: invokevirtual #1340               // Method rustme/iilliIliiI.IlIiIilliI:()Lrustme/IIlIIliIiI;
+      10: aload_0
+      11: if_acmpne     18
+      14: iconst_1
+      15: goto          19
+      18: iconst_0
+      19: ireturn
+
+  public boolean lllIIiiilI();
+    Code:
+       0: iconst_1
+       1: ireturn
+}
