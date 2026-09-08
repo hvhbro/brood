@@ -16,6 +16,38 @@ public final class RenderUtil {
 
     // ===== Матрицы =====
 
+    // GL-константы для матриц (в стабе их нет; в рантайме lwjglx проксирует
+    // настоящий LWJGL3 GL11, там значения стандартные)
+    public static final int GL_MATRIX_MODE = 0x0BA0;
+    public static final int GL_MODELVIEW = 0x1700;
+    public static final int GL_PROJECTION = 0x1701;
+    public static final int GL_COLOR_BUFFER_BIT = 0x4000;
+
+    /**
+     * Экранное ортографическое пространство 0..w / 0..h (scaled-пиксели).
+     * Сохраняет текущие матрицы; парный вызов screenSpaceEnd.
+     * Нужен потому, что в drawScreen фаза GUI игры может иметь произвольные
+     * матрицы (прод-форк 1.12.2 рендерит экраны не как ваниль 1.12) —
+     * наши scaled-координаты умножались дважды → квад заливал весь экран.
+     */
+    public static void screenSpaceStart(float width, float height) {
+        GL11.glMatrixMode(GL_PROJECTION);
+        GL11.glPushMatrix();
+        GL11.glLoadIdentity();
+        GL11.glOrtho(0, width, height, 0, -1, 100);
+        GL11.glMatrixMode(GL_MODELVIEW);
+        GL11.glPushMatrix();
+        GL11.glLoadIdentity();
+    }
+
+    public static void screenSpaceEnd() {
+        GL11.glMatrixMode(GL_PROJECTION);
+        GL11.glPopMatrix();
+        GL11.glMatrixMode(GL_MODELVIEW);
+        GL11.glPopMatrix();
+        GL11.glMatrixMode(GL_MODELVIEW);
+    }
+
     public static void scaleStart(float x, float y, float scaleX, float scaleY) {
         GL11.glPushMatrix();
         GL11.glTranslatef(x, y, 0);
@@ -185,6 +217,54 @@ public final class RenderUtil {
             sh.stop();
         } catch (Throwable t) {
             utils.etc.Log.error("Render", "roundRect shader failed", t);
+        }
+    }
+
+    private static ShaderUtil borderShader;
+
+    private static ShaderUtil borderShader() {
+        if (borderShader == null) {
+            borderShader = new ShaderUtil(Shaders.VERT, Shaders.BORDER);
+        }
+        return borderShader;
+    }
+
+    /** Скруглённая рамка (полоса по периметру). width — в scaled-пикселях. */
+    public static void drawRoundedBorder(GameContext ctx, float x, float y, float w, float h,
+                                         float radius, float width, int color) {
+        try {
+            float scale = GuiScale.get(ctx);
+            float ex = x * scale, ey = y * scale;
+            float ew = w * scale, eh = h * scale;
+            float er = Math.min(radius * scale, Math.min(ew, eh) / 2f);
+
+            ShaderUtil sh = borderShader();
+            sh.start();
+            sh.uniform4F("rect", ex, ey, ew, eh);
+            sh.uniformF("radius", er);
+            sh.uniformF("borderWidth", Math.max(1f, width * scale));
+            sh.uniformF("RectSmoothness", 0.6f * scale);
+            sh.uniformF("fbHeight", (float) ctx.fbHeight);
+            sh.uniform4F("color",
+                ((color >> 16) & 0xFF) / 255f, ((color >> 8) & 0xFF) / 255f, (color & 0xFF) / 255f, ((color >> 24) & 0xFF) / 255f);
+
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glDisable(GL11.GL_TEXTURE_2D);
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+            GL11.glBegin(GL11.GL_QUADS);
+            GL11.glColor4f(1, 1, 1, 1);
+            GL11.glVertex2f(x, y);
+            GL11.glVertex2f(x, y + h);
+            GL11.glVertex2f(x + w, y + h);
+            GL11.glVertex2f(x + w, y);
+            GL11.glEnd();
+
+            GL11.glEnable(GL11.GL_TEXTURE_2D);
+            // blend НЕ выключаем (кэш GlStateManager, см. 13.4.5)
+            sh.stop();
+        } catch (Throwable t) {
+            utils.etc.Log.error("Render", "rounded border failed", t);
         }
     }
 

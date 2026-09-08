@@ -26,8 +26,9 @@ public final class CheatHud {
     private static final float PADDING_V = 1.0f;  // их paddingV; 1.0 → высота плашки ЦЕЛАЯ
     // (10.0 scaled) — стыки плашек попадают на границу пикселей, без полупрозрачных швов
     private static final float STRIPE_W = 1.5f;   // их stripeWidth
-    private static final float LEFT_X = 6f;       // отступ от левого края
-    private static final float TOP_Y = 30f;       // их y=30
+    // позиция ArrayList (перетаскивание при открытом меню)
+    private static float posX = 6f;
+    private static float posY = 30f;
 
     // UIColors primary/secondary (тема клиента, меняется двумя константами)
     private static final int PRIMARY = 0xFF906BFF;
@@ -38,16 +39,60 @@ public final class CheatHud {
 
     private static boolean logged;
 
+    /** DIAG: счётчик кадров overlay (для детекта двойного вызова drawScreen). */
+    public static volatile int hudFrameCounter;
+
     private CheatHud() {}
+
+    // ===== позиция ArrayList + hit-рект (перетаскивание при открытом меню) =====
+
+    /** Полная ширина списка (самая широкая плашка) при текущих модулях. */
+    public static float getListW() {
+        float w = 0f;
+        Module[] all = Modules.all().toArray(new Module[0]);
+        for (Module m : all) {
+            if (!m.isState() || "Menu".equals(m.name)) continue;
+            float pw = CustomFont.getWidth(m.name, FONT_SIZE, CustomFont.WM_FONT)
+                + PADDING_H * 2f + STRIPE_W;
+            if (pw > w) w = pw;
+        }
+        return w > 0f ? w : 40f;
+    }
+
+    public static float getX() { return posX; }
+    public static float getY() { return posY; }
+
+    public static void setPos(float x, float y) {
+        posX = Math.max(0f, x);
+        posY = Math.max(0f, y);
+    }
+
+    /** Hit-рект списка: out = {x,y,w,h} (последний рендер). */
+    public static void getRect(float[] out) {
+        out[0] = posX;
+        out[1] = posY;
+        out[2] = getListW();
+        out[3] = listH;
+    }
+
+    private static float listH;
 
     /** Рисует ArrayList (vanquish-стиль) + ESP-боксы. Вызывается из CheatIngame каждый кадр. */
     public static void renderFrame(int scaledWidth, int scaledHeight, float partialTicks) {
         try {
+            // МЕНЮ (rock-схема): рендер в overlay-фазе, экран = только ввод.
+            // Вводные координаты CheatMenuScreen обновляются в его drawScreen.
+            if (modules.impl.MenuModule.isOpen()) {
+                rustme.CheatMenuScreen.renderOverlay(scaledWidth, scaledHeight);
+            }
+
             // ватермарка (верх-центр) — рисуется всегда
             Watermark.render(scaledWidth);
 
             // ESP-боксы (под HUD-текстом; сам решает, включён ли модуль)
             modules.impl.Esp.render(GameContext.get(), partialTicks, scaledWidth, scaledHeight);
+            // Tracers: линии до игроков (после Esp — делит камеру/проекцию)
+            modules.impl.Tracers.render(GameContext.get(), partialTicks, scaledWidth, scaledHeight);
 
             MsdfFont f = CustomFont.WM_FONT; // их getMediumFont()
 
@@ -55,7 +100,7 @@ public final class CheatHud {
             Module[] all = Modules.all().toArray(new Module[0]);
             List<Module> enabled = new ArrayList<Module>();
             for (Module m : all) {
-                if (m.isState()) enabled.add(m);
+                if (m.isState() && !"Menu".equals(m.name)) enabled.add(m);
             }
             if (enabled.isEmpty()) return;
 
@@ -71,7 +116,8 @@ public final class CheatHud {
                 enabled.set(j + 1, key);
             }
 
-            float currentY = TOP_Y;
+            float baseX = posX;
+            float currentY = posY;
 
             for (int idx = 0; idx < enabled.size(); idx++) {
                 Module module = enabled.get(idx);
@@ -84,7 +130,7 @@ public final class CheatHud {
                 // (alpha=0 у каждого) и сквозь него светит мир → «отступ».
                 // +0.5 scaled = +1 физ. пиксель: шовный пиксель всегда внутри квада.
                 float rectHDraw = rectH + 0.5f;
-                float moduleX = LEFT_X; // левая сторона: плашки прижаты к левому краю
+                float moduleX = baseX;
 
                 // фон модуля (жёсткий край 0.25, низ перекрывает стык с соседним)
                 RenderUtil.drawRoundedRectShader(GameContext.get(), moduleX, currentY,
@@ -100,6 +146,7 @@ public final class CheatHud {
 
                 currentY += rectH;
             }
+            listH = currentY - posY;
 
             // сброс цвета после кадра (полоски/квады оставляют свой цвет в GL)
             GL11.glColor4f(1f, 1f, 1f, 1f);

@@ -9,7 +9,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DUMP = os.path.join(ROOT, 'dump', 'classes', 'minecraft')
 MAP = os.path.join(ROOT, 'tools', 'disk_name_map.json')
 TMP = os.path.join(ROOT, 'tools', 'javap_tmp7')
-JAVAP = r'C:\Program Files\Eclipse Adoptium\jdk-8.0.502.7-hotspot\bin\javap.exe'
+JAVAP = r'C:\Users\Admin\AppData\Local\Programs\Eclipse Adoptium\jdk-8.0.504.1-hotspot\bin\javap.exe'
 
 def main():
     args = sys.argv[1:]

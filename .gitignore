@@ -27,3 +27,6 @@ tools/scan_db.json
 tools/game_cp.jar
 tools/game_stubs.jar
 dump/minecraft_FULL_DEOBF.jar
+
+# Восстановленные сурсы стороннего клиента (reference, не часть проекта)
+rock/

@@ -74,6 +74,8 @@ public class RustClient implements Runnable {
             autoSprint = new AutoSprint();
             new FullBright();
             new modules.impl.Esp();
+            new modules.impl.Tracers();
+            new modules.impl.MenuModule();
         } catch (Throwable t) {
             Log.error("Agent", "module init failed", t);
             return;
@@ -98,6 +100,12 @@ public class RustClient implements Runnable {
                 boolean inWorld = ctx.update();
                 if (!ctx.hudInstalled) ctx.ensureHud(); // ленивая доустановка
                 EventBus.post(new TickEvent(inWorld));
+                // бинды из меню (edge-detect; меню съедает клавиатуру — скип)
+                boolean menuOpen = modules.impl.MenuModule.isOpen();
+                Object[] arr = modules.api.Modules.all().toArray();
+                for (int i = 0; i < arr.length; i++) {
+                    ((modules.api.Module) arr[i]).tickBind(ctx, menuOpen);
+                }
                 long now = System.currentTimeMillis();
                 if (now - lastBeat >= 10000L) {
                     lastBeat = now;

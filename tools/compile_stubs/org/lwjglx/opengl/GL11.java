@@ -34,6 +34,13 @@ public final class GL11 {
 
     public static void glPushMatrix() {}
     public static void glPopMatrix() {}
+
+    public static void glMatrixMode(int mode) {}
+    public static void glLoadIdentity() {}
+    public static void glOrtho(double left, double right, double bottom, double top, double near, double far) {}
+    public static int glGetError() { return 0; }
+    public static void glPushAttrib(int mask) {}
+    public static void glPopAttrib() {}
     public static void glTranslatef(float x, float y, float z) {}
     public static void glScalef(float x, float y, float z) {}
     public static void glRotatef(float angle, float x, float y, float z) {}
@@ -57,7 +64,11 @@ public final class GL11 {
     public static void glTexParameteri(int target, int pname, int param) {}
     // сигнатура верифицирована по дампу: glTexImage2D(IIIIIIIILjava/nio/ByteBuffer;)V
     public static void glTexImage2D(int target, int level, int internalFormat, int width, int height, int border, int format, int type, java.nio.ByteBuffer pixels) {}
+    public static void glCopyTexImage2D(int target, int level, int internalFormat, int x, int y, int width, int height, int border) {}
+    public static void glViewport(int x, int y, int width, int height) {}
+    public static void glReadBuffer(int mode) {}
     public static int glGetInteger(int pname) { return 0; }
+    public static void glGetInteger(int pname, java.nio.IntBuffer params) {}
     public static float glGetFloat(int pname) { return 0f; }
     public static void glGetFloat(int pname, java.nio.FloatBuffer params) {}
     public static boolean glIsEnabled(int cap) { return false; }

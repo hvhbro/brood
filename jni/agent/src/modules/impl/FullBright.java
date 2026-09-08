@@ -36,7 +36,7 @@ public final class FullBright extends Module {
     private static final float FULLBRIGHT_GAMMA = 10.0f;
 
     public FullBright() {
-        super("FullBright");
+        super("FullBright", "Visuals", 74);
         EventBus.subscribe(TickEvent.class, new EventBus.Listener<TickEvent>() {
             @Override
             public void onEvent(TickEvent event) {
@@ -53,6 +53,10 @@ public final class FullBright extends Module {
     private void handleKey() {
         GameContext ctx = GameContext.get();
         boolean jDown = ctx.isKeyDown(TOGGLE_KEY);
+        if (MenuModule.isOpen()) {
+            keyWasDown = jDown;
+            return;
+        }
         if (jDown && !keyWasDown) {
             toggle();
             Log.info("FullBright", "toggled by J -> " + (isState() ? "ON" : "OFF"));

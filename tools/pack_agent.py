@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.join(TOOLS, '..'))
 import decryptor as D  # noqa: E402
 from encode_protected import encode_protected  # noqa: E402
 
-DEFAULT_JAVAC = r"C:\Program Files\Eclipse Adoptium\jdk-8.0.502.7-hotspot\bin\javac.exe"
+DEFAULT_JAVAC = r"C:\Users\Admin\AppData\Local\Programs\Eclipse Adoptium\jdk-8.0.504.1-hotspot\bin\javac.exe"
 DEFAULT_ENTRY = "client/RustClient"
 
 

@@ -51,6 +51,45 @@ public final class Watermark {
 
     private static boolean logged;
 
+    // ===== позиция (перетаскивание при открытом меню) =====
+    private static float posX = -1f;  // -1 = по центру экрана
+    private static float posY = 26f;
+
+    /** Ширина всего элемента (часы + остров + бары) при данной ширине экрана. */
+    public static float getTotalW(int scaledWidth) {
+        try {
+            MsdfFont f = CustomFont.WM_FONT;
+            float textW = CustomFont.getWidth("ваня стирается", TEXT_SIZE, f);
+            float clockW = CustomFont.getWidth(clockText(), TEXT_SIZE, f);
+            float flowW = PAD_LEFT + textW + PAD_RIGHT;
+            float barsW = (PING_THRESHOLDS.length - 1) * BAR_STEP + BAR_W;
+            return clockW + CLOCK_GAP + flowW + BARS_GAP + barsW;
+        } catch (Throwable t) {
+            return 100f;
+        }
+    }
+
+    /** Левый верх всего элемента (x часового блока). */
+    public static float getX(int scaledWidth) {
+        if (posX >= 0f) return posX;
+        return scaledWidth / 2f - getTotalW(scaledWidth) / 2f;
+    }
+
+    public static float getY() { return posY; }
+
+    public static void setPos(float x, float y) {
+        posX = Math.max(0f, x);
+        posY = Math.max(0f, y);
+    }
+
+    /** Hit-рект для драга: out = {x,y,w,h}. */
+    public static void getRect(int scaledWidth, float[] out) {
+        out[0] = getX(scaledWidth);
+        out[1] = posY;
+        out[2] = getTotalW(scaledWidth);
+        out[3] = ISLAND_H + 2f;
+    }
+
     /** Лог пинга раз в 5 секунд (диагностика цепочки). */
     private static long lastPingLog;
 
@@ -127,8 +166,9 @@ public final class Watermark {
             float flowW = PAD_LEFT + textW + PAD_RIGHT;
             float barsW = (PING_THRESHOLDS.length - 1) * BAR_STEP + BAR_W;
             float totalW = clockW + CLOCK_GAP + flowW + BARS_GAP + barsW;
-            float islandX = scaledWidth / 2f - totalW / 2f + clockW + CLOCK_GAP;
-            float islandY = TOP_Y;
+            float baseX = posX >= 0f ? posX : scaledWidth / 2f - totalW / 2f;
+            float islandX = baseX + clockW + CLOCK_GAP;
+            float islandY = posY;
 
             // 0) часы слева от острова (белым, вертикально по центру высоты)
             float clockY = islandY + (ISLAND_H - CustomFont.cellHeight(TEXT_SIZE, f)) / 2f;

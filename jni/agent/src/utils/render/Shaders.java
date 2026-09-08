@@ -57,6 +57,95 @@ public final class Shaders {
         "}";
 
     /**
+     * Скруглённая РАМКА (только полоса по периметру, как drawRoundedBorder rock):
+     * band = |dist| <= borderWidth, всё внутри/снаружи discard.
+     */
+    public static final String BORDER = "" +
+        "#version 120\n" +
+        "uniform vec4 rect;\n" +
+        "uniform float radius;\n" +
+        "uniform float borderWidth;\n" +
+        "uniform float RectSmoothness;\n" +
+        "uniform float fbHeight;\n" +
+        "uniform vec4 color;\n" +
+        "\n" +
+        "float roundedBox(vec2 p, vec2 halfSize, float rad) {\n" +
+        "    vec2 q = abs(p) - halfSize + rad;\n" +
+        "    return min(max(q.x, q.y), 0.0) + length(max(q, 0.0)) - rad;\n" +
+        "}\n" +
+        "\n" +
+        "void main() {\n" +
+        "    vec2 p = gl_FragCoord.xy;\n" +
+        "    p.y = fbHeight - p.y;\n" +
+        "    vec2 local = p - rect.xy;\n" +
+        "    vec2 halfSize = rect.zw * 0.5;\n" +
+        "    float dist = roundedBox(local - halfSize, halfSize, radius);\n" +
+        "    float band = smoothstep(-RectSmoothness, RectSmoothness, dist + borderWidth)\n" +
+        "               * (1.0 - smoothstep(-RectSmoothness, RectSmoothness, dist - borderWidth));\n" +
+        "    if (band <= 0.0) discard;\n" +
+        "    gl_FragColor = vec4(color.rgb, color.a * band);\n" +
+        "}";
+
+    /** Копия экрана в FBO (uv по gl_FragCoord / размеру цели). */
+    public static final String COPY = "" +
+        "#version 120\n" +
+        "uniform sampler2D tex;\n" +
+        "uniform vec2 uTexel; // 1/targetSize\n" +
+        "void main() {\n" +
+        "    vec2 uv = gl_FragCoord.xy * uTexel;\n" +
+        "    gl_FragColor = texture2D(tex, uv);\n" +
+        "}";
+
+    /** 9-tap gaussian (expensive-стиль, шаг в текселях). uDir = (1,0)/(0,1). */
+    public static final String BLUR = "" +
+        "#version 120\n" +
+        "uniform sampler2D tex;\n" +
+        "uniform vec2 uTexel;\n" +
+        "uniform vec2 uDir;\n" +
+        "void main() {\n" +
+        "    vec2 uv = gl_FragCoord.xy * uTexel;\n" +
+        "    vec2 o1 = uDir * uTexel * 1.3846153846;\n" +
+        "    vec2 o2 = uDir * uTexel * 3.2307692308;\n" +
+        "    vec4 c = texture2D(tex, uv) * 0.2270270270;\n" +
+        "    c += (texture2D(tex, uv + o1) + texture2D(tex, uv - o1)) * 0.3162162162;\n" +
+        "    c += (texture2D(tex, uv + o2) + texture2D(tex, uv - o2)) * 0.0702702703;\n" +
+        "    gl_FragColor = c;\n" +
+        "}";
+
+    /**
+     * Окно-«стекло»: сэмплит размытый экран-текстуру внутри скруглённого
+     * прямоугольника (rock: backdrop blur окна + тёмный тинт).
+     * uv.y флипается: FBO-текстура v=0 снизу, экран у нас сверху-вниз.
+     */
+    public static final String WINDOW = "" +
+        "#version 120\n" +
+        "uniform sampler2D tex;\n" +
+        "uniform vec4 rect;\n" +
+        "uniform float radius;\n" +
+        "uniform float RectSmoothness;\n" +
+        "uniform float fbHeight;\n" +
+        "uniform vec4 tint;\n" +
+        "uniform float blurMix;\n" +
+        "\n" +
+        "float roundedBox(vec2 p, vec2 halfSize, float rad) {\n" +
+        "    vec2 q = abs(p) - halfSize + rad;\n" +
+        "    return min(max(q.x, q.y), 0.0) + length(max(q, 0.0)) - rad;\n" +
+        "}\n" +
+        "\n" +
+        "void main() {\n" +
+        "    vec2 p = gl_FragCoord.xy;\n" +
+        "    p.y = fbHeight - p.y;\n" +
+        "    vec2 local = p - rect.xy;\n" +
+        "    vec2 halfSize = rect.zw * 0.5;\n" +
+        "    float dist = roundedBox(local - halfSize, halfSize, radius);\n" +
+        "    float alpha = 1.0 - smoothstep(-RectSmoothness, RectSmoothness, dist);\n" +
+        "    if (alpha <= 0.0) discard;\n" +
+        "    vec2 uv = vec2(local.x / rect.z, 1.0 - local.y / rect.w);\n" +
+        "    vec3 blur = texture2D(tex, uv).rgb;\n" +
+        "    gl_FragColor = vec4(mix(tint.rgb, blur.rgb, blurMix), tint.a * alpha);\n" +
+        "}";
+
+    /**
      * MSDF-текст — порт fragment.fsh из expensive, но UV вычисляются из
      * gl_FragCoord по uniform-кваду глифа (glTexCoord2f через immediate mode
      * lwjglx в GLSL НЕ доходит — подтверждено: квад сэмплился в одной точке,

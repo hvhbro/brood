@@ -27,7 +27,7 @@ public final class AutoSprint extends Module {
     private boolean lastWritten;  // что мы последний раз записали в pressed
 
     public AutoSprint() {
-        super("AutoSprint");
+        super("AutoSprint", "Combat", 88);
         // стартуем включенным (как раньше)
         setState(true);
         EventBus.subscribe(TickEvent.class, new EventBus.Listener<TickEvent>() {
@@ -52,8 +52,13 @@ public final class AutoSprint extends Module {
 
     private void handleKey() {
         GameContext ctx = GameContext.get();
-        // toggle по X (tap)
         boolean xDown = ctx.isKeyDown(TOGGLE_KEY);
+        if (MenuModule.isOpen()) {
+            // меню открыто — экран съедает клавиатуру, не тогглим
+            keyWasDown = xDown;
+            return;
+        }
+        // toggle по X (tap)
         if (xDown && !keyWasDown) {
             toggle();
             Log.info("AutoSprint", "toggled by X -> " + (isState() ? "ON" : "OFF"));
@@ -67,6 +72,15 @@ public final class AutoSprint extends Module {
 
         if (!event.isInWorld()) {
             // вышли из мира — отпускаем клавишу, чтобы она не осталась зажатой
+            if (lastWritten) {
+                forceSprintKey(false);
+                lastWritten = false;
+            }
+            return;
+        }
+
+        if (MenuModule.isOpen()) {
+            // в меню игра не двигает игрока — не держим спринт
             if (lastWritten) {
                 forceSprintKey(false);
                 lastWritten = false;

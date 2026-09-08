@@ -85,7 +85,7 @@ public final class Esp extends Module {
     private static boolean nameResolved;
 
     public Esp() {
-        super("ESP");
+        super("ESP", "Visuals", TOGGLE_KEY);
         INSTANCE = this;
         EventBus.subscribe(TickEvent.class, new EventBus.Listener<TickEvent>() {
             @Override
@@ -109,6 +109,10 @@ public final class Esp extends Module {
     private void handleKey() {
         GameContext ctx = GameContext.get();
         boolean down = ctx.isKeyDown(TOGGLE_KEY);
+        if (MenuModule.isOpen()) {
+            keyWasDown = down;
+            return;
+        }
         if (down && !keyWasDown) {
             toggle();
             Log.info("ESP", "toggled by G -> " + (isState() ? "ON" : "OFF"));
@@ -175,6 +179,8 @@ public final class Esp extends Module {
                     }
                 }
             } catch (Throwable ignore) {}
+
+            camReady = true;
 
             // --- сбор боксов (без GL) ---
             statTotal = 0;
@@ -370,9 +376,76 @@ public final class Esp extends Module {
         return cwRaw;
     }
 
+    // ===== API для Tracers (камера/проекция) =====
+
+    /** Готова ли камера/проекция (выставляются в render). */
+    public static boolean cameraReady() {
+        return camReady;
+    }
+
+    /** Выставить камеру/проекцию без рендера боксов (для Tracers при выключенном ESP). */
+    public static void updateCamera(GameContext ctx, float partialTicks) {
+        try {
+            if (!ctx.inWorld || ctx.player == null) return;
+            if (!(ctx.player instanceof IIlIIliIiI)) return;
+            IIlIIliIiI lp = (IIlIIliIiI) ctx.player;
+            double lx = lp.IlIiillIII();
+            double ly = lp.liiiIllIII();
+            double lz = lp.lIilillIII();
+            double lpx = lp.IiilillIII();
+            double lpy = lp.lliilIlIII();
+            double lpz = lp.lilllIlIII();
+            camX = Math.abs(lx - lpx) > TELEPORT_DELTA ? lx : lpx + (lx - lpx) * partialTicks;
+            camZ = Math.abs(lz - lpz) > TELEPORT_DELTA ? lz : lpz + (lz - lpz) * partialTicks;
+            camY = (Math.abs(ly - lpy) > TELEPORT_DELTA ? ly : lpy + (ly - lpy) * partialTicks)
+                + lp.iliilIiilI();
+            camYaw = lp.IIiIillIII();
+            camPitch = lp.iilIIIlIII();
+            double yr = Math.toRadians((double) camYaw + 180.0);
+            double pr = Math.toRadians((double) camPitch);
+            vCosY = Math.cos(yr);
+            vSinY = Math.sin(yr);
+            vCosP = Math.cos(pr);
+            vSinP = Math.sin(pr);
+
+            double fov = DEFAULT_FOV;
+            try {
+                double f = ((iilliIliiI) ctx.gs).iIiiIilliI();
+                if (f >= 30.0 && f <= 110.0) fov = f;
+            } catch (Throwable ignore) {}
+            aspect = ctx.scaledHeight > 0 ? (double) ctx.scaledWidth / (double) ctx.scaledHeight : 16.0 / 9.0;
+            pF = 1.0 / Math.tan(Math.toRadians(fov) / 2.0);
+            pFOverAspect = pF / aspect;
+
+            capturedProjPerspective = false;
+            capturedProj = null;
+            try {
+                FloatBuffer p = lliIilliiI.lIIlIlIl;
+                if (p != null && p.capacity() >= 16) {
+                    capturedProj = p;
+                    float m10 = p.get(10), m11 = p.get(11), m15 = p.get(15);
+                    capturedProjPerspective = Math.abs(m11) > 0.5f && Math.abs(m15) < 0.5f && m10 < 0f;
+                }
+            } catch (Throwable ignore) {}
+            camReady = true;
+        } catch (Throwable t) {
+            Log.error("ESP", "updateCamera failed", t);
+        }
+    }
+
+    /** Проекция точки мира -> scaled-экран. Возвращает RAW cw (<=0 — за камерой). */
+    public static double projectToScreen(double wx, double wy, double wz, int scaledW, int scaledH, float[] out) {
+        return projectCorner(wx, wy, wz, scaledW, scaledH, out);
+    }
+
+    public static double camX() { return camX; }
+    public static double camY() { return camY; }
+    public static double camZ() { return camZ; }
+
     // ===== утилиты =====
 
     private static final float[] TMP = new float[2];
+    private static boolean camReady;
 
     /** Имя сущности: GameProfile.getName() (кэш методов), fallback — Entity.getName(). */
     private static String entityName(IIlIIliIiI e) {
