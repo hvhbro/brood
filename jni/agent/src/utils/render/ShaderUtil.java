@@ -27,6 +27,15 @@ public final class ShaderUtil {
     public ShaderUtil(String vertexSource, String fragmentSource) {
         int vs = vertexSource == null ? 0 : compile(GL20.GL_VERTEX_SHADER, vertexSource);
         int fs = compile(GL20.GL_FRAGMENT_SHADER, fragmentSource);
+        // FAIL-FAST: если запрошенный шейдер не собрался — program=0 (иначе
+        // линкуется программа с одной вершинной стадией, и fullscreen-квад
+        // с ней заливает экран мусором — «зависшая картинка»).
+        if (fs == 0 || (vertexSource != null && vs == 0)) {
+            if (vs != 0) GL20.glDeleteShader(vs);
+            if (fs != 0) GL20.glDeleteShader(fs);
+            program = 0;
+            return;
+        }
         program = GL20.glCreateProgram();
         if (vs != 0) GL20.glAttachShader(program, vs);
         GL20.glAttachShader(program, fs);
@@ -71,6 +80,10 @@ public final class ShaderUtil {
 
     public void uniform2F(String name, float x, float y) {
         GL20.glUniform2f(uniform(name), x, y);
+    }
+
+    public void uniform3F(String name, float x, float y, float z) {
+        GL20.glUniform3f(uniform(name), x, y, z);
     }
 
     public void uniform4F(String name, float x, float y, float z, float w) {

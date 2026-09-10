@@ -79,7 +79,6 @@ public final class MsdfFont {
     private static void logSource() {
         if (sourceLogged) return;
         sourceLogged = true;
-        Log.info("MsdfFont", "atlas source: embedded payload (disk не используется)");
     }
 
     private MsdfFont(String fontBase) {
@@ -270,9 +269,6 @@ public final class MsdfFont {
             loaded = true;
             if (!logged) {
                 logged = true;
-                Log.info("MsdfFont", "atlas loaded [" + fontBase + "]: " + w + "x" + h
-                    + " range=" + DISTANCE_RANGE + " glyphs=" + GLYPH.size() + " tex=" + texId
-                    + " yOriginTop=" + yOriginTop);
             }
         } catch (Throwable t) {
             failed = true;

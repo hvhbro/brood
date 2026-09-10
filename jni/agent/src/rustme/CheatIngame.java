@@ -21,7 +21,6 @@ public class CheatIngame extends liIIliliiI {
 
     public CheatIngame(iilliIliiI gsIn) {
         super(gsIn);
-        Log.info("HUD", "CheatIngame constructed");
     }
 
     @Override
@@ -29,8 +28,14 @@ public class CheatIngame extends liIIliliiI {
         callCount++;
         if (!firstCallLogged) {
             firstCallLogged = true;
-            Log.info("HUD", "FIRST CALL: our iliIiiIliI invoked, partialTicks=" + partialTicks);
         }
+
+        // JumpDistort: захват МИРА + волна искажения ПЕРЕД ванильным HUD —
+        // порядок kimiko: мир → post-волна → HUD → кольцо. В бэкбуфере на этот
+        // момент ещё чистый мир, поэтому волна не искажает HUD.
+        try {
+            modules.impl.JumpCircle.preOverlay(GameContext.get(), partialTicks);
+        } catch (Throwable ignore) {}
 
         // ванильный + модовый HUD
         try {
@@ -60,8 +65,6 @@ public class CheatIngame extends liIIliliiI {
                     GuiScale.set((float) gs);
                     ctx.guiScale = (float) gs;
                     ctx.fbHeight = scaledH * gs;
-                    Log.info("HUD", "scaledW=" + scaledW + " scaledH=" + scaledH + " guiScale=" + gs
-                        + " fbHeight=" + ctx.fbHeight);
                 }
             }
             CheatHud.renderFrame(scaledW, scaledH, partialTicks);

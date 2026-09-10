@@ -34,7 +34,8 @@ public final class GL20 {
     public static void glUniform2f(int location, float v0, float v1) {}
     public static void glUniform3f(int location, float v0, float v1, float v2) {}
     public static void glUniform4f(int location, float v0, float v1, float v2, float v3) {}
+    public static void glUniformMatrix4fv(int location, boolean transpose, java.nio.FloatBuffer value) {}
 
-    // FBO (LWJGL3 int-overloads)
+    // FBO/menu (merge 09-09)
     public static void glActiveTexture(int texture) {}
 }

@@ -1,0 +1,88 @@
+direct hits: 7 of 41
+rust:admin:give + GiveItemPacketData :: entry:illiIiIiII, count:int, descriptor:static final SerialDescriptor
+rust:admin:spawn + SpawnVehiclePacketData :: entry:llliIiIiII, descriptor:static final SerialDescriptor
+rust:build:codecld - CodeLockInputClosedPacketData :: 
+rust:build:opencode + OpenCodeLockInputPacketData :: mode:CodeLockInputMode
+rust:build:subcode + SubmitCodeLockPacketData :: code:String
+rust:craft:cancel - CancelPacketData :: 
+rust:craft:favorite - ToggleFavoritePacketData :: 
+rust:craft:queue - QueueStatePacketData :: 
+rust:craft:request - RequestPacketData :: 
+rust:craft:skin - SetSkinPacketData :: 
+rust:craft:sync - SyncPacketData :: 
+rust:craft:tofront - MoveToFrontPacketData :: 
+rust:dmg:close - CloseDeathScreenPacketData :: 
+rust:dmg:death + OpenDeathScreenPacketData :: timeAlive:long, killedBy:DamageSource, withA:DamageSource, attackDistance:float
+rust:dmg:respawn + RespawnPacketData :: respawnPointId:Integer
+rust:donate:buy - ConfirmPurchasePacketData :: 
+rust:donate:lootf - LootBoxFinishedOpeningPacketData :: 
+rust:donate:looto + LootBoxOpenedPacketData :: resultItemId:int, resultItemCount:int
+rust:donate:oloot + OpenLootBoxPacketData :: lootBoxId:int
+rust:donate:open - OpenScreenPacketData :: 
+rust:donate:pref - OpenPrefixesPacketData :: 
+rust:donate:unpref + UnselectDonatePrefixPacketData :: itemId:int
+rust:evt:khenter - KingHillEnterPacketData :: 
+rust:evt:khquit - KingHillQuitPacketData :: 
+rust:gntcs:upd - UpdatePacketData :: 
+rust:inv:action - ActionPacketData :: 
+rust:inv:fluid + FluidTransferPacketData :: windowId:int, take:boolean, slot:int
+rust:inv:fluiddrink + FluidDrinkPacketData :: windowId:int
+rust:inv:itmact + ItemActionPacketData :: windowId:int, slot:int, action:String
+rust:inv:split - SplitPacketData :: 
+rust:inv:toggle - ToggleStatePacketData :: 
+rust:inv:vendbuy + VendingBuyPacketData :: windowId:int, lotIndex:int, count:int
+rust:inv:vendlots + VendingLotsPacketData :: windowId:int, shopName:String, lots:List<VendingLotData>
+rust:inv:vendpur + VendingPurchasePacketData :: windowId:int, state:VendingPurchaseState, lotIndex:int
+rust:item:craft + UpdateCraftingQueuePacketData :: currentCraft:ClientPendingCraft, craftingQueue:List<ItemStack>
+rust:item:pickup - ShowItemPickupPacketData :: 
+rust:item:repair + UnableToRepairPacketData :: entries:List<RepairContextEntry>
+rust:item:status - ShowStatusNotificationPacketData :: 
+rust:map:adddyn + AddDynamicMarkersPacketData :: markers:List<DynamicMapMarker>, descriptor:static final SerialDescriptor
+rust:map:crtuser + CreateUserMarkerPacketData :: marker:UserMapMarker
+rust:map:deluser + DeleteUserMarkerPacketData :: id:long
+rust:map:markers - UpdateMarkersPacketData :: 
+rust:map:remdyn - RemoveDynamicMarkerPacketData :: 
+rust:met:update + UpdateMetabolismPacketData :: metabolism:MetabolismStorage
+rust:met:vehicle + UpdateVehiclePacketData :: energyData:VehicleEnergyData, healthData:VehicleHealthData
+rust:met:wounded - WoundedInfoPacketData :: 
+rust:misc:enable - EnableHudPacketData :: 
+rust:misc:itmap + InitMapPacketData :: mapId:String, mapSize:int, offshoreLength:int, xStart:int, zStart:int
+rust:misc:lguse - PerformLongUseActionPacketData :: 
+rust:misc:looktog + FreeLookTogglePacketData :: enabled:boolean
+rust:misc:shownot + ShowNotificationPacketData :: backgroundColor:long, contentColor:long, text:TextWithArguments, duration:long, iconLocation:String, hasEnterAnimation:boolean
+rust:misc:shuse - PerformShortUseActionPacketData :: 
+rust:misc:uphint - UpdateHintPacketData :: 
+rust:mlrs:closed - ScreenClosedPacketData :: 
+rust:mlrs:launch - LaunchMissilePacketData :: 
+rust:mlrs:open - OpenScreenPacketData :: 
+rust:mlrs:select - SelectPositionPacketData :: 
+rust:mlrs:start - StartMovementPacketData :: 
+rust:openmainmenu - OpenMainMenuPacketData :: 
+rust:player:skin + ApplySkinPacketData :: windowId:int, skinName:String
+rust:player:state - StatePacketData :: 
+rust:player:swing + SwingPacketData :: arc:long
+rust:radial:click - ItemClickedPacketData :: 
+rust:radial:close - CloseMenuPacketData :: 
+rust:radial:open - OpenMenuPacketData :: 
+rust:resch:closed - TreeClosedPacketData :: 
+rust:resch:level + UpdateWorkbenchLevelPacketData :: workbench:illiIiIiII
+rust:resch:open - OpenTreePacketData :: 
+rust:resch:research - ResearchItemPacketData :: 
+rust:resch:upd - UpdateTreePacketData :: 
+rust:sc:entryupd - UpdateEntriesPacketData :: 
+rust:sc:timeupd - UpdateRemainingTimePacketData :: 
+rust:sound:play - PlayPacketData :: 
+rust:sound:stop - StopPacketData :: 
+rust:textfld:apply - ApplyPacketData :: 
+rust:textfld:cls - CloseScreenPacketData :: 
+rust:textfld:open + OpenScreenPacketData :: initialText:String, allowedChars:String, title:String, applyButtonText:String, description:String, iconLocation:String
+rust:vc:conninfo - ConnectionInfoPacketData :: 
+rust:vc:playerinfo - PlayerInfoPacketData :: 
+rust:vc:talkcng - TalkStateChangePacketData :: 
+rust:wipe:state - StatePacketData :: 
+rust:world:decay + UpdateBuildingDecayingPacketData :: isDecaying:boolean
+rust:world:hostile + UpdateSafeZoneHostilePacketData :: leftHostileDuration:Duration, leftWarningDuration:Duration
+rust:world:perm + UpdateBuildingPermissionPacketData :: permission:BuildingPermission
+rust:world:raid + UpdateRaidBlockPacketData :: leftDuration:Duration
+rust:world:safe + UpdateIsInSafeZonePacketData :: isInSafeZone:boolean
+rust:world:upkeep + UpdateUpkeepTimePacketData :: durationUntilDecay:Duration

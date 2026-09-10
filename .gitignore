@@ -28,5 +28,30 @@ tools/game_cp.jar
 tools/game_stubs.jar
 dump/minecraft_FULL_DEOBF.jar
 
-# Восстановленные сурсы стороннего клиента (reference, не часть проекта)
-rock/
+# Декомпиляция игры (регенерируется из dump/ через CFR)
+tools/decomp/
+
+# Дамп конкурента (chtdump) — в репозиторий не едет
+chtdump/
+
+# Сторонние референс-клиенты (исходники, не наш код)
+kimiko/
+rockstar-client-src/
+
+# Скретч javap-дампы в корне tools/
+tools/javap_caps/
+tools/javap_lwjglx/
+tools/javap_srv/
+tools/javap_wipe/
+tools/jt_gs2/
+tools/jt_h/
+tools/jt_lmb/
+tools/jt_ol/
+tools/mrgchk/
+
+# Скретч javap-дампы в корне tools/
+tools/_*.txt
+DashboardPlayerUiData
+
+# Лог сборки
+jni/dll/build_out.txt

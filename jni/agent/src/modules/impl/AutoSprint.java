@@ -16,54 +16,34 @@ import utils.etc.Log;
  * спринт: нативный FOV, ванильное поведение с едой/кромкой/полётом,
  * сервер получает корректный sprint-state.
  *
- * ВКЛЮЧЕНИЕ: клавиша X (GLFW 88, временно) — тап переключает модуль.
+ * ВКЛЮЧЕНИЕ: бинд из меню (Module.tickBind), дефолтных клавиш нет.
  * При выключении клавиша отпускается ОДИН раз (не спамим false,
  * иначе реальный спринт юзера перетирался бы каждый тик).
  */
 public final class AutoSprint extends Module {
-    public static final int TOGGLE_KEY = 88; // GLFW_KEY_X
-
-    private boolean keyWasDown;   // edge-detect для тапа X
     private boolean lastWritten;  // что мы последний раз записали в pressed
 
     public AutoSprint() {
-        super("AutoSprint", "Combat", 88);
+        super("AutoSprint", "Combat");
         // стартуем включенным (как раньше)
         setState(true);
         EventBus.subscribe(TickEvent.class, new EventBus.Listener<TickEvent>() {
             @Override
             public void onEvent(TickEvent event) {
                 try {
-                    handleKey();
                     if (isState()) onTick(event);
                 } catch (Throwable t) {
                     Log.error("AutoSprint", "onTick exception", t);
                 }
             }
         });
-        Log.info("AutoSprint", "registered (toggle: X)");
+        Log.info("AutoSprint", "registered (toggle: menu bind)");
     }
 
     @Override
     protected void onDisable() {
         // отпускаем клавишу — игра сама снимет спринт
         // (сделает это onTick при следующем проходе: lastWritten=true)
-    }
-
-    private void handleKey() {
-        GameContext ctx = GameContext.get();
-        boolean xDown = ctx.isKeyDown(TOGGLE_KEY);
-        if (MenuModule.isOpen()) {
-            // меню открыто — экран съедает клавиатуру, не тогглим
-            keyWasDown = xDown;
-            return;
-        }
-        // toggle по X (tap)
-        if (xDown && !keyWasDown) {
-            toggle();
-            Log.info("AutoSprint", "toggled by X -> " + (isState() ? "ON" : "OFF"));
-        }
-        keyWasDown = xDown;
     }
 
     @Override

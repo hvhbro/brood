@@ -1,5 +1,6 @@
 package utils.render;
 
+import org.lwjgl.opengl.GL20;
 import org.lwjglx.opengl.GL11;
 import utils.etc.GameContext;
 import utils.etc.Log;
@@ -11,6 +12,8 @@ import utils.etc.Log;
  * ВСЁ вызывается только с главного потока (из CheatIngame).
  */
 public final class RenderUtil {
+
+    private static final int GL_CURRENT_PROGRAM = 0x8B8D;
 
     private RenderUtil() {}
 
@@ -181,6 +184,11 @@ public final class RenderUtil {
             float ew = w * scale, eh = h * scale;
             float er = Math.min(radius * scale, Math.min(ew, eh) / 2f);
 
+            // программа восстанавливается БЕЗУСЛОВНО (и в 0 тоже): кэш GL-состояния
+            // игры считает привязку неизменной; физически оставленный наш шейдер
+            // ломал их меню-рендер в лобби (иконки сквозь MSDF-шейдер → фиолетовый экран)
+            int prevProgram = GL11.glGetInteger(GL_CURRENT_PROGRAM);
+
             ShaderUtil sh = roundShader();
             sh.start();
             sh.uniform4F("rect", ex, ey, ew, eh);
@@ -215,6 +223,7 @@ public final class RenderUtil {
             // десинхронизирует кэш → следующие полупрозрачные плашки рисуются
             // непрозрачно. Оставляем blend включённым (кэш совпадает с реальностью).
             sh.stop();
+            GL20.glUseProgram(prevProgram); // безусловно: и 0, и чужую программу
         } catch (Throwable t) {
             utils.etc.Log.error("Render", "roundRect shader failed", t);
         }

@@ -86,13 +86,25 @@ public final class CheatHud {
                 rustme.CheatMenuScreen.renderOverlay(scaledWidth, scaledHeight);
             }
 
+            // задачи модулей, требующие главного/GL-потока (регистрация текстур и т.п.)
+            GameContext.get().drainMainThreadTasks();
+
             // ватермарка (верх-центр) — рисуется всегда
             Watermark.render(scaledWidth);
 
+            // Keybinds: активные горячие клавиши (sweetie-порт)
+            KeybindsWidget.render(scaledWidth);
+
+            // JumpCircle: расширяющийся круг при прыжке
+            modules.impl.JumpCircle.render(GameContext.get(), partialTicks, scaledWidth, scaledHeight);
             // ESP-боксы (под HUD-текстом; сам решает, включён ли модуль)
             modules.impl.Esp.render(GameContext.get(), partialTicks, scaledWidth, scaledHeight);
             // Tracers: линии до игроков (после Esp — делит камеру/проекцию)
             modules.impl.Tracers.render(GameContext.get(), partialTicks, scaledWidth, scaledHeight);
+            // AimBot: FOV-круг (центр экрана, поверх трейсеров)
+            modules.impl.AimBot.render(GameContext.get(), partialTicks, scaledWidth, scaledHeight);
+            // SoundEsp: метки звуков мира (поверх, только текст/квады)
+            modules.impl.SoundEsp.render(GameContext.get(), partialTicks, scaledWidth, scaledHeight);
 
             MsdfFont f = CustomFont.WM_FONT; // их getMediumFont()
 
@@ -153,7 +165,6 @@ public final class CheatHud {
 
             if (!logged) {
                 logged = true;
-                Log.info("HUD", "vanquish arraylist drawn: modules=" + enabled.size());
             }
         } catch (Throwable t) {
             Log.error("HUD", "render exception", t);

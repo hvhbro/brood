@@ -1,6 +1,5 @@
 package utils.render;
 
-import org.lwjglx.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjglx.opengl.GL11;
 import utils.etc.GameContext;
@@ -14,11 +13,14 @@ import java.nio.ByteOrder;
 
 /**
  * Рендер SVG-иконок rock (растеризованы tools/build_icons.py в атлас
- * IconData: fill белый, alpha=coverage). Тонировка через glColor.
+ * IconData: fill белый, alpha=coverage). Тонировка через uniform color.
  *
- * Fixed pipeline: bind атласа, glColor4ub, текстурный QUAD (texcoord через
- * lwjglx в шейдер НЕ доходит — 13.4.2 — поэтому именно фиксированный
- * конвейер; GL_ALPHA_TEST на время отрисовки выключается, как у шрифта).
+ * Рисование ТОЛЬКО через GL20-шейдер (Shaders.ICON), как MSDF-шрифт:
+ * fixed-pipeline texcoord через lwjglx ненадёжен (13.4.2 — s/t в квад
+ * не попадает; у друга на его сборке иконки так и не рисовались), а
+ * gl_FragCoord-путь у нас доказан (шрифт). Вершинный ftransform + QUAD
+ * в SCALED-координатах; quad/uvRect — uniform'ы в физ.пикселях.
+ * GL_ALPHA_TEST на время отрисовки выключается (режет градиент, 13.4.4).
  */
 public final class IconRender {
 
@@ -26,9 +28,10 @@ public final class IconRender {
     private static boolean tried;
     private static boolean ok;
     private static boolean logged;
+    private static ShaderUtil iconShader;
 
-    private static final int GL_ACTIVE_TEXTURE = 0x84E0;
     private static final int GL_TEXTURE0 = 0x84C0;
+    private static final int GL_ACTIVE_TEXTURE = 0x84E0;
     private static final int GL_TEXTURE_BINDING_2D = 0x8069;
     private static final int GL_CURRENT_PROGRAM = 0x8B8D;
 
@@ -68,10 +71,14 @@ public final class IconRender {
             GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, w, h, 0,
                 GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buf);
             GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
-            ok = texId != 0;
+
+            iconShader = new ShaderUtil(Shaders.VERT, Shaders.ICON);
+            ok = texId != 0 && iconShader.programId() != 0;
+            if (!ok) Log.error("Icons", "shader compile failed", null);
             if (!logged) {
                 logged = true;
-                Log.info("Icons", "atlas " + w + "x" + h + ", " + IconData.NAMES.length + " icons, ok=" + ok);
+                Log.info("Icons", "atlas " + w + "x" + h + ", " + IconData.NAMES.length
+                    + " icons, shader=" + iconShader.programId() + ", ok=" + ok);
             }
         } catch (Throwable t) {
             Log.error("Icons", "init failed", t);
@@ -79,9 +86,9 @@ public final class IconRender {
         return ok;
     }
 
-    /** Иконка rock: name из IconData.NAMES, size в scaled-пикселях. */
+    /** Иконка rock: name из IconData.NAMES, x/y/size в scaled-пикселях, argb-тонировка. */
     public static void drawIcon(String name, float x, float y, float size, int argb) {
-        if (!ensure()) return;
+        if (!ensure() || iconShader == null || iconShader.programId() == 0) return;
         int idx = -1;
         for (int i = 0; i < IconData.NAMES.length; i++) {
             if (IconData.NAMES[i].equals(name)) {
@@ -95,42 +102,49 @@ public final class IconRender {
             int rows = IconData.ATLAS_H / IconData.CELL;
             float cellW = 1f / cols, cellH = 1f / rows;
             float u0 = (idx % cols) * cellW, v0 = (idx / cols) * cellH;
-            float u1 = u0 + cellW, v1 = v0 + cellH;
 
             GameContext ctx = GameContext.get();
+            float scale = GuiScale.get(ctx);
+
             int prevProgram = GL11.glGetInteger(GL_CURRENT_PROGRAM);
-            if (prevProgram != 0) GL20.glUseProgram(0);
-            int prevUnit = GL11.glGetInteger(GL_ACTIVE_TEXTURE);
-            if (prevUnit != GL_TEXTURE0) GL13.glActiveTexture(GL_TEXTURE0);
             int prevTex = GL11.glGetInteger(GL_TEXTURE_BINDING_2D);
             boolean prevAlphaTest = GL11.glIsEnabled(GL11.GL_ALPHA_TEST);
             if (prevAlphaTest) GL11.glDisable(GL11.GL_ALPHA_TEST);
 
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-            GL11.glEnable(GL11.GL_TEXTURE_2D);
+
+            // активный юнит -> 0 (через lwjglx GL13; реальная прокси в нативный LWJGL3)
+            int prevUnit = GL11.glGetInteger(GL_ACTIVE_TEXTURE);
+            if (prevUnit != GL_TEXTURE0) org.lwjglx.opengl.GL13.glActiveTexture(GL_TEXTURE0);
             GL11.glBindTexture(GL11.GL_TEXTURE_2D, texId);
-            GL11.glColor4ub(
-                (byte) ((argb >> 16) & 0xFF),
-                (byte) ((argb >> 8) & 0xFF),
-                (byte) (argb & 0xFF),
-                (byte) ((argb >> 24) & 0xFF));
+
+            iconShader.start();
+            iconShader.uniformI("atlas", 0);
+            // вершины SCALED (матрица guiScale жива), uniform'ы — ФИЗИЧЕСКИЕ пиксели
+            iconShader.uniform4F("quad", x * scale, y * scale, size * scale, size * scale);
+            iconShader.uniform4F("uvRect", u0, v0, u0 + cellW, v0 + cellH);
+            iconShader.uniformF("fbHeight", (float) ctx.fbHeight);
+            iconShader.uniform4F("color",
+                ((argb >> 16) & 0xFF) / 255f,
+                ((argb >> 8) & 0xFF) / 255f,
+                (argb & 0xFF) / 255f,
+                ((argb >> 24) & 0xFF) / 255f);
+
             GL11.glBegin(GL11.GL_QUADS);
-            GL11.glTexCoord2f(u0, v0);
+            GL11.glColor4f(1f, 1f, 1f, 1f);
             GL11.glVertex2f(x, y);
-            GL11.glTexCoord2f(u0, v1);
             GL11.glVertex2f(x, y + size);
-            GL11.glTexCoord2f(u1, v1);
             GL11.glVertex2f(x + size, y + size);
-            GL11.glTexCoord2f(u1, v0);
             GL11.glVertex2f(x + size, y);
             GL11.glEnd();
-            GL11.glColor4f(1f, 1f, 1f, 1f);
 
+            iconShader.stop();
+            GL20.glUseProgram(prevProgram); // безусловно: и 0, и чужую программу
             GL11.glBindTexture(GL11.GL_TEXTURE_2D, prevTex);
+            if (prevUnit != GL_TEXTURE0) org.lwjglx.opengl.GL13.glActiveTexture(prevUnit);
             if (prevAlphaTest) GL11.glEnable(GL11.GL_ALPHA_TEST);
-            if (prevUnit != GL_TEXTURE0) GL13.glActiveTexture(prevUnit);
-            if (prevProgram != 0) GL20.glUseProgram(prevProgram);
+            GL11.glColor4f(1f, 1f, 1f, 1f);
         } catch (Throwable t) {
             Log.error("Icons", "draw failed", t);
         }

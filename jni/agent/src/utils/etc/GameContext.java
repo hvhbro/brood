@@ -22,13 +22,13 @@ public final class GameContext {
     // --- resolved (reflection objects) ---
     public Field worldField;          // mc -> World
     public Field playersField;        // World -> List<wrapper>
-    public Field motionYField;        // Entity.IiiIIiliI:D
-    public Field motionXField;        // Entity.iIIlIiliI:D
-    public Field motionZField;        // Entity.IIiIIiliI:D
+    public Field motionYField;        // Entity.iIIlIiliI:D (доказано: jump 0.42 пишется сюда)
+    public Field motionXField;        // Entity.IIiIIiliI:D (спринт-буст −= sin*0.2)
+    public Field motionZField;        // Entity.IiiIIiliI:D (спринт-буст += cos*0.2)
     public Field sprintField;         // Entity.IilIiIliI:Z
-    public Field moveForwardField;    // Input.IiIiIIiII:F
-    public Field moveStrafeField;     // Input.iIIiIIiII:F
-    public Field movementInputField;  // wrapper.iiliiIiII -> input holder
+    public Field moveForwardField;    // ВНИМАНИЕ: liIIIiIIiI=capabilities → IiIiIIiII=F=flySpeed (не ввод!)
+    public Field moveStrafeField;     // ВНИМАНИЕ: iIIiIIiII=F=walkSpeed (не ввод!)
+    public Field movementInputField;  // wrapper.iiliiIiII -> capabilities holder
 
     public Method setSprint;          // EntityPlayer.lIllilllII(Z)V
     public Method getAttrInstanceMethod; // EntityPlayer.IiIlIiilII(lIliiliIiI)
@@ -48,6 +48,28 @@ public final class GameContext {
     public Method nodeGetValue;        // OptionNode.getValue() → KeyBinding
     public Class keyBindingClass;      // rustme.IilIiIiIiI (KeyBinding)
     public Field kbPressedField;       // KeyBinding.iilIIiIiI:Z — клавиша зажата
+    private final java.util.HashMap keyBindingCache = new java.util.HashMap();
+
+    /** KeyBinding-инстанс по имени геттера KeyBindingsCategory ("getKeyJump",
+     *  "getKeyForward", "getKeyLeft", "getKeyBack", "getKeyRight", ...).
+     *  Требует resolveSprintKey() (та же цепь: Settings→getData→getKeybindingSettings).
+     *  Инстансы KeyBinding стабильны (ребинд меняет keyCode, не объект) — кэшируем. */
+    public Object keyBindingFor(String getterName) {
+        if (keyBindingsCategory == null || nodeGetValue == null) return null;
+        Object cached = keyBindingCache.get(getterName);
+        if (cached != null) return cached;
+        try {
+            Method nodeGetter = keyBindingsCategory.getClass().getMethod(getterName);
+            Object node = nodeGetter.invoke(keyBindingsCategory);
+            if (node == null) return null;
+            Object kb = nodeGetValue.invoke(node);
+            if (kb == null) return null;
+            keyBindingCache.put(getterName, kb);
+            return kb;
+        } catch (Throwable t) {
+            return null;
+        }
+    }
 
     // --- HUD / главный поток (см. resolveRenderHooks) ---
     public Class eventDispatcherClass; // rustme.lIliliiIiI (диспетчер событий мода)
@@ -74,6 +96,85 @@ public final class GameContext {
     public int fbHeight = -1;
     public int scaledWidth = 480;      // из ScaledResolution события (обновляется)
     public int scaledHeight = 320;
+
+    // --- NoRecoil (см. modules/impl/NoRecoil) ---
+    // Отдача приходит с сервера каналом gun:recoil (обработчик rustme.ilillIiliI):
+    //   mode==1 -> kick копится в статик-накопителях (дрейнится в кадр из llilllIiII);
+    //   mode==0 + free-look -> кик пишется в офсеты камеры фасада;
+    //   mode==0 без free-look -> прямой setYaw/setPitch игроку (не перехватываем).
+    public Class gunManagerClass;     // rustme.ilillIiliI (менеджер оружия)
+    public Field kickYawField;        // static IliiiiIIl:F — накопитель отдачи yaw
+    public Field kickPitchField;      // static iliiiiIIl:F — накопитель отдачи pitch
+    public Class cameraFacadeClass;   // rustme.lIillIiliI (камера/free-look фасад)
+    public Field camYawOffsetField;   // static illllliIl:F — офсет yaw камеры (free-look ветка)
+    public Field camPitchOffsetField; // static lIlllliIl:F — офсет pitch камеры
+    public Field freeLookFlagAField;  // static iIlllliIl:Z — free-look флаг (liIliIlIil())
+    public Field freeLookFlagBField;  // static IIiiiiIIl:Z — free-look флаг (lIlliIlIil())
+
+    // --- GearESP (снаряжение чужих, проверено декомпиляцией 09-08) ---
+    // Пакет IiililIIiI (entityId+slot+stack) пишет в ЛЮБУЮ сущность через
+    // wrapper.iIiIliiilI(slot, stack): MainHand → inventory main[current],
+    // Armor1..7 → armor-список (7 слотов). Чтение — wrapper.IiliIiiilI(slot)
+    // (getItemStackFromSlot: MainHand → getCurrentItem, Armor → armorList.get,
+    // OffHand → всегда пустой). RenderItem.gs.iIiIiilliI() рисует 16x16
+    // (iIIilIliII, TransformType.GUI — как хотбар мода).
+    public Class renderItemsClass;      // rustme.liiiliiIiI (RenderItem)
+    public Object renderItems;          // instance (gs.iIiIiilliI())
+    public Method renderItemGui;        // liiiliiIiI.iIIilIliII(stack, x, y)V
+    public Class equipSlotClass;        // rustme.iilliilliI (MainHand/OffHand/Armor1..7)
+    public Object[] equipSlots;         // все значения values()
+    public Method getItemStackFromSlot; // IIiIIiIIiI.IiliIiiilI(slot) → stack
+    public Method stackIsEmpty;         // liIIIIIIiI.isEmpty()Z
+    public Method stackGetItem;         // liIIIIIIiI.IIllIililI() → Item
+    public boolean gearResolved;
+
+    // --- NoSlow (ADS, реверс 09-09 утро) ---
+    // ИСТИННАЯ цепочка (перепроверено дизасмом): SP.liIIIiiilI — офсет 347 холдер
+    // перечитывает клавиатуру, 364-398 поля ×0.2 при liilIiilII()&&!riding,
+    // 1404 super → копия холдера → travel. ВСЁ атомарно в тике — правка полей
+    // холдера между тиками мертва (первая попытка, тест не прошёл).
+    // РАБОЧИЙ путь: wrapper.liIIIiiilI офсеты 140-160 — запись base атрибута
+    // обёрнута в if(!world.isRemote): на КЛИЕНТЕ игра base не пишет, только
+    // читает (speed = attr.getValue(), офсеты 195-203 → liiiliilII(F)).
+    // Поэтому setBaseValue живёт весь тик (путь SpeedBoost, ZNANIA 11.1):
+    // travel = вход холдера(×0.2) × speed(base×5) = ×1.
+    public Method noSlowAimMethod;      // liIililiiI.liilIiilII()Z (vanilla usingItem — ЕДА/лук; ганы могут не ставить)
+    public Method noSlowRidingMethod;   // IIlIIliIiI.IlIIillIII()Z (в транспорте игра не умножает)
+    public Method noSlowAimBitMethod;   // liIlIliIiI.iIIlliilII()Z (dataWatcher бит 7 = НАСТОЯЩИЙ aim-флаг, ZNANIA-анализ)
+    public Method attrGetBase;          // illiiliIiI.ilIiIlIIII()D (getBaseValue)
+    public Method attrGetModifiers;     // illiiliIiI.lIIiIlIIII() → Collection<Modifier>
+    public Method attrNameMethod;       // lIliiliIiI.getName()
+    public Method potionByName;         // iillIlIIiI.IIlIIIIIlI(String) → Potion (static)
+    public Method removePotionEffect;   // liIlIliIiI.lIIiliilII(Potion)V
+    public Method isPotionActive;       // liIlIliIiI.IiIiiIilII(Potion)Z
+    public Method modGetAmount;         // iIliiliIiI.lIllilIIII()D
+    public Method modGetOp;             // iIliiliIiI.IIllilIIII()I
+    public boolean noSlowResolved;
+
+    // --- main-thread очередь (GL/регистрации, безопасные только на главном потоке) ---
+    // Модули кладут задачи из CheatMain (1мс-цикл), CheatHud.renderFrame выгребает каждый кадр.
+    private final java.util.List<Runnable> mainThreadTasks =
+        java.util.Collections.synchronizedList(new java.util.ArrayList<Runnable>());
+
+    public void runOnMainThread(Runnable r) {
+        mainThreadTasks.add(r);
+    }
+
+    public void drainMainThreadTasks() {
+        Runnable[] arr;
+        synchronized (mainThreadTasks) {
+            if (mainThreadTasks.isEmpty()) return;
+            arr = mainThreadTasks.toArray(new Runnable[0]);
+            mainThreadTasks.clear();
+        }
+        for (int i = 0; i < arr.length; i++) {
+            try {
+                arr[i].run();
+            } catch (Throwable t) {
+                Log.error("Ctx", "main-thread task failed", t);
+            }
+        }
+    }
 
     // --- live (обновляются каждый тик) ---
     public Object world;              // текущий World instance
@@ -203,6 +304,10 @@ public final class GameContext {
             isSneaking = playerClass.getMethod("iiiilIlIII");
             getSpeed = playerClass.getMethod("iIIIIiiilI");
             getAttrInstanceMethod = playerClass.getMethod("IiIlIiilII", gameLoader.loadClass("rustme.lIliiliIiI"));
+            // атрибут-инстанс методы (getBase/getValue/setBase) — для NoSlow/Strafe
+            Class attrInstC = getAttrInstanceMethod.getReturnType();
+            attrGetValue = attrInstC.getMethod("iIIiIlIIII");
+            attrSetBase = attrInstC.getMethod("iIliIlIIII", Double.TYPE);
 
             // sprint flag: поле IilIiIliI:Z по иерархии от EntityPlayer вверх
             Class c = playerClass;
@@ -215,32 +320,49 @@ public final class GameContext {
                 c = c.getSuperclass();
             }
 
-            // motion поля: Entity root IIlIIliIiI
+            // motion поля: Entity root IIlIIliIiI.
+            // КАРТА (доказана дизасмом 09-10, ZNANIA 5/14.1 ошибочна):
+            //   motionY = iIIlIiliI (метод прыжка ililIiiilI пишет 0.42 сюда),
+            //   motionX = IIiIIiliI (спринт-буст прыжка: −= sin(yaw)*0.2),
+            //   motionZ = IiiIIiliI (спринт-буст прыжка: += cos(yaw)*0.2);
+            // кросс-проверка lllIlllIII(DDD)=addVelocity(x,y,z): p1→IIiIIiliI, p2→iIIlIiliI, p3→IiiIIiliI.
             Class entityRoot = gameLoader.loadClass("rustme.IIlIIliIiI");
-            motionXField = findField(entityRoot, "iIIlIiliI");
-            motionYField = findField(entityRoot, "IiiIIiliI");
-            motionZField = findField(entityRoot, "IIiIIiliI");
+            motionXField = findField(entityRoot, "IIiIIiliI");
+            motionYField = findField(entityRoot, "iIIlIiliI");
+            motionZField = findField(entityRoot, "IiiIIiliI");
 
-            // moveForward/moveStrafe в inputClass
+            // ВНИМАНИЕ (разбор 09-10): liIIIiIIiI — это PlayerCapabilities
+            // (регистрация полей: invulnerable/flying/mayfly/instabuild/mayBuild/
+            // flySpeed/walkSpeed), НЕ movementInput! IiIiIIiII=flySpeed,
+            // iIIiIIiII=walkSpeed — константы, не ввод игрока. Модулям для ввода
+            // читать модовые бинды (ctx.keyBindingFor("getKeyJump" / Forward / ...)).
             moveForwardField = inputClass.getField("IiIiIIiII");
             moveStrafeField = inputClass.getField("iIIiIIiII");
 
             // movementSpeed attribute instance
             Class smaClass = gameLoader.loadClass("rustme.IlilIiIIiI");
+            // ВАЖНО (диаг 09-09: base=0.0 eff=0.0): брать ПЕРВОЕ static-поле нельзя —
+            // это maxHealth. Ищем ПО ИМЕНИ: attr.getName() == "generic.movementSpeed".
+            Class attrBaseC = gameLoader.loadClass("rustme.lIliiliIiI");
+            Method attrName = attrBaseC.getMethod("getName");
             Object smaSpeed = null;
-            // lllilIiII — movementSpeed из дампа
             for (Field f : smaClass.getDeclaredFields()) {
                 if (!java.lang.reflect.Modifier.isStatic(f.getModifiers())) continue;
                 if (!f.getType().getName().equals("rustme.lIliiliIiI")) continue;
                 f.setAccessible(true);
                 Object v = f.get(null);
-                if (v != null) { smaSpeed = v; break; }
+                if (v == null) continue;
+                String nm = (String) attrName.invoke(v);
+                if ("generic.movementSpeed".equals(nm)) {
+                    smaSpeed = v;
+                    break;
+                }
             }
             if (smaSpeed != null) {
                 movementSpeedAttr = smaSpeed;
-                // IiIlIiilII уже зарезолвен выше через playerClass
-                // здесь только attrGetValue/attrSetBase
-                Log.info("Ctx", "movementSpeed attr set: " + (smaSpeed != null));
+                Log.info("Ctx", "movementSpeed attr resolved by name OK");
+            } else {
+                Log.info("Ctx", "movementSpeed attr NOT FOUND by name!");
             }
 
             // спринт-клавиша мода (не критично, при неудаче AutoSprint повторит)
@@ -293,6 +415,27 @@ public final class GameContext {
     public boolean initialized() {
         return mc != null && worldField != null && playersField != null;
     }
+
+    /** Резолв applyModifier/removeModifier у атрибут-инстанса (для Strafe).
+     *  Атрибут-инстанс уже резолвлен init'ом (getAttrInstanceMethod/movementSpeedAttr). */
+    public boolean resolveMovementAttributes() {
+        if (modApplyMethod != null) return true;
+        try {
+            Class attrInstC = gameLoader.loadClass("rustme.illiiliIiI");
+            Class modC = gameLoader.loadClass("rustme.iIliiliIiI");
+            modApplyMethod = attrInstC.getMethod("liIiIlIIII", modC);
+            modRemoveMethod = attrInstC.getMethod("liliIlIIII", modC);
+            modClass = modC;
+            return true;
+        } catch (Throwable t) {
+            Log.error("Ctx", "movement attrs resolve failed", t);
+            return false;
+        }
+    }
+
+    public Method modApplyMethod;  // illiiliIiI.liIiIlIIII(mod) = applyModifier
+    public Method modRemoveMethod; // illiiliIiI.liliIlIIII(mod) = removeModifier
+    public Class modClass;         // rustme.iIliiliIiI (AttributeModifier)
 
     private long lastSprintResolveAttempt;
 
@@ -374,6 +517,150 @@ public final class GameContext {
         }
     }
 
+    // --- кнопки мыши (GLFW_MOUSE_BUTTON 0..7; у мода хелпера нет — GLFW напрямую) ---
+    private Method winHandleGetter;   // ililiilliI.llilIlIIIl()J
+    private Method glfwMouseBtn;      // GLFW.glfwGetMouseButton(JI)I
+    private boolean mouseResolved;
+
+    /** Кнопка мыши зажата (GLFW_MOUSE_BUTTON 0..7). Рефлексия GLFW + хендл окна мода. */
+    public boolean isMouseButtonDown(int button) {
+        try {
+            if (!mouseResolved) {
+                mouseResolved = true;
+                winHandleGetter = gameLoader.loadClass("rustme.ililiilliI").getMethod("llilIlIIIl");
+                Class glfwC = Class.forName("org.lwjgl.glfw.GLFW", true, gameLoader);
+                glfwMouseBtn = glfwC.getMethod("glfwGetMouseButton", Long.TYPE, Integer.TYPE);
+            }
+            long win = (Long) winHandleGetter.invoke(null);
+            return ((Integer) glfwMouseBtn.invoke(null, Long.valueOf(win),
+                Integer.valueOf(button))) != 0;
+        } catch (Throwable t) {
+            return false;
+        }
+    }
+
+    /**
+     * Резолв полей отдачи (NoRecoil). Проверено дизасмом:
+     *   ilillIiliI (gun manager): static float IliiiiIIl / iliiiiIIl — накопители кика,
+     *   пишутся из gun:recoil-хендлера, дрейнятся по кадру в llilllIiII (главный цикл).
+     *   lIillIiliI (камера-фасад): static float illllliIl/lIlllliIl — офсеты yaw/pitch,
+     *   static boolean iIlllliIl/IIiiiiIIl — free-look флаги (обращаются liIIliliII камеры).
+     * Не критично для init() — NoRecoil повторяет лениво.
+     */
+    public boolean resolveNoRecoil() {
+        if (kickYawField != null) return true;
+        long now = System.currentTimeMillis();
+        if (now - lastNoRecoilResolveAttempt < 2000L) return false;
+        lastNoRecoilResolveAttempt = now;
+        try {
+            gunManagerClass = gameLoader.loadClass("rustme.ilillIiliI");
+            kickYawField = gunManagerClass.getDeclaredField("IliiiiIIl");
+            kickYawField.setAccessible(true);
+            kickPitchField = gunManagerClass.getDeclaredField("iliiiiIIl");
+            kickPitchField.setAccessible(true);
+
+            cameraFacadeClass = gameLoader.loadClass("rustme.lIillIiliI");
+            camYawOffsetField = cameraFacadeClass.getDeclaredField("illllliIl");
+            camYawOffsetField.setAccessible(true);
+            camPitchOffsetField = cameraFacadeClass.getDeclaredField("lIlllliIl");
+            camPitchOffsetField.setAccessible(true);
+            freeLookFlagAField = cameraFacadeClass.getDeclaredField("iIlllliIl");
+            freeLookFlagAField.setAccessible(true);
+            freeLookFlagBField = cameraFacadeClass.getDeclaredField("IIiiiiIIl");
+            freeLookFlagBField.setAccessible(true);
+
+            Log.info("Ctx", "noRecoil fields resolved");
+            return true;
+        } catch (Throwable t) {
+            Log.error("Ctx", "noRecoil resolve failed", t);
+            return false;
+        }
+    }
+
+    private long lastNoRecoilResolveAttempt;
+
+    /**
+     * Резолв GearESP-цепочки (лениво, из Esp; повтор не чаще раза в 2с):
+     *  - RenderItem: gs.iIiIiilliI() (как в ctor GuiIngame: this.lllIliil = gs.iIiIiilliI());
+     *  - методы RenderItem.iIIilIliII(stack,x,y) — 16x16 GUI-иконка, пустой стак сам скипает;
+     *  - слот-энум iilliilliI.values() (MainHand, OffHand, Armor1..Armor7 — порядок как в дампе);
+     *  - wrapper.IiliIiiilI(slot) — getItemStackFromSlot (объявлен в IIiIIiIIiI);
+     *  - stack.isEmpty()Z.
+     */
+    public boolean resolveGear() {
+        if (gearResolved) return true;
+        long now = System.currentTimeMillis();
+        if (now - lastGearResolveAttempt < 2000L) return false;
+        lastGearResolveAttempt = now;
+        try {
+            if (renderItemsClass == null) {
+                renderItemsClass = gameLoader.loadClass("rustme.liiiliiIiI");
+            }
+            Method getRenderItems = gs.getClass().getMethod("iIiIiilliI");
+            renderItems = getRenderItems.invoke(gs);
+            if (renderItems == null) {
+                Log.info("Ctx", "gear: renderItems null");
+                return false;
+            }
+            renderItemGui = renderItemsClass.getMethod("iIIilIliII",
+                gameLoader.loadClass("rustme.liIIIIIIiI"), Integer.TYPE, Integer.TYPE);
+
+            equipSlotClass = gameLoader.loadClass("rustme.iilliilliI");
+            equipSlots = (Object[]) equipSlotClass.getMethod("values").invoke(null);
+
+            getItemStackFromSlot = wrapperClass.getMethod("IiliIiiilI", equipSlotClass);
+
+            Class stackClass = gameLoader.loadClass("rustme.liIIIIIIiI");
+            stackIsEmpty = stackClass.getMethod("isEmpty");
+            stackGetItem = stackClass.getMethod("IIllIililI"); // getItem → Item
+
+            gearResolved = true;
+            Log.info("Ctx", "gear resolved: renderItems + slots(" + equipSlots.length + ") + getters OK");
+            return true;
+        } catch (Throwable t) {
+            Log.error("Ctx", "gear resolve failed", t);
+            return false;
+        }
+    }
+
+    private long lastGearResolveAttempt;
+
+    /**
+     * Резолв NoSlow-цепочки (лениво, из NoSlow; повтор не чаще раза в 2с).
+     * Цель: компенсация атрибутом movementSpeed — на клиенте игра base НЕ пишет
+     * (wrapper.liIIIiiilI офсеты 140-160 обёрнуты в if(!world.isRemote)), значит
+     * наш setBaseValue живёт весь тик. Имена верифицированы дизасмом.
+     */
+    public boolean resolveNoSlow() {
+        if (noSlowResolved) return true;
+        long now = System.currentTimeMillis();
+        if (now - lastNoSlowResolveAttempt < 2000L) return false;
+        lastNoSlowResolveAttempt = now;
+        try {
+            noSlowAimMethod = localSpClass.getMethod("liilIiilII");
+            noSlowRidingMethod = playerClass.getMethod("IlIIillIII");
+            noSlowAimBitMethod = playerClass.getMethod("iIIlliilII");
+            attrGetBase = getAttrInstanceMethod.getReturnType().getMethod("ilIiIlIIII");
+            attrGetModifiers = getAttrInstanceMethod.getReturnType().getMethod("lIIiIlIIII");
+            Class modC = gameLoader.loadClass("rustme.iIliiliIiI");
+            modGetAmount = modC.getMethod("lIllilIIII");
+            modGetOp = modC.getMethod("IIllilIIII");
+            attrNameMethod = gameLoader.loadClass("rustme.lIliiliIiI").getMethod("getName");
+            Class potionC = gameLoader.loadClass("rustme.iillIlIIiI");
+            potionByName = potionC.getMethod("IIlIIIIIlI", String.class);
+            removePotionEffect = playerClass.getMethod("lIIiliilII", potionC);
+            isPotionActive = playerClass.getMethod("IiIiiIilII", potionC);
+            noSlowResolved = true;
+            Log.info("Ctx", "noSlow resolved: aim/riding/bit7 + attrGetBase/Value OK");
+            return true;
+        } catch (Throwable t) {
+            Log.error("Ctx", "noSlow resolve failed", t);
+            return false;
+        }
+    }
+
+    private long lastNoSlowResolveAttempt;
+
     /**
      * Резолв рендер-хуков:
      *  - диспетчер событий мода lIliliiIiI + статическая подписка lIllIilliI.iIlIIIlIIl(Class, Consumer)V
@@ -427,13 +714,11 @@ public final class GameContext {
         try {
             if (ingameClass == null) {
                 ingameClass = gameLoader.loadClass("rustme.liIIliliiI");
-                Log.info("HUD", "ingameClass loaded");
             }
             if (ingameField == null && !findIngameField()) {
                 long now = System.currentTimeMillis();
                 if (now - lastHudScanLog >= 10000L) {
                     lastHudScanLog = now;
-                    Log.info("HUD", "no GuiIngame field found yet (gs/mc scanned)");
                 }
                 return false;
             }
@@ -442,28 +727,21 @@ public final class GameContext {
                 long now = System.currentTimeMillis();
                 if (now - lastHudScanLog >= 10000L) {
                     lastHudScanLog = now;
-                    Log.info("HUD", "field " + ingameField.getName() + " is null, waiting");
                 }
                 return false;
             }
             if ("rustme.CheatIngame".equals(cur.getClass().getName())) {
                 if (!hudInstalled) {
                     hudInstalled = true;
-                    Log.info("HUD", "swap confirmed in place");
                 }
                 return true;
             }
             if (gs == null) return false;
-            Log.info("HUD", "swapping field " + ingameField.getName()
-                + " owner=" + ingameOwner.getClass().getName()
-                + " cur=" + cur.getClass().getName());
             Object ours = new rustme.CheatIngame((rustme.iilliIliiI) gs);
             ingameField.set(ingameOwner, ours);
             // проверить, что записалось
             Object check = ingameField.get(ingameOwner);
             hudInstalled = check == ours;
-            Log.info("HUD", "swap done, verified=" + hudInstalled
-                + " (now=" + (check == null ? "null" : check.getClass().getName()) + ")");
             return hudInstalled;
         } catch (Throwable t) {
             Log.error("HUD", "install failed", t);
@@ -504,8 +782,6 @@ public final class GameContext {
                     Object v = f.get(owner);
                     if (v != null && ingameClass.isInstance(v)) {
                         found++;
-                        Log.info("HUD", "FOUND GuiIngame: " + tag + "." + f.getName()
-                            + " (" + v.getClass().getName() + ")");
                         if (ingameField == null) {
                             ingameField = f;
                             ingameOwner = owner;

@@ -21,10 +21,6 @@ import java.lang.reflect.Method;
  * Вызов — с главного потока агента (tick event).
  */
 public final class FullBright extends Module {
-    public static final int TOGGLE_KEY = 74; // GLFW_KEY_J
-
-    private boolean keyWasDown;
-
     private static boolean resolved;
     private static Object gammaNode;        // ru.rustme.settings.FloatNode
     private static Method nodeSetValue;     // OptionNode.setValue(Object)V
@@ -36,32 +32,8 @@ public final class FullBright extends Module {
     private static final float FULLBRIGHT_GAMMA = 10.0f;
 
     public FullBright() {
-        super("FullBright", "Visuals", 74);
-        EventBus.subscribe(TickEvent.class, new EventBus.Listener<TickEvent>() {
-            @Override
-            public void onEvent(TickEvent event) {
-                try {
-                    handleKey();
-                } catch (Throwable t) {
-                    Log.error("FullBright", "tick exception", t);
-                }
-            }
-        });
-        Log.info("FullBright", "registered (toggle: J)");
-    }
-
-    private void handleKey() {
-        GameContext ctx = GameContext.get();
-        boolean jDown = ctx.isKeyDown(TOGGLE_KEY);
-        if (MenuModule.isOpen()) {
-            keyWasDown = jDown;
-            return;
-        }
-        if (jDown && !keyWasDown) {
-            toggle();
-            Log.info("FullBright", "toggled by J -> " + (isState() ? "ON" : "OFF"));
-        }
-        keyWasDown = jDown;
+        super("FullBright", "Visuals");
+        Log.info("FullBright", "registered (toggle: menu bind)");
     }
 
     @Override
@@ -73,7 +45,6 @@ public final class FullBright extends Module {
     protected void onDisable() {
         if (gammaDefault != null) {
             applyGamma(((Number) gammaDefault).floatValue());
-            Log.info("FullBright", "gamma restored to " + gammaDefault);
         }
     }
 
@@ -82,8 +53,7 @@ public final class FullBright extends Module {
             GameContext ctx = GameContext.get();
             if (!resolve(ctx)) return;
             nodeSetValue.invoke(gammaNode, value);
-            Log.info("FullBright", "gamma set to " + value);
-        } catch (Throwable t) {
+            } catch (Throwable t) {
             Log.error("FullBright", "applyGamma failed", t);
         }
     }
@@ -107,8 +77,7 @@ public final class FullBright extends Module {
             Class optionNode = ctx.gameLoader.loadClass("ru.rustme.settings.OptionNode");
             nodeSetValue = optionNode.getMethod("setValue", Object.class);
             resolved = true;
-            Log.info("FullBright", "resolved: gamma node, default=" + gammaDefault);
-            return true;
+                return true;
         } catch (Throwable t) {
             Log.error("FullBright", "resolve failed", t);
             return false;

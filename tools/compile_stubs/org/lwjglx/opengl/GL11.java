@@ -13,6 +13,7 @@ public final class GL11 {
     public static final int GL_SCISSOR_TEST = 0xC11;
     public static final int GL_SRC_ALPHA = 0x302;
     public static final int GL_ONE_MINUS_SRC_ALPHA = 0x303;
+    public static final int GL_ONE = 1;
     public static final int GL_ALPHA_TEST = 0xBC0;
     public static final int GL_LINE_SMOOTH = 0xB20;
     public static final int GL_CULL_FACE = 0xB44;
@@ -71,7 +72,34 @@ public final class GL11 {
     public static void glGetInteger(int pname, java.nio.IntBuffer params) {}
     public static float glGetFloat(int pname) { return 0f; }
     public static void glGetFloat(int pname, java.nio.FloatBuffer params) {}
+    // сигнатура верифицирована по дампу: glCopyTexSubImage2D(IIIIIIII)V
+    public static void glCopyTexSubImage2D(int target, int level, int xoffset, int yoffset, int x, int y, int width, int height) {}
+    // сигнатура верифицирована по дампу: glReadPixels(IIIIIILjava/nio/IntBuffer;)V
+    public static void glReadPixels(int x, int y, int width, int height, int format, int type, java.nio.IntBuffer pixels) {}
+    public static void glGetInteger(int pname, java.nio.IntBuffer params) {}
+    // сигнатура верифицирована по дампу: glGetTexImage(IIIIILjava/nio/FloatBuffer;)V
+    public static void glGetTexImage(int target, int level, int format, int type, java.nio.FloatBuffer pixels) {}
+    public static void glDepthMask(boolean flag) {}
+    public static void glDeleteTextures(int texture) {}
+    public static final int GL_UNSIGNED_INT = 0x1405;
+    public static final int GL_NO_ERROR = 0;
+    public static int glGetError() { return 0; }
+    public static final int GL_VIEWPORT = 0x0BA2;
     public static boolean glIsEnabled(int cap) { return false; }
     public static void glEnableClientState(int array) {}
     public static void glDisableClientState(int array) {}
+
+    // --- методы друга (меню/GUI, merge 09-09) ---
+    public static void glMatrixMode(int mode) {}
+    public static void glLoadIdentity() {}
+    public static void glOrtho(double left, double right, double bottom, double top, double near, double far) {}
+    public static void glPushAttrib(int mask) {}
+    public static void glPopAttrib() {}
+    public static void glCopyTexImage2D(int target, int level, int internalFormat, int x, int y, int width, int height, int border) {}
+    public static void glViewport(int x, int y, int width, int height) {}
+    public static void glReadBuffer(int mode) {}
+
+    // --- Tracers/menu (merge 09-09) ---
+    public static final int GL_LINES = 1;
+    public static final int GL_LINE_LOOP = 2;
 }

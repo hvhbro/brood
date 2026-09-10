@@ -1,0 +1,113 @@
+== \ru\meproject\rustme\vanilla\network\assignfriend\AssignFriendPayloadChannels.java
+== \ru\meproject\rustme\vanilla\network\damage\DamagePayloadChannels.java
+   OpenDeathScreen = rust:dmg:death
+   CloseDeathScreen = rust:dmg:close
+   Respawn = rust:dmg:respawn
+== \ru\meproject\rustme\vanilla\network\donate\DonatePayloadChannels.java
+   OpenScreen = rust:donate:open
+   ConfirmPurchase = rust:donate:buy
+   OpenPrefixes = rust:donate:pref
+   OpenLootBox = rust:donate:oloot
+   LootBoxOpened = rust:donate:looto
+   LootBoxFinishedOpening = rust:donate:lootf
+   UnselectDonatePrefix = rust:donate:unpref
+== \ru\meproject\rustme\vanilla\network\homeinfo\HomeInfoPayloadChannels.java
+== \ru\meproject\rustme\vanilla\network\item\ItemPayloadChannels.java
+   UnableToRepair = rust:item:repair
+   UpdateCraftingQueue = rust:item:craft
+   ShowStatusNotification = rust:item:status
+== \ru\meproject\rustme\vanilla\network\misc\MiscPayloadChannels.java
+   EnableHud = rust:misc:enable
+   ShowNotification = rust:misc:shownot
+   FreeLookToggle = rust:misc:looktog
+   UpdateHint = rust:misc:uphint
+   PerformShortUseAction = rust:misc:shuse
+   PerformLongUseAction = rust:misc:lguse
+   InitMap = rust:misc:itmap
+== \ru\meproject\rustme\vanilla\network\mlrs\MlrsPayloadChannels.java
+   OpenScreen = rust:mlrs:open
+   SelectPosition = rust:mlrs:select
+   StartMovement = rust:mlrs:start
+   LaunchMissile = rust:mlrs:launch
+   ScreenClosed = rust:mlrs:closed
+== \ru\meproject\rustme\vanilla\network\radial\RadialPayloadChannels.java
+   OpenMenu = rust:radial:open
+   CloseMenu = rust:radial:close
+   ItemClicked = rust:radial:click
+== \ru\meproject\rustme\vanilla\network\scoreboard\ScoreboardPayloadChannels.java
+   UpdateEntries = rust:sc:entryupd
+   UpdateRemainingTime = rust:sc:timeupd
+== \ru\meproject\rustme\vanilla\network\specialgameevents\SpecialGameEventsPayloadChannels.java
+   KingHillEnter = rust:evt:khenter
+   KingHillQuit = rust:evt:khquit
+== \ru\meproject\rustme\vanilla\network\textfield\TextFieldPayloadChannels.java
+   OpenScreen = rust:textfld:open
+   CloseScreen = rust:textfld:cls
+   Apply = rust:textfld:apply
+== \ru\meproject\rustme\vanilla\network\voicechat\VoiceChatPayloadChannels.java
+   ConnectionInfo = rust:vc:conninfo
+   PlayerInfo = rust:vc:playerinfo
+   TalkStateChange = rust:vc:talkcng
+== \ru\meproject\rustme\vanilla\network\world\WorldPayloadChannels.java
+   UpdateBuildingDecaying = rust:world:decay
+   UpdateBuildingPermission = rust:world:perm
+   UpdateIsInSafeZone = rust:world:safe
+   UpdateUpkeepTime = rust:world:upkeep
+   UpdateSafeZoneHostile = rust:world:hostile
+   UpdateRaidBlock = rust:world:raid
+   OpenMainMenu = rust:openmainmenu
+== \ru\meproject\rustme\vanilla\network\world\building\BuildingPayloadChannels.java
+   OpenCodeLockInput = rust:build:opencode
+   SubmitCodeLock = rust:build:subcode
+   CodeLockInputClosed = rust:build:codecld
+== \ru\meproject\rustme\vanilla\network\world\genetics\GeneticsPayloadChannels.java
+   Update = rust:gntcs:upd
+== \ru\meproject\rustme\vanilla\network\world\map\MapPayloadChannels.java
+   UpdateMarkers = rust:map:markers
+   CreateUserMarker = rust:map:crtuser
+   DeleteUserMarker = rust:map:deluser
+   AddDynamicMarkers = rust:map:adddyn
+   RemoveDynamicMarker = rust:map:remdyn
+== \ru\rustme\network\admin\AdminPayloadChannels.java
+   GiveItem = rust:admin:give
+   SpawnVehicle = rust:admin:spawn
+== \ru\rustme\network\craft\CraftPayloadChannels.java
+   Request = rust:craft:request
+   Cancel = rust:craft:cancel
+   MoveToFront = rust:craft:tofront
+   Sync = rust:craft:sync
+   ToggleFavorite = rust:craft:favorite
+   SetSkin = rust:craft:skin
+   QueueState = rust:craft:queue
+== \ru\rustme\network\inventory\InventoryPayloadChannels.java
+   Action = rust:inv:action
+   Split = rust:inv:split
+   ToggleState = rust:inv:toggle
+   ItemAction = rust:inv:itmact
+   FluidTransfer = rust:inv:fluid
+   FluidDrink = rust:inv:fluiddrink
+   VendingLots = rust:inv:vendlots
+   VendingBuy = rust:inv:vendbuy
+   VendingPurchase = rust:inv:vendpur
+== \ru\rustme\network\item\ItemPayloadChannels.java
+   UnableToRepair = rust:item:repair
+   ShowItemPickup = rust:item:pickup
+== \ru\rustme\network\metabolism\MetabolismPayloadChannels.java
+   UpdateMetabolism = rust:met:update
+   WoundedInfo = rust:met:wounded
+   UpdateVehicle = rust:met:vehicle
+== \ru\rustme\network\player\PlayerPayloadChannels.java
+   State = rust:player:state
+   ApplySkin = rust:player:skin
+   Swing = rust:player:swing
+== \ru\rustme\network\research\ResearchPayloadChannels.java
+   UpdateWorkbenchLevel = rust:resch:level
+   OpenTree = rust:resch:open
+   UpdateTree = rust:resch:upd
+   TreeClosed = rust:resch:closed
+   ResearchItem = rust:resch:research
+== \ru\rustme\network\sounds\SoundPayloadChannels.java
+   Play = rust:sound:play
+   Stop = rust:sound:stop
+== \ru\rustme\network\wipeinfo\WipeInfoPayloadChannels.java
+   State = rust:wipe:state

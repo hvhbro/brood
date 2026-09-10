@@ -1,0 +1,1261 @@
+{
+ "rust:dmg:death": {
+  "package": "ru.meproject.rustme.vanilla.network.damage",
+  "class": "ru.meproject.rustme.vanilla.network.damage.OpenDeathScreenPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\named_src\\ru\\meproject\\rustme\\vanilla\\network\\damage\\OpenDeathScreenPacketData.java",
+  "fields": [
+   [
+    "timeAlive",
+    "long"
+   ],
+   [
+    "killedBy",
+    "DamageSource"
+   ],
+   [
+    "withA",
+    "DamageSource"
+   ],
+   [
+    "attackDistance",
+    "float"
+   ]
+  ]
+ },
+ "rust:dmg:close": {
+  "package": "ru.meproject.rustme.vanilla.network.damage",
+  "class": "ru.meproject.rustme.vanilla.network.damage.CloseDeathScreenPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\meproject\\rustme\\vanilla\\network\\damage\\CloseDeathScreenPacketData.java",
+  "fields": []
+ },
+ "rust:dmg:respawn": {
+  "package": "ru.meproject.rustme.vanilla.network.damage",
+  "class": "ru.meproject.rustme.vanilla.network.damage.RespawnPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\named_src\\ru\\meproject\\rustme\\vanilla\\network\\damage\\RespawnPacketData.java",
+  "fields": [
+   [
+    "respawnPointId",
+    "Integer"
+   ]
+  ]
+ },
+ "rust:donate:open": {
+  "package": "ru.meproject.rustme.vanilla.network.donate",
+  "class": "ru.meproject.rustme.vanilla.network.donate.OpenDonateScreenPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\meproject\\rustme\\vanilla\\network\\donate\\OpenDonateScreenPacketData.java",
+  "fields": [
+   [
+    "screenData",
+    "DonateScreenData"
+   ]
+  ]
+ },
+ "rust:donate:buy": {
+  "package": "ru.meproject.rustme.vanilla.network.donate",
+  "class": "ru.meproject.rustme.vanilla.network.donate.ConfirmDonatePurchasePacketData",
+  "file": null,
+  "fields": [
+   [
+    "itemId",
+    "int"
+   ]
+  ]
+ },
+ "rust:donate:pref": {
+  "package": "ru.meproject.rustme.vanilla.network.donate",
+  "class": "ru.meproject.rustme.vanilla.network.donate.OpenPrefixesScreenPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\meproject\\rustme\\vanilla\\network\\donate\\OpenPrefixesScreenPacketData.java",
+  "fields": []
+ },
+ "rust:donate:oloot": {
+  "package": "ru.meproject.rustme.vanilla.network.donate",
+  "class": "ru.meproject.rustme.vanilla.network.donate.OpenLootBoxPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\named_src\\ru\\meproject\\rustme\\vanilla\\network\\donate\\OpenLootBoxPacketData.java",
+  "fields": [
+   [
+    "lootBoxId",
+    "int"
+   ]
+  ]
+ },
+ "rust:donate:looto": {
+  "package": "ru.meproject.rustme.vanilla.network.donate",
+  "class": "ru.meproject.rustme.vanilla.network.donate.LootBoxOpenedPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\named_src\\ru\\meproject\\rustme\\vanilla\\network\\donate\\LootBoxOpenedPacketData.java",
+  "fields": [
+   [
+    "resultItemId",
+    "int"
+   ],
+   [
+    "resultItemCount",
+    "int"
+   ]
+  ]
+ },
+ "rust:donate:lootf": {
+  "package": "ru.meproject.rustme.vanilla.network.donate",
+  "class": "ru.meproject.rustme.vanilla.network.donate.DonateLootBoxFinishedOpeningPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\meproject\\rustme\\vanilla\\network\\donate\\DonateLootBoxFinishedOpeningPacketData.java",
+  "fields": []
+ },
+ "rust:donate:unpref": {
+  "package": "ru.meproject.rustme.vanilla.network.donate",
+  "class": "ru.meproject.rustme.vanilla.network.donate.UnselectDonatePrefixPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\named_src\\ru\\meproject\\rustme\\vanilla\\network\\donate\\UnselectDonatePrefixPacketData.java",
+  "fields": [
+   [
+    "itemId",
+    "int"
+   ]
+  ]
+ },
+ "rust:item:repair": {
+  "package": "ru.meproject.rustme.vanilla.network.item",
+  "class": "ru.rustme.network.item.UnableToRepairPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\named_src\\ru\\rustme\\network\\item\\UnableToRepairPacketData.java",
+  "fields": [
+   [
+    "entries",
+    "List<RepairContextEntry>"
+   ]
+  ]
+ },
+ "rust:item:craft": {
+  "package": "ru.meproject.rustme.vanilla.network.item",
+  "class": "ru.meproject.rustme.vanilla.network.item.UpdateCraftingQueuePacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\named_src\\ru\\meproject\\rustme\\vanilla\\network\\item\\UpdateCraftingQueuePacketData.java",
+  "fields": [
+   [
+    "currentCraft",
+    "ClientPendingCraft"
+   ],
+   [
+    "craftingQueue",
+    "List<ItemStack>"
+   ]
+  ]
+ },
+ "rust:item:status": {
+  "package": "ru.meproject.rustme.vanilla.network.item",
+  "class": "ru.meproject.rustme.vanilla.network.item.StatusNotificationPacketData",
+  "file": null,
+  "fields": [
+   [
+    "backgroundColor",
+    "int"
+   ],
+   [
+    "textColor",
+    "int"
+   ],
+   [
+    "key",
+    "String"
+   ],
+   [
+    "iconLocation",
+    "String"
+   ],
+   [
+    "value",
+    "String"
+   ]
+  ]
+ },
+ "rust:misc:enable": {
+  "package": "ru.meproject.rustme.vanilla.network.misc",
+  "class": "ru.meproject.rustme.vanilla.network.misc.EnableHudPacketData",
+  "file": "more_tmp\\ru\\meproject\\rustme\\vanilla\\network\\misc\\EnableHudPacketData.java",
+  "fields": []
+ },
+ "rust:misc:shownot": {
+  "package": "ru.meproject.rustme.vanilla.network.misc",
+  "class": "ru.meproject.rustme.vanilla.network.misc.ShowNotificationPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\named_src\\ru\\meproject\\rustme\\vanilla\\network\\misc\\ShowNotificationPacketData.java",
+  "fields": [
+   [
+    "backgroundColor",
+    "long"
+   ],
+   [
+    "contentColor",
+    "long"
+   ],
+   [
+    "text",
+    "TextWithArguments"
+   ],
+   [
+    "duration",
+    "long"
+   ],
+   [
+    "iconLocation",
+    "String"
+   ],
+   [
+    "hasEnterAnimation",
+    "boolean"
+   ]
+  ]
+ },
+ "rust:misc:looktog": {
+  "package": "ru.meproject.rustme.vanilla.network.misc",
+  "class": "ru.meproject.rustme.vanilla.network.misc.FreeLookTogglePacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\named_src\\ru\\meproject\\rustme\\vanilla\\network\\misc\\FreeLookTogglePacketData.java",
+  "fields": [
+   [
+    "enabled",
+    "boolean"
+   ]
+  ]
+ },
+ "rust:misc:uphint": {
+  "package": "ru.meproject.rustme.vanilla.network.misc",
+  "class": "ru.meproject.rustme.vanilla.network.misc.hint.UpdateHintPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\meproject\\rustme\\vanilla\\network\\misc\\hint\\UpdateHintPacketData.java",
+  "fields": [
+   [
+    "data",
+    "HintOverlayData"
+   ]
+  ]
+ },
+ "rust:misc:shuse": {
+  "package": "ru.meproject.rustme.vanilla.network.misc",
+  "class": "ru.meproject.rustme.vanilla.network.misc.hint.PerformShortUseActionPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\meproject\\rustme\\vanilla\\network\\misc\\hint\\PerformShortUseActionPacketData.java",
+  "fields": []
+ },
+ "rust:misc:lguse": {
+  "package": "ru.meproject.rustme.vanilla.network.misc",
+  "class": "ru.meproject.rustme.vanilla.network.misc.hint.PerformLongUseActionPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\meproject\\rustme\\vanilla\\network\\misc\\hint\\PerformLongUseActionPacketData.java",
+  "fields": []
+ },
+ "rust:misc:itmap": {
+  "package": "ru.meproject.rustme.vanilla.network.misc",
+  "class": "ru.meproject.rustme.vanilla.network.misc.InitMapPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\named_src\\ru\\meproject\\rustme\\vanilla\\network\\misc\\InitMapPacketData.java",
+  "fields": [
+   [
+    "mapId",
+    "String"
+   ],
+   [
+    "mapSize",
+    "int"
+   ],
+   [
+    "offshoreLength",
+    "int"
+   ],
+   [
+    "xStart",
+    "int"
+   ],
+   [
+    "zStart",
+    "int"
+   ]
+  ]
+ },
+ "rust:mlrs:open": {
+  "package": "ru.meproject.rustme.vanilla.network.mlrs",
+  "class": "ru.meproject.rustme.vanilla.network.mlrs.OpenMlrsScreenPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\meproject\\rustme\\vanilla\\network\\mlrs\\OpenMlrsScreenPacketData.java",
+  "fields": [
+   [
+    "safeZones",
+    "List<MlrsSafeZone>"
+   ],
+   [
+    "missilesCount",
+    "int"
+   ],
+   [
+    "expectedRadiusBlocks",
+    "int"
+   ],
+   [
+    "expectedPosition",
+    "Vec2i"
+   ],
+   [
+    "actualRadiusBlocks",
+    "int"
+   ],
+   [
+    "actualStartPosition",
+    "Vec2i"
+   ],
+   [
+    "actualTargetPosition",
+    "Vec2i"
+   ],
+   [
+    "leftMovementDuration",
+    "long"
+   ]
+  ]
+ },
+ "rust:mlrs:select": {
+  "package": "ru.meproject.rustme.vanilla.network.mlrs",
+  "class": "ru.meproject.rustme.vanilla.network.mlrs.SelectMlrsPositionPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\meproject\\rustme\\vanilla\\network\\mlrs\\SelectMlrsPositionPacketData.java",
+  "fields": [
+   [
+    "targetPosition",
+    "Vec2i"
+   ]
+  ]
+ },
+ "rust:mlrs:start": {
+  "package": "ru.meproject.rustme.vanilla.network.mlrs",
+  "class": "ru.meproject.rustme.vanilla.network.mlrs.StartMlrsMovementPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\meproject\\rustme\\vanilla\\network\\mlrs\\StartMlrsMovementPacketData.java",
+  "fields": [
+   [
+    "expectedPosition",
+    "Vec2i"
+   ],
+   [
+    "actualPosition",
+    "Vec2i"
+   ],
+   [
+    "duration",
+    "long"
+   ]
+  ]
+ },
+ "rust:mlrs:launch": {
+  "package": "ru.meproject.rustme.vanilla.network.mlrs",
+  "class": "ru.meproject.rustme.vanilla.network.mlrs.LaunchMlrsMissilePacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\meproject\\rustme\\vanilla\\network\\mlrs\\LaunchMlrsMissilePacketData.java",
+  "fields": []
+ },
+ "rust:mlrs:closed": {
+  "package": "ru.meproject.rustme.vanilla.network.mlrs",
+  "class": "ru.meproject.rustme.vanilla.network.mlrs.MlrsScreenClosedPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\meproject\\rustme\\vanilla\\network\\mlrs\\MlrsScreenClosedPacketData.java",
+  "fields": []
+ },
+ "rust:radial:open": {
+  "package": "ru.meproject.rustme.vanilla.network.radial",
+  "class": "ru.meproject.rustme.vanilla.network.radial.OpenRadialMenuPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\meproject\\rustme\\vanilla\\network\\radial\\OpenRadialMenuPacketData.java",
+  "fields": [
+   [
+    "items",
+    "List<RadialMenuItem>"
+   ],
+   [
+    "options",
+    "RadialMenuOptions"
+   ],
+   [
+    "sourcePosition",
+    "Vec3d"
+   ]
+  ]
+ },
+ "rust:radial:close": {
+  "package": "ru.meproject.rustme.vanilla.network.radial",
+  "class": "ru.meproject.rustme.vanilla.network.radial.CloseRadialMenuPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\meproject\\rustme\\vanilla\\network\\radial\\CloseRadialMenuPacketData.java",
+  "fields": []
+ },
+ "rust:radial:click": {
+  "package": "ru.meproject.rustme.vanilla.network.radial",
+  "class": "ru.meproject.rustme.vanilla.network.radial.RadialMenuItemClickedPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\meproject\\rustme\\vanilla\\network\\radial\\RadialMenuItemClickedPacketData.java",
+  "fields": [
+   [
+    "itemIndex",
+    "int"
+   ]
+  ]
+ },
+ "rust:sc:entryupd": {
+  "package": "ru.meproject.rustme.vanilla.network.scoreboard",
+  "class": "ru.meproject.rustme.vanilla.network.scoreboard.ScoreboardUpdateEntriesPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\meproject\\rustme\\vanilla\\network\\scoreboard\\ScoreboardUpdateEntriesPacketData.java",
+  "fields": [
+   [
+    "entries",
+    "List<ScoreboardEntry>"
+   ]
+  ]
+ },
+ "rust:sc:timeupd": {
+  "package": "ru.meproject.rustme.vanilla.network.scoreboard",
+  "class": "ru.meproject.rustme.vanilla.network.scoreboard.ScoreboardUpdateRemainingTimePacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\meproject\\rustme\\vanilla\\network\\scoreboard\\ScoreboardUpdateRemainingTimePacketData.java",
+  "fields": [
+   [
+    "remainingTime",
+    "long"
+   ]
+  ]
+ },
+ "rust:evt:khenter": {
+  "package": "ru.meproject.rustme.vanilla.network.specialgameevents",
+  "class": "ru.meproject.rustme.vanilla.network.specialgameevents.KingHillEvent",
+  "file": null,
+  "fields": [
+   [
+    "data",
+    "PlayerEventData"
+   ],
+   [
+    "playersInArea",
+    "int"
+   ],
+   [
+    "totalTokens",
+    "int"
+   ],
+   [
+    "areaNameKey",
+    "String"
+   ],
+   [
+    "kills",
+    "int"
+   ],
+   [
+    "remainingTime",
+    "Instant"
+   ],
+   [
+    "aliveTime",
+    "int"
+   ],
+   [
+    "rewardForAliveDuration",
+    "long"
+   ],
+   [
+    "rewardForAlive",
+    "int"
+   ],
+   [
+    "rewardForKill",
+    "int"
+   ]
+  ]
+ },
+ "rust:evt:khquit": {
+  "package": "ru.meproject.rustme.vanilla.network.specialgameevents",
+  "class": "ru.meproject.rustme.vanilla.network.specialgameevents (khquit: маркер/без полей)",
+  "file": null,
+  "fields": []
+ },
+ "rust:textfld:open": {
+  "package": "ru.meproject.rustme.vanilla.network.textfield",
+  "class": "ru.meproject.rustme.vanilla.network.textfield.OpenTextFieldMenuPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\meproject\\rustme\\vanilla\\network\\textfield\\OpenTextFieldMenuPacketData.java",
+  "fields": [
+   [
+    "initialText",
+    "String"
+   ],
+   [
+    "allowedChars",
+    "String"
+   ],
+   [
+    "title",
+    "String"
+   ],
+   [
+    "applyButtonText",
+    "String"
+   ],
+   [
+    "description",
+    "String"
+   ],
+   [
+    "iconLocation",
+    "String"
+   ]
+  ]
+ },
+ "rust:textfld:cls": {
+  "package": "ru.meproject.rustme.vanilla.network.textfield",
+  "class": "ru.meproject.rustme.vanilla.network.textfield.CloseTextFieldMenuPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\meproject\\rustme\\vanilla\\network\\textfield\\CloseTextFieldMenuPacketData.java",
+  "fields": []
+ },
+ "rust:textfld:apply": {
+  "package": "ru.meproject.rustme.vanilla.network.textfield",
+  "class": "ru.meproject.rustme.vanilla.network.textfield.ApplyTextFieldMenuPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\meproject\\rustme\\vanilla\\network\\textfield\\ApplyTextFieldMenuPacketData.java",
+  "fields": [
+   [
+    "text",
+    "String"
+   ]
+  ]
+ },
+ "rust:vc:conninfo": {
+  "package": "ru.meproject.rustme.vanilla.network.voicechat",
+  "class": "ru.meproject.rustme.vanilla.network.voicechat.VoiceChatConnectionInfoPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\meproject\\rustme\\vanilla\\network\\voicechat\\VoiceChatConnectionInfoPacketData.java",
+  "fields": [
+   [
+    "voiceHost",
+    "String"
+   ],
+   [
+    "secretKey",
+    "byte[]"
+   ]
+  ]
+ },
+ "rust:vc:playerinfo": {
+  "package": "ru.meproject.rustme.vanilla.network.voicechat",
+  "class": "ru.meproject.rustme.vanilla.network.voicechat.VoiceChatPlayerInfoPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\meproject\\rustme\\vanilla\\network\\voicechat\\VoiceChatPlayerInfoPacketData.java",
+  "fields": [
+   [
+    "playerUuid",
+    "UUID"
+   ],
+   [
+    "velocityHost",
+    "String"
+   ],
+   [
+    "velocityPort",
+    "int"
+   ]
+  ]
+ },
+ "rust:vc:talkcng": {
+  "package": "ru.meproject.rustme.vanilla.network.voicechat",
+  "class": "ru.meproject.rustme.vanilla.network.voicechat.VoiceChatChangeTalkStatePacketData",
+  "file": null,
+  "fields": [
+   [
+    "playerId",
+    "int"
+   ],
+   [
+    "isTalking",
+    "boolean"
+   ]
+  ]
+ },
+ "rust:world:decay": {
+  "package": "ru.meproject.rustme.vanilla.network.world",
+  "class": "ru.meproject.rustme.vanilla.network.world.UpdateBuildingDecayingPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\named_src\\ru\\meproject\\rustme\\vanilla\\network\\world\\UpdateBuildingDecayingPacketData.java",
+  "fields": [
+   [
+    "isDecaying",
+    "boolean"
+   ]
+  ]
+ },
+ "rust:world:perm": {
+  "package": "ru.meproject.rustme.vanilla.network.world",
+  "class": "ru.meproject.rustme.vanilla.network.world.UpdateBuildingPermissionPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\named_src\\ru\\meproject\\rustme\\vanilla\\network\\world\\UpdateBuildingPermissionPacketData.java",
+  "fields": [
+   [
+    "permission",
+    "BuildingPermission"
+   ]
+  ]
+ },
+ "rust:world:safe": {
+  "package": "ru.meproject.rustme.vanilla.network.world",
+  "class": "ru.meproject.rustme.vanilla.network.world.UpdateIsInSafeZonePacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\named_src\\ru\\meproject\\rustme\\vanilla\\network\\world\\UpdateIsInSafeZonePacketData.java",
+  "fields": [
+   [
+    "isInSafeZone",
+    "boolean"
+   ]
+  ]
+ },
+ "rust:world:upkeep": {
+  "package": "ru.meproject.rustme.vanilla.network.world",
+  "class": "ru.meproject.rustme.vanilla.network.world.UpdateUpkeepTimePacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\named_src\\ru\\meproject\\rustme\\vanilla\\network\\world\\UpdateUpkeepTimePacketData.java",
+  "fields": [
+   [
+    "durationUntilDecay",
+    "Duration"
+   ]
+  ]
+ },
+ "rust:world:hostile": {
+  "package": "ru.meproject.rustme.vanilla.network.world",
+  "class": "ru.meproject.rustme.vanilla.network.world.UpdateSafeZoneHostilePacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\named_src\\ru\\meproject\\rustme\\vanilla\\network\\world\\UpdateSafeZoneHostilePacketData.java",
+  "fields": [
+   [
+    "leftHostileDuration",
+    "Duration"
+   ],
+   [
+    "leftWarningDuration",
+    "Duration"
+   ]
+  ]
+ },
+ "rust:world:raid": {
+  "package": "ru.meproject.rustme.vanilla.network.world",
+  "class": "ru.meproject.rustme.vanilla.network.world.UpdateRaidBlockPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\named_src\\ru\\meproject\\rustme\\vanilla\\network\\world\\UpdateRaidBlockPacketData.java",
+  "fields": [
+   [
+    "leftDuration",
+    "Duration"
+   ]
+  ]
+ },
+ "rust:openmainmenu": {
+  "package": "ru.meproject.rustme.vanilla.network.world",
+  "class": "ru.meproject.rustme.vanilla.network.world.OpenMainMenuPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\meproject\\rustme\\vanilla\\network\\world\\OpenMainMenuPacketData.java",
+  "fields": []
+ },
+ "rust:build:opencode": {
+  "package": "ru.meproject.rustme.vanilla.network.world.building",
+  "class": "ru.meproject.rustme.vanilla.network.world.building.OpenCodeLockInputPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\meproject\\rustme\\vanilla\\network\\world\\building\\OpenCodeLockInputPacketData.java",
+  "fields": [
+   [
+    "mode",
+    "CodeLockInputMode"
+   ]
+  ]
+ },
+ "rust:build:subcode": {
+  "package": "ru.meproject.rustme.vanilla.network.world.building",
+  "class": "ru.meproject.rustme.vanilla.network.world.building.SubmitCodeLockPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\named_src\\ru\\meproject\\rustme\\vanilla\\network\\world\\building\\SubmitCodeLockPacketData.java",
+  "fields": [
+   [
+    "code",
+    "String"
+   ]
+  ]
+ },
+ "rust:build:codecld": {
+  "package": "ru.meproject.rustme.vanilla.network.world.building",
+  "class": "ru.meproject.rustme.vanilla.network.world.building.CodeLockInputClosedPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\meproject\\rustme\\vanilla\\network\\world\\building\\CodeLockInputClosedPacketData.java",
+  "fields": []
+ },
+ "rust:gntcs:upd": {
+  "package": "ru.meproject.rustme.vanilla.network.world.genetics",
+  "class": "ru.meproject.rustme.vanilla.network.world.genetics.UpdateGeneticsInfoPacketData",
+  "file": null,
+  "fields": [
+   [
+    "info",
+    "GeneticsInfo"
+   ]
+  ]
+ },
+ "rust:map:markers": {
+  "package": "ru.meproject.rustme.vanilla.network.world.map",
+  "class": "ru.meproject.rustme.vanilla.network.world.map.UpdateMapMarkersPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\meproject\\rustme\\vanilla\\network\\world\\map\\UpdateMapMarkersPacketData.java",
+  "fields": [
+   [
+    "markers",
+    "List<MapMarker>"
+   ]
+  ]
+ },
+ "rust:map:crtuser": {
+  "package": "ru.meproject.rustme.vanilla.network.world.map",
+  "class": "ru.meproject.rustme.vanilla.network.world.map.CreateUserMarkerPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\named_src\\ru\\meproject\\rustme\\vanilla\\network\\world\\map\\CreateUserMarkerPacketData.java",
+  "fields": [
+   [
+    "marker",
+    "UserMapMarker"
+   ]
+  ]
+ },
+ "rust:map:deluser": {
+  "package": "ru.meproject.rustme.vanilla.network.world.map",
+  "class": "ru.meproject.rustme.vanilla.network.world.map.DeleteUserMarkerPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\named_src\\ru\\meproject\\rustme\\vanilla\\network\\world\\map\\DeleteUserMarkerPacketData.java",
+  "fields": [
+   [
+    "id",
+    "long"
+   ]
+  ]
+ },
+ "rust:map:adddyn": {
+  "package": "ru.meproject.rustme.vanilla.network.world.map",
+  "class": "ru.meproject.rustme.vanilla.network.world.map.dynamic.AddDynamicMapMarkersPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\meproject\\rustme\\vanilla\\network\\world\\map\\dynamic\\AddDynamicMapMarkersPacketData.java",
+  "fields": [
+   [
+    "markers",
+    "List<DynamicMapMarker>"
+   ]
+  ]
+ },
+ "rust:map:remdyn": {
+  "package": "ru.meproject.rustme.vanilla.network.world.map",
+  "class": "ru.meproject.rustme.vanilla.network.world.map.dynamic.RemoveDynamicMapMarkerPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\meproject\\rustme\\vanilla\\network\\world\\map\\dynamic\\RemoveDynamicMapMarkerPacketData.java",
+  "fields": [
+   [
+    "markerId",
+    "int"
+   ]
+  ]
+ },
+ "rust:admin:give": {
+  "package": "ru.rustme.network.admin",
+  "class": "ru.rustme.network.admin.GiveItemPacketData",
+  "file": "more_tmp\\ru\\rustme\\network\\admin\\AdminGiveItemPacketData.java",
+  "fields": [
+   [
+    "entry",
+    "illiIiIiII"
+   ],
+   [
+    "count",
+    "int"
+   ],
+   [
+    "descriptor",
+    "static final SerialDescriptor"
+   ]
+  ]
+ },
+ "rust:admin:spawn": {
+  "package": "ru.rustme.network.admin",
+  "class": "ru.rustme.network.admin.SpawnVehiclePacketData",
+  "file": "more_tmp\\ru\\rustme\\network\\admin\\AdminSpawnVehiclePacketData.java",
+  "fields": [
+   [
+    "entry",
+    "llliIiIiII"
+   ],
+   [
+    "descriptor",
+    "static final SerialDescriptor"
+   ]
+  ]
+ },
+ "rust:craft:request": {
+  "package": "ru.rustme.network.craft",
+  "class": "ru.rustme.network.craft.CraftRequestPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\rustme\\network\\craft\\CraftRequestPacketData.java",
+  "fields": [
+   [
+    "entryId",
+    "String"
+   ],
+   [
+    "count",
+    "int"
+   ]
+  ]
+ },
+ "rust:craft:cancel": {
+  "package": "ru.rustme.network.craft",
+  "class": "ru.rustme.network.craft.CraftQueueActionPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\rustme\\network\\craft\\CraftQueueActionPacketData.java",
+  "fields": [
+   [
+    "queueItemId",
+    "int"
+   ]
+  ]
+ },
+ "rust:craft:tofront": {
+  "package": "ru.rustme.network.craft",
+  "class": "ru.rustme.network.craft.CraftQueueActionPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\rustme\\network\\craft\\CraftQueueActionPacketData.java",
+  "fields": [
+   [
+    "queueItemId",
+    "int"
+   ]
+  ]
+ },
+ "rust:craft:sync": {
+  "package": "ru.rustme.network.craft",
+  "class": "ru.rustme.network.craft.CraftQueueActionPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\rustme\\network\\craft\\CraftQueueActionPacketData.java",
+  "fields": [
+   [
+    "queueItemId",
+    "int"
+   ]
+  ]
+ },
+ "rust:craft:favorite": {
+  "package": "ru.rustme.network.craft",
+  "class": "ru.rustme.network.craft.CraftFavoritePacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\rustme\\network\\craft\\CraftFavoritePacketData.java",
+  "fields": [
+   [
+    "entryId",
+    "String"
+   ]
+  ]
+ },
+ "rust:craft:skin": {
+  "package": "ru.rustme.network.craft",
+  "class": "ru.rustme.network.craft.CraftSkinPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\rustme\\network\\craft\\CraftSkinPacketData.java",
+  "fields": [
+   [
+    "entryId",
+    "String"
+   ],
+   [
+    "skinName",
+    "String"
+   ]
+  ]
+ },
+ "rust:craft:queue": {
+  "package": "ru.rustme.network.craft",
+  "class": "ru.rustme.network.craft.CraftQueueStatePacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\rustme\\network\\craft\\CraftQueueStatePacketData.java",
+  "fields": [
+   [
+    "items",
+    "List<CraftQueueItemData>"
+   ]
+  ]
+ },
+ "rust:inv:action": {
+  "package": "ru.rustme.network.inventory",
+  "class": "ru.rustme.network.inventory.InventoryActionPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\rustme\\network\\inventory\\InventoryActionPacketData.java",
+  "fields": [
+   [
+    "windowId",
+    "int"
+   ],
+   [
+    "slot",
+    "Integer"
+   ],
+   [
+    "selectedSlot",
+    "int"
+   ],
+   [
+    "action",
+    "InventoryAction"
+   ]
+  ]
+ },
+ "rust:inv:split": {
+  "package": "ru.rustme.network.inventory",
+  "class": "ru.rustme.network.inventory.InventorySplitPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\rustme\\network\\inventory\\InventorySplitPacketData.java",
+  "fields": [
+   [
+    "windowId",
+    "int"
+   ],
+   [
+    "sourceSlot",
+    "int"
+   ],
+   [
+    "targetSlot",
+    "int"
+   ],
+   [
+    "amount",
+    "int"
+   ],
+   [
+    "originalCount",
+    "int"
+   ]
+  ]
+ },
+ "rust:inv:toggle": {
+  "package": "ru.rustme.network.inventory",
+  "class": "ru.rustme.network.inventory.ToggleInventoryStatePacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\rustme\\network\\inventory\\ToggleInventoryStatePacketData.java",
+  "fields": [
+   [
+    "windowId",
+    "int"
+   ],
+   [
+    "buttonId",
+    "int"
+   ]
+  ]
+ },
+ "rust:inv:itmact": {
+  "package": "ru.rustme.network.inventory",
+  "class": "ru.rustme.network.inventory.ItemActionPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\named_src\\ru\\rustme\\network\\inventory\\ItemActionPacketData.java",
+  "fields": [
+   [
+    "windowId",
+    "int"
+   ],
+   [
+    "slot",
+    "int"
+   ],
+   [
+    "action",
+    "String"
+   ]
+  ]
+ },
+ "rust:inv:fluid": {
+  "package": "ru.rustme.network.inventory",
+  "class": "ru.rustme.network.inventory.FluidTransferPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\named_src\\ru\\rustme\\network\\inventory\\FluidTransferPacketData.java",
+  "fields": [
+   [
+    "windowId",
+    "int"
+   ],
+   [
+    "take",
+    "boolean"
+   ],
+   [
+    "slot",
+    "int"
+   ]
+  ]
+ },
+ "rust:inv:fluiddrink": {
+  "package": "ru.rustme.network.inventory",
+  "class": "ru.rustme.network.inventory.FluidDrinkPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\named_src\\ru\\rustme\\network\\inventory\\FluidDrinkPacketData.java",
+  "fields": [
+   [
+    "windowId",
+    "int"
+   ]
+  ]
+ },
+ "rust:inv:vendlots": {
+  "package": "ru.rustme.network.inventory",
+  "class": "ru.rustme.network.inventory.VendingLotsPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\named_src\\ru\\rustme\\network\\inventory\\VendingLotsPacketData.java",
+  "fields": [
+   [
+    "windowId",
+    "int"
+   ],
+   [
+    "shopName",
+    "String"
+   ],
+   [
+    "lots",
+    "List<VendingLotData>"
+   ]
+  ]
+ },
+ "rust:inv:vendbuy": {
+  "package": "ru.rustme.network.inventory",
+  "class": "ru.rustme.network.inventory.VendingBuyPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\named_src\\ru\\rustme\\network\\inventory\\VendingBuyPacketData.java",
+  "fields": [
+   [
+    "windowId",
+    "int"
+   ],
+   [
+    "lotIndex",
+    "int"
+   ],
+   [
+    "count",
+    "int"
+   ]
+  ]
+ },
+ "rust:inv:vendpur": {
+  "package": "ru.rustme.network.inventory",
+  "class": "ru.rustme.network.inventory.VendingPurchasePacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\named_src\\ru\\rustme\\network\\inventory\\VendingPurchasePacketData.java",
+  "fields": [
+   [
+    "windowId",
+    "int"
+   ],
+   [
+    "state",
+    "VendingPurchaseState"
+   ],
+   [
+    "lotIndex",
+    "int"
+   ]
+  ]
+ },
+ "rust:item:pickup": {
+  "package": "ru.rustme.network.item",
+  "class": "ru.rustme.network.item.ItemPickupNotificationPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\rustme\\network\\item\\ItemPickupNotificationPacketData.java",
+  "fields": [
+   [
+    "entry",
+    "IillIiIiII"
+   ],
+   [
+    "amount",
+    "int"
+   ],
+   [
+    "total",
+    "int"
+   ]
+  ]
+ },
+ "rust:met:update": {
+  "package": "ru.rustme.network.metabolism",
+  "class": "ru.rustme.network.metabolism.UpdateMetabolismPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\named_src\\ru\\rustme\\network\\metabolism\\UpdateMetabolismPacketData.java",
+  "fields": [
+   [
+    "metabolism",
+    "MetabolismStorage"
+   ]
+  ]
+ },
+ "rust:met:wounded": {
+  "package": "ru.rustme.network.metabolism",
+  "class": "ru.rustme.network.metabolism.HealthStatus",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\rustme\\network\\metabolism\\HealthStatus.java",
+  "fields": [
+   [
+    "moveSpeed",
+    "double"
+   ],
+   [
+    "WoundedStatuses",
+    "static final EnumSet<HealthStatus>"
+   ]
+  ]
+ },
+ "rust:met:vehicle": {
+  "package": "ru.rustme.network.metabolism",
+  "class": "ru.rustme.network.metabolism.UpdateVehiclePacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\named_src\\ru\\rustme\\network\\metabolism\\UpdateVehiclePacketData.java",
+  "fields": [
+   [
+    "energyData",
+    "VehicleEnergyData"
+   ],
+   [
+    "healthData",
+    "VehicleHealthData"
+   ]
+  ]
+ },
+ "rust:player:state": {
+  "package": "ru.rustme.network.player",
+  "class": "ru.rustme.network.player.PlayerStatePacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\rustme\\network\\player\\PlayerStatePacketData.java",
+  "fields": [
+   [
+    "researchedItemIds",
+    "List<String>"
+   ],
+   [
+    "researchedAtMillis",
+    "Map<String, Long>"
+   ],
+   [
+    "availableSkinNames",
+    "List<String>"
+   ],
+   [
+    "favoriteCraftIds",
+    "List<String>"
+   ],
+   [
+    "permittedCraftIds",
+    "List<String>"
+   ],
+   [
+    "selectedSkins",
+    "List<SelectedSkinData>"
+   ],
+   [
+    "teaBoosts",
+    "Map<IillIiIiII, Instant>"
+   ],
+   [
+    "entityId",
+    "Integer"
+   ],
+   [
+    "handsDown",
+    "Boolean"
+   ]
+  ]
+ },
+ "rust:player:skin": {
+  "package": "ru.rustme.network.player",
+  "class": "ru.rustme.network.player.ApplySkinPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\named_src\\ru\\rustme\\network\\player\\ApplySkinPacketData.java",
+  "fields": [
+   [
+    "windowId",
+    "int"
+   ],
+   [
+    "skinName",
+    "String"
+   ]
+  ]
+ },
+ "rust:player:swing": {
+  "package": "ru.rustme.network.player",
+  "class": "ru.rustme.network.player.SwingPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\named_src\\ru\\rustme\\network\\player\\SwingPacketData.java",
+  "fields": [
+   [
+    "arc",
+    "long"
+   ]
+  ]
+ },
+ "rust:resch:level": {
+  "package": "ru.rustme.network.research",
+  "class": "ru.rustme.network.research.UpdateWorkbenchLevelPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\named_src\\ru\\rustme\\network\\research\\UpdateWorkbenchLevelPacketData.java",
+  "fields": [
+   [
+    "workbench",
+    "illiIiIiII"
+   ]
+  ]
+ },
+ "rust:resch:open": {
+  "package": "ru.rustme.network.research",
+  "class": "ru.rustme.network.research.OpenResearchTreePacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\rustme\\network\\research\\OpenResearchTreePacketData.java",
+  "fields": [
+   [
+    "currentScrap",
+    "int"
+   ],
+   [
+    "rootNodes",
+    "Map<IillIiIiII, List<ResearchTreeNode>>"
+   ],
+   [
+    "researchStates",
+    "Map<IillIiIiII, ResearchState>"
+   ]
+  ]
+ },
+ "rust:resch:upd": {
+  "package": "ru.rustme.network.research",
+  "class": "ru.rustme.network.research.UpdateResearchTreePacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\rustme\\network\\research\\UpdateResearchTreePacketData.java",
+  "fields": [
+   [
+    "changedEntries",
+    "Map<IillIiIiII, ResearchState>"
+   ],
+   [
+    "currentScrap",
+    "int"
+   ]
+  ]
+ },
+ "rust:resch:closed": {
+  "package": "ru.rustme.network.research",
+  "class": "ru.rustme.network.research.ResearchTreeClosedPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\rustme\\network\\research\\ResearchTreeClosedPacketData.java",
+  "fields": []
+ },
+ "rust:resch:research": {
+  "package": "ru.rustme.network.research",
+  "class": "ru.rustme.network.research.ResearchTreeResearchClickPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\rustme\\network\\research\\ResearchTreeResearchClickPacketData.java",
+  "fields": [
+   [
+    "entry",
+    "IillIiIiII"
+   ]
+  ]
+ },
+ "rust:sound:play": {
+  "package": "ru.rustme.network.sounds",
+  "class": "ru.rustme.network.sounds.PlaySoundPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\rustme\\network\\sounds\\PlaySoundPacketData.java",
+  "fields": [
+   [
+    "entryId",
+    "String"
+   ],
+   [
+    "instanceId",
+    "int"
+   ],
+   [
+    "volume",
+    "float"
+   ],
+   [
+    "position",
+    "llIililliI"
+   ],
+   [
+    "category",
+    "liiliIIiII"
+   ]
+  ]
+ },
+ "rust:sound:stop": {
+  "package": "ru.rustme.network.sounds",
+  "class": "ru.rustme.network.sounds.StopSoundPacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\rustme\\network\\sounds\\StopSoundPacketData.java",
+  "fields": [
+   [
+    "instanceId",
+    "int"
+   ],
+   [
+    "entryId",
+    "String"
+   ]
+  ]
+ },
+ "rust:wipe:state": {
+  "package": "ru.rustme.network.wipeinfo",
+  "class": "ru.rustme.network.wipeinfo.WipeStatePacketData",
+  "file": "C:\\Users\\Admin\\Desktop\\rustme\\tools\\decomp\\more_tmp4\\ru\\rustme\\network\\wipeinfo\\WipeStatePacketData.java",
+  "fields": [
+   [
+    "wipeDate",
+    "Instant"
+   ],
+   [
+    "classic",
+    "boolean"
+   ]
+  ]
+ }
+}

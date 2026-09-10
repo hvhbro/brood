@@ -1,0 +1,598 @@
+{
+"rust:admin:give": [
+{
+"holder": "rustme/iiilIlilII.liiilIIIiiI",
+"file": null
+}
+],
+"rust:admin:spawn": [
+{
+"holder": "rustme/iiilIlilII.IillIIIIiiI",
+"file": null
+}
+],
+"rust:build:codecld": [
+{
+"holder": "rustme/lIlllIlIII.iiilIlilll",
+"file": null
+}
+],
+"rust:build:opencode": [
+{
+"holder": "rustme/llliIlilII.ilIiiIIIiiI",
+"file": null
+}
+],
+"rust:build:subcode": [
+{
+"holder": "rustme/lIlllIlIII.iIIlIlilll",
+"file": null
+}
+],
+"rust:craft:cancel": [
+{
+"holder": "rustme/iIiIIIlIII.lilIIiilll",
+"file": null
+}
+],
+"rust:craft:favorite": [
+{
+"holder": "rustme/IIIillilII.liiiIlIIiiI",
+"file": null
+}
+],
+"rust:craft:queue": [
+{
+"holder": "rustme/iIiIIIlIII.iIlIIiilll",
+"file": null
+}
+],
+"rust:craft:request": [
+{
+"holder": "rustme/iIiIIIlIII.iilIIiilll",
+"file": null
+}
+],
+"rust:craft:skin": [
+{
+"holder": "rustme/liilIiilII.IllIiIIiiiI",
+"file": null
+}
+],
+"rust:craft:sync": [
+{
+"holder": "rustme/iIiIIIlIII.lIlIIiilll",
+"file": null
+}
+],
+"rust:craft:tofront": [
+{
+"holder": "rustme/iIiIIIlIII.llIIIiilll",
+"file": null
+}
+],
+"rust:dmg:close": [
+{
+"holder": "rustme/llliIlilII.IIliiIIIiiI",
+"file": null
+}
+],
+"rust:dmg:death": [
+{
+"holder": "rustme/llliIlilII.IIllliIIiiI",
+"file": null
+}
+],
+"rust:dmg:respawn": [
+{
+"holder": "rustme/iIiIillIII.iillilIlll",
+"file": null
+},
+{
+"holder": "rustme/iIiIillIII.liIlilIlll",
+"file": null
+}
+],
+"rust:donate:buy": [
+{
+"holder": "rustme/IlIiillIII.IliilIIlll",
+"file": null
+},
+{
+"holder": "rustme/IlIiillIII.iiiIlIIlll",
+"file": null
+}
+],
+"rust:donate:lootf": [
+{
+"holder": "rustme/IililiilII.IlliilIiiiI",
+"file": null
+}
+],
+"rust:donate:looto": [
+{
+"holder": "rustme/llliIlilII.IiliiIIIiiI",
+"file": null
+}
+],
+"rust:donate:oloot": [
+{
+"holder": "rustme/IililiilII.llliilIiiiI",
+"file": null
+}
+],
+"rust:donate:open": [
+{
+"holder": "rustme/llliIlilII.llliiIIIiiI",
+"file": null
+}
+],
+"rust:donate:unpref": [
+{
+"holder": "rustme/IIIiliilII.llIllIIiiiI",
+"file": null
+}
+],
+"rust:evt:khenter": [
+{
+"holder": "rustme/lIilililII.IIlliiIIiiI",
+"file": null
+}
+],
+"rust:evt:khquit": [
+{
+"holder": "rustme/lIilililII.lilliiIIiiI",
+"file": null
+}
+],
+"rust:gntcs:upd": [
+{
+"holder": "rustme/lIilililII.lIiiIiIIiiI",
+"file": null
+}
+],
+"rust:inv:action": [
+{
+"holder": "rustme/liIlililII.iiiIIiIIiiI",
+"file": null
+}
+],
+"rust:inv:fluid": [
+{
+"holder": "rustme/IIIIiilIII.IlIiIiiIll",
+"file": null
+}
+],
+"rust:inv:fluiddrink": [
+{
+"holder": "rustme/IIIIiilIII.iiliIiiIll",
+"file": null
+}
+],
+"rust:inv:itmact": [
+{
+"holder": "rustme/liIlililII.iliIIiIIiiI",
+"file": null
+}
+],
+"rust:inv:split": [
+{
+"holder": "rustme/liIlililII.IliIIiIIiiI",
+"file": null
+}
+],
+"rust:inv:toggle": [
+{
+"holder": "rustme/IIiliIilII.ilIiilliiiI",
+"file": null
+},
+{
+"holder": "rustme/IlliIllIII.iillIIllll",
+"file": null
+},
+{
+"holder": "rustme/IIiIIllIII.iiliilllll",
+"file": null
+},
+{
+"holder": "rustme/lIiIillIII.iIIiIlIlll",
+"file": null
+},
+{
+"holder": "rustme/iiIIillIII.IIlIIlIlll",
+"file": null
+},
+{
+"holder": "rustme/ilIIillIII.IiIlllIlll",
+"file": null
+},
+{
+"holder": "rustme/iIliIllIII.lilliIllll",
+"file": null
+},
+{
+"holder": "rustme/IiIIIllIII.llIIilllll",
+"file": null
+},
+{
+"holder": "rustme/lIliIllIII.liiIIIllll",
+"file": null
+}
+],
+"rust:inv:vendbuy": [
+{
+"holder": "rustme/IlIIIllIII.liliIlllll",
+"file": null
+}
+],
+"rust:inv:vendlots": [
+{
+"holder": "rustme/llliIlilII.IlllliIIiiI",
+"file": null
+}
+],
+"rust:inv:vendpur": [
+{
+"holder": "rustme/llliIlilII.liIiiIIIiiI",
+"file": null
+}
+],
+"rust:item:pickup": [
+{
+"holder": "rustme/lIilililII.illliiIIiiI",
+"file": null
+}
+],
+"rust:item:repair": [
+{
+"holder": "rustme/illllIilII.IliilliIiiI",
+"file": null
+}
+],
+"rust:map:adddyn": [
+{
+"holder": "rustme/llliIlilII.iiIiiIIIiiI",
+"file": null
+}
+],
+"rust:map:crtuser": [
+{
+"holder": "rustme/iiilIIlIII.IiiIliilll",
+"file": null
+},
+{
+"holder": "rustme/iiilIIlIII.iiiIliilll",
+"file": null
+}
+],
+"rust:map:deluser": [
+{
+"holder": "rustme/iiilIIlIII.liiIliilll",
+"file": null
+}
+],
+"rust:map:markers": [
+{
+"holder": "rustme/llliIlilII.iIllliIIiiI",
+"file": null
+}
+],
+"rust:map:remdyn": [
+{
+"holder": "rustme/llliIlilII.lIliiIIIiiI",
+"file": null
+}
+],
+"rust:mate:inv": [
+{
+"holder": "rustme/ilIIIlilII.lIiiIIIIiiI",
+"file": null
+}
+],
+"rust:mate:invac": [
+{
+"holder": "rustme/iIIliIilII.IilIilliiiI",
+"file": null
+}
+],
+"rust:mate:invrej": [
+{
+"holder": "rustme/lIIliIilII.illIilliiiI",
+"file": null
+}
+],
+"rust:mate:kick": [
+{
+"holder": "rustme/iilliIilII.iIllilliiiI",
+"file": null
+}
+],
+"rust:mate:openmenu": [
+{
+"holder": "rustme/lliliIilII.iliIilliiiI",
+"file": null
+}
+],
+"rust:mate:promote": [
+{
+"holder": "rustme/iilliIilII.liiiIlliiiI",
+"file": null
+}
+],
+"rust:mate:quit": [
+{
+"holder": "rustme/lliliIilII.IliIilliiiI",
+"file": null
+}
+],
+"rust:mate:updst": [
+{
+"holder": "rustme/ilIIIlilII.lIlliIIIiiI",
+"file": null
+}
+],
+"rust:met:update": [
+{
+"holder": "rustme/illllIilII.iIiilliIiiI",
+"file": null
+}
+],
+"rust:met:vehicle": [
+{
+"holder": "rustme/illllIilII.lillIliIiiI",
+"file": null
+}
+],
+"rust:met:wounded": [
+{
+"holder": "rustme/llliliIlII.lilIliIliiI",
+"file": null
+}
+],
+"rust:misc:enable": [
+{
+"holder": "rustme/illllIilII.IIiilliIiiI",
+"file": null
+}
+],
+"rust:misc:itmap": [
+{
+"holder": "rustme/llliIlilII.illlliIIiiI",
+"file": null
+}
+],
+"rust:misc:lguse": [
+{
+"holder": "rustme/ilIilIlIII.IIiilIilll",
+"file": null
+}
+],
+"rust:misc:looktog": [
+{
+"holder": "rustme/iiIIIIlIII.llIlIiilll",
+"file": null
+}
+],
+"rust:misc:shownot": [
+{
+"holder": "rustme/lIilililII.IllliiIIiiI",
+"file": null
+}
+],
+"rust:misc:shuse": [
+{
+"holder": "rustme/ilIilIlIII.iliilIilll",
+"file": null
+}
+],
+"rust:misc:uphint": [
+{
+"holder": "rustme/lIilililII.liIiIiIIiiI",
+"file": null
+}
+],
+"rust:mlrs:closed": [
+{
+"holder": "rustme/IIlilllIII.IIIIliiiiiI",
+"file": null
+}
+],
+"rust:mlrs:launch": [
+{
+"holder": "rustme/IlllIllIII.IiIlIiiiiiI",
+"file": null
+}
+],
+"rust:mlrs:open": [
+{
+"holder": "rustme/llliIlilII.IIIiiIIIiiI",
+"file": null
+}
+],
+"rust:mlrs:select": [
+{
+"holder": "rustme/iliilllIII.illlIiiiiiI",
+"file": null
+}
+],
+"rust:mlrs:start": [
+{
+"holder": "rustme/llliIlilII.lIllliIIiiI",
+"file": null
+}
+],
+"rust:player:skin": [
+{
+"holder": "rustme/lIliIllIII.lIliIIllll",
+"file": null
+}
+],
+"rust:player:state": [
+{
+"holder": "rustme/illllIilII.illlIliIiiI",
+"file": null
+}
+],
+"rust:player:swing": [
+{
+"holder": "rustme/illiIIlIII.liliIiilll",
+"file": null
+}
+],
+"rust:radial:click": [
+{
+"holder": "rustme/illilllIII.illlliiiiiI",
+"file": null
+}
+],
+"rust:radial:close": [
+{
+"holder": "rustme/illilllIII.liiiiIiiiiI",
+"file": null
+}
+],
+"rust:radial:open": [
+{
+"holder": "rustme/llliIlilII.iiiIiIIIiiI",
+"file": null
+}
+],
+"rust:resch:closed": [
+{
+"holder": "rustme/iiillllIII.IliIIIiiiiI",
+"file": null
+}
+],
+"rust:resch:level": [
+{
+"holder": "rustme/illllIilII.llllIliIiiI",
+"file": null
+}
+],
+"rust:resch:open": [
+{
+"holder": "rustme/llliIlilII.iiliiIIIiiI",
+"file": null
+}
+],
+"rust:resch:research": [
+{
+"holder": "rustme/iiillllIII.IlIIIIiiiiI",
+"file": null
+}
+],
+"rust:resch:upd": [
+{
+"holder": "rustme/llliIlilII.IliiiIIIiiI",
+"file": null
+}
+],
+"rust:sc:entryupd": [
+{
+"holder": "rustme/lIilililII.iiiiIiIIiiI",
+"file": null
+}
+],
+"rust:sc:timeupd": [
+{
+"holder": "rustme/lIilililII.IiIiIiIIiiI",
+"file": null
+}
+],
+"rust:sound:play": [
+{
+"holder": "rustme/lIiIIlilII.llIIiIIIiiI",
+"file": null
+}
+],
+"rust:sound:stop": [
+{
+"holder": "rustme/lIiIIlilII.IilIiIIIiiI",
+"file": null
+}
+],
+"rust:team:create": [
+{
+"holder": "rustme/IiIliIilII.IlIIilliiiI",
+"file": null
+}
+],
+"rust:team:upd": [
+{
+"holder": "rustme/ilIIIlilII.IllliIIIiiI",
+"file": null
+}
+],
+"rust:team:updpos": [
+{
+"holder": "rustme/ilIIIlilII.lllliIIIiiI",
+"file": null
+}
+],
+"rust:textfld:apply": [
+{
+"holder": "rustme/lIiIlllIII.IilIiIiiiiI",
+"file": null
+}
+],
+"rust:textfld:cls": [
+{
+"holder": "rustme/lIiIlllIII.liIIiIiiiiI",
+"file": null
+}
+],
+"rust:textfld:open": [
+{
+"holder": "rustme/llliIlilII.IlliiIIIiiI",
+"file": null
+}
+],
+"rust:vc:talkcng": [
+{
+"holder": "rustme/IiIiliIlII.llliIiIliiI",
+"file": null
+}
+],
+"rust:wipe:state": [
+{
+"holder": "rustme/IilIIlilII.IlIiIIIIiiI",
+"file": null
+}
+],
+"rust:world:decay": [
+{
+"holder": "rustme/illllIilII.liiilliIiiI",
+"file": null
+}
+],
+"rust:world:hostile": [
+{
+"holder": "rustme/illllIilII.iiIilliIiiI",
+"file": null
+}
+],
+"rust:world:perm": [
+{
+"holder": "rustme/illllIilII.IlllIliIiiI",
+"file": null
+}
+],
+"rust:world:raid": [
+{
+"holder": "rustme/illllIilII.iIIlIliIiiI",
+"file": null
+}
+],
+"rust:world:safe": [
+{
+"holder": "rustme/illllIilII.iiiilliIiiI",
+"file": null
+}
+],
+"rust:world:upkeep": [
+{
+"holder": "rustme/illllIilII.IiiilliIiiI",
+"file": null
+}
+]
+}

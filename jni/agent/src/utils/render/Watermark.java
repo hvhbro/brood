@@ -9,9 +9,9 @@ import java.util.Calendar;
 
 /**
  * Ватермарка rockstar-стиль (статичный «дефолтный айленд», без анимаций и
- * статусов): часы слева + тёмный остров (гладкая капсула radius 7) с
- * акцентным градиентным слоем 69% ширины (затухание вправо) + текст
- * medium-шрифтом 7px.
+ * статусов): имя сервера слева (заголовок таба, fallback mapId/часы) + тёмный
+ * остров (гладкая капсула radius 7) с акцентным градиентным слоем 69% ширины
+ * (затухание вправо) + текст medium-шрифтом 7px.
  *
  * Константы 1:1 из rockstar-client-src:
  *  - позиция: x = центр экрана (у них y=7, у нас 26 — «пониже»)
@@ -40,7 +40,7 @@ public final class Watermark {
     private static final float PAD_LEFT = 4f;
     private static final float PAD_RIGHT = 5f;
     private static final float TOP_Y = 26f;            // «чуть пониже»
-    private static final float CLOCK_GAP = 12f;        // зазор часы → остров
+    private static final float LABEL_GAP = 4f;         // зазор лейбл → остров (как у часов)
 
     // пинг-бары (их I_method_58a034b9)
     private static final int[] PING_THRESHOLDS = {450, 300, 150, 75}; // I_field_b4e
@@ -49,30 +49,44 @@ public final class Watermark {
     private static final float BAR_STEP = 2.7f;        // их шаг 2.7F
     private static final float BAR_R = 0.8f;           // скругление бара (их SDF-шейдер)
 
-    private static boolean logged;
-
     // ===== позиция (перетаскивание при открытом меню) =====
     private static float posX = -1f;  // -1 = по центру экрана
     private static float posY = 26f;
 
-    /** Ширина всего элемента (часы + остров + бары) при данной ширине экрана. */
+    /** Ширина ВСЕЙ группы (лейбл + остров + бары) при данной ширине экрана. */
     public static float getTotalW(int scaledWidth) {
         try {
             MsdfFont f = CustomFont.WM_FONT;
             float textW = CustomFont.getWidth("ваня стирается", TEXT_SIZE, f);
-            float clockW = CustomFont.getWidth(clockText(), TEXT_SIZE, f);
+            float leftW = CustomFont.getWidth(leftLabel(), TEXT_SIZE, f);
             float flowW = PAD_LEFT + textW + PAD_RIGHT;
             float barsW = (PING_THRESHOLDS.length - 1) * BAR_STEP + BAR_W;
-            return clockW + CLOCK_GAP + flowW + BARS_GAP + barsW;
+            return leftW + LABEL_GAP + flowW + BARS_GAP + barsW;
         } catch (Throwable t) {
             return 100f;
         }
     }
 
-    /** Левый верх всего элемента (x часового блока). */
+    /** Левый край ВСЕЙ группы (лейбла). Авто: остров+бары по центру,
+     *  лейбл слева с LABEL_GAP; драг задаёт posX = этот же левый край. */
     public static float getX(int scaledWidth) {
         if (posX >= 0f) return posX;
-        return scaledWidth / 2f - getTotalW(scaledWidth) / 2f;
+        try {
+            float leftW = CustomFont.getWidth(leftLabel(), TEXT_SIZE, CustomFont.WM_FONT);
+            float coreGroup = coreGroupW();
+            return scaledWidth / 2f - coreGroup / 2f - LABEL_GAP - leftW;
+        } catch (Throwable t) {
+            return scaledWidth / 2f;
+        }
+    }
+
+    /** Остров + пинг-бары (без лейбла) — центрируемая часть. */
+    private static float coreGroupW() {
+        MsdfFont f = CustomFont.WM_FONT;
+        float textW = CustomFont.getWidth("ваня стирается", TEXT_SIZE, f);
+        float flowW = PAD_LEFT + textW + PAD_RIGHT;
+        float barsW = (PING_THRESHOLDS.length - 1) * BAR_STEP + BAR_W;
+        return flowW + BARS_GAP + barsW;
     }
 
     public static float getY() { return posY; }
@@ -88,17 +102,6 @@ public final class Watermark {
         out[1] = posY;
         out[2] = getTotalW(scaledWidth);
         out[3] = ISLAND_H + 2f;
-    }
-
-    /** Лог пинга раз в 5 секунд (диагностика цепочки). */
-    private static long lastPingLog;
-
-    private static void logPingOnce5s(int ping) {
-        long now = System.currentTimeMillis();
-        if (now - lastPingLog >= 5000L) {
-            lastPingLog = now;
-            Log.info("Watermark", "ping=" + (ping < 0 ? "unavailable" : ping + " ms"));
-        }
     }
 
     // ===== пинг через КЛАССЫ ФОРКА (ванильных классов нет). Путь 1:1 как у
@@ -123,11 +126,10 @@ public final class Watermark {
         // пинг из lIllilIIiI.iIliIliIlI(). liIIillliI() (IIlllIIl) обновляется
         // только при открытом Tab — даёт вечные нули.
         latencyM = entryClass.getMethod("illIillliI");
-        Log.info("Watermark", "net chain bound: iliiililiI/liIIillliI");
     }
 
     /** Текущий пинг игрока в ms, -1 если недоступен. */
-    private static int resolvePing(GameContext ctx) {
+    public static int resolvePing(GameContext ctx) {
         try {
             if (!ctx.inWorld || ctx.player == null) return -1;
             if (!netResolved) {
@@ -141,6 +143,128 @@ public final class Watermark {
             return (v >= 0 && v <= 5000) ? v : -1;
         } catch (Throwable t) {
             return -1;
+        }
+    }
+
+    // ===== Имя сервера: ЗАГОЛОВОК ТАБА (юзер 09-08: 'RustMe - "имя сервера"').
+    // Сервер шлёт S47-аналог rustme/iIllilIIiI; netHandler.lIiiillliI кладёт хедер
+    // в Tab GUI: GuiIngame.liIiiiIliI() -> поле iIilliil (liIlliliiI), хедер =
+    // поле iIIiIIil (компонент ilIIlilIiI), plain-text = lllIlliIIl() (дизасм 09-08).
+    // GuiIngame у нас в руках (GameContext.ingameField/Owner) — читаем каждый кадр
+    // без открытия таба. Fallback: mapId (технический wipe-id), затем часы.
+    private static boolean hdrResolved;
+    private static Field tabGuiField;   // liIIliliiI.iIilliil (Tab GUI)
+    private static Field headerField;   // liIlliliiI.iIIiIIil (хедер)
+    private static Method headerTextM;  // ilIIlilIiI.lllIlliIIl() — plain text
+
+    /** Текст заголовка таба (как пришёл от сервера), null если не приходил. */
+    private static String tabHeaderText() {
+        try {
+            GameContext ctx = GameContext.get();
+            if (ctx.ingameField == null || ctx.ingameOwner == null) return null;
+            if (!hdrResolved) {
+                hdrResolved = true;
+                ClassLoader cl = ctx.gameLoader;
+                Class ingameC = ctx.ingameClass != null
+                    ? ctx.ingameClass : cl.loadClass("rustme.liIIliliiI");
+                tabGuiField = ingameC.getDeclaredField("iIilliil");
+                tabGuiField.setAccessible(true);
+                Class tabC = cl.loadClass("rustme.liIlliliiI");
+                headerField = tabC.getDeclaredField("iIIiIIil");
+                headerField.setAccessible(true);
+                Class compC = cl.loadClass("rustme.ilIIlilIiI");
+                headerTextM = compC.getMethod("lllIlliIIl");
+            }
+            Object ingame = ctx.ingameField.get(ctx.ingameOwner);
+            if (ingame == null) return null;
+            Object tab = tabGuiField.get(ingame);
+            if (tab == null) return null;
+            Object comp = headerField.get(tab);
+            if (comp == null) return null;
+            return (String) headerTextM.invoke(comp);
+        } catch (Throwable t) {
+            return null;
+        }
+    }
+
+    /** Имя сервера из заголовка таба. Хедер многострочный (живой дамп 09-08):
+     *  строка 1: '§cRust§fMe §7» §aПесочница-1' (режим — нужен), строка 3:
+     *  '§7Онлайн » §a90'. Парс: срезать коды §x → первая непустая строка →
+     *  текст после '»' (U+00BB). null если хедер не приходил. */
+    private static String serverName() {
+        String hdr = tabHeaderText();
+        if (hdr == null) return null;
+        String s = stripColorCodes(hdr);
+        String[] lines = s.split("\n");
+        String first = null;
+        for (int i = 0; i < lines.length; i++) {
+            String t = lines[i].trim();
+            if (!t.isEmpty()) { first = t; break; }
+        }
+        if (first == null) return null;
+        String name = first;
+        int gt = name.indexOf('»');
+        if (gt >= 0) name = name.substring(gt + 1);
+        name = name.replace("\"", "").trim();
+        return name.isEmpty() ? first : name;
+    }
+
+    /** Срезает пары §+код (цвета/форматы ванили). */
+    private static String stripColorCodes(String s) {
+        StringBuilder out = new StringBuilder(s.length());
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (c == '§' && i + 1 < s.length()) { i++; continue; }
+            out.append(c);
+        }
+        return out.toString();
+    }
+
+    /** Левый лейбл watermark: имя сервера → сырой mapId → часы (единый для render/getTotalW). */
+    private static String leftLabel() {
+        String name = serverName();
+        if (name != null) return name;
+        String id = currentMapId();
+        return (id != null) ? id : clockText();
+    }
+
+    // ===== mapId (fallback для лейбла, пока не пришёл таб-хедер): статика
+    // llIllIiliI.IilIiiIIl → lIlIIlIliI, mapId = llillIlll:String (геттер
+    // liiIiiiIIl()). Заполняется сервером пакетом rust:misc:itmap.
+    private static boolean mapIdResolved;
+    private static Field mapDataStatic;   // llIllIiliI.IilIiiIIl
+    private static Method mapIdGetter;    // lIlIIlIliI.liiIiiiIIl()
+    private static Field mapIdField;      // lIlIIlIliI.llillIlll (fallback)
+
+    /** Ленивая резолвка mapId-цепочки. */
+    private static void resolveMapId(GameContext ctx) throws Exception {
+        if (mapIdResolved) return;
+        mapIdResolved = true;
+        ClassLoader cl = ctx.gameLoader;
+        Class mapDataC = cl.loadClass("rustme.llIllIiliI");
+        mapDataStatic = mapDataC.getDeclaredField("IilIiiIIl");
+        mapDataStatic.setAccessible(true);
+        Class mapInputC = cl.loadClass("rustme.lIlIIlIliI");
+        try {
+            mapIdGetter = mapInputC.getMethod("liiIiiiIIl");
+        } catch (Throwable ignore) {}
+        mapIdField = mapInputC.getDeclaredField("llillIlll");
+        mapIdField.setAccessible(true);
+    }
+
+    /** mapId из статики llIllIiliI.IilIiiIIl; null если пакет ещё не приходил. */
+    private static String currentMapId() {
+        try {
+            Object mapData = mapDataStatic.get(null);
+            if (mapData == null) return null;
+            if (mapIdGetter != null) {
+                try {
+                    return (String) mapIdGetter.invoke(mapData);
+                } catch (Throwable ignore) {}
+            }
+            return (String) mapIdField.get(mapData);
+        } catch (Throwable t) {
+            return null;
         }
     }
 
@@ -160,19 +284,26 @@ public final class Watermark {
             float textW = CustomFont.getWidth(text, TEXT_SIZE, f);
             if (textW <= 0f) return 0f;
 
-            String clock = clockText();
-            float clockW = CustomFont.getWidth(clock, TEXT_SIZE, f);
+            // текст слева от острова: имя сервера (таб-хедер), fallback — сырой
+            // mapId, если хедер ещё не приходил — часы (единый leftLabel())
+            String left = leftLabel();
+            float leftW = CustomFont.getWidth(left, TEXT_SIZE, f);
 
             float flowW = PAD_LEFT + textW + PAD_RIGHT;
             float barsW = (PING_THRESHOLDS.length - 1) * BAR_STEP + BAR_W;
-            float totalW = clockW + CLOCK_GAP + flowW + BARS_GAP + barsW;
-            float baseX = posX >= 0f ? posX : scaledWidth / 2f - totalW / 2f;
-            float islandX = baseX + clockW + CLOCK_GAP;
+            float coreGroup = flowW + BARS_GAP + barsW;   // остров + бары
+            float totalW = leftW + LABEL_GAP + coreGroup;
+            // posX>=0 (драг) = левый край лейбла; авто: остров+бары СТРОГО по
+            // центру экрана, лейбл пристаёт слева с тем же зазором, что был у
+            // часов (4px) — имя не расталкивает остров
+            float islandX = posX >= 0f ? posX + leftW + LABEL_GAP
+                                       : scaledWidth / 2f - coreGroup / 2f;
             float islandY = posY;
+            float labelX = islandX - LABEL_GAP - leftW;
 
-            // 0) часы слева от острова (белым, вертикально по центру высоты)
+            // 0) имя сервера/часы слева от острова (белым, по центру высоты)
             float clockY = islandY + (ISLAND_H - CustomFont.cellHeight(TEXT_SIZE, f)) / 2f;
-            CustomFont.drawString(clock, islandX - clockW - 4f, clockY, TEXT_WHITE, false, TEXT_SIZE, f);
+            CustomFont.drawString(left, labelX, clockY, TEXT_WHITE, false, TEXT_SIZE, f);
 
             // 1) внешняя подсветка (+1px наружу, белый @10%)
             RenderUtil.drawRoundedRectShader(GameContext.get(), islandX - 1f, islandY - 1f,
@@ -199,7 +330,6 @@ public final class Watermark {
             GameContext ctx = GameContext.get();
             if (ctx.inWorld) {
                 int ping = resolvePing(ctx);
-                logPingOnce5s(ping);
                 float barsBottom = islandY + 12f;
                 for (int i = 0; i < PING_THRESHOLDS.length; i++) {
                     float bh = 3f + i;
@@ -212,13 +342,6 @@ public final class Watermark {
                         islandX + flowW + BARS_GAP + i * BAR_STEP, by,
                         BAR_W, bh, BAR_R, color, color, color, color);
                 }
-            }
-
-            if (!logged) {
-                logged = true;
-                Log.info("Watermark", "drawn: island(" + Math.round(islandX) + "," + islandY
-                    + ")+[" + Math.round(flowW) + "x" + (int) ISLAND_H + "] textW=" + textW
-                    + " clock=" + clock);
             }
             return totalW;
         } catch (Throwable t) {

@@ -158,7 +158,10 @@ public final class CustomFont {
             Log.error("Font", "msdf draw failed", t);
         } finally {
             if (prevAlphaTest) GL11.glEnable(GL11.GL_ALPHA_TEST);
-            if (prevProgram != 0) GL20.glUseProgram(prevProgram);
+            // программа восстанавливается БЕЗУСЛОВНО (и в 0): физически оставленный
+            // наш шейдер при prevProgram==0 ломал рендер лобби (их UI шёл дальше
+            // с нашей MSDF-программой — иконки сквозь маску квада → фиолетовый экран)
+            GL20.glUseProgram(prevProgram);
             if (prevUnit != GL_TEXTURE0) GL13.glActiveTexture(prevUnit);
         }
         return getWidth(s, size, f);
@@ -268,7 +271,8 @@ public final class CustomFont {
             Log.error("Font", "msdf gradient draw failed", t);
         } finally {
             if (prevAlphaTest) GL11.glEnable(GL11.GL_ALPHA_TEST);
-            if (prevProgram != 0) GL20.glUseProgram(prevProgram);
+            // см. drawString: восстановление программы безусловное
+            GL20.glUseProgram(prevProgram);
             if (prevUnit != GL_TEXTURE0) GL13.glActiveTexture(prevUnit);
         }
         return getWidth(s, size, f);
@@ -333,8 +337,6 @@ public final class CustomFont {
         MV.clear(); PR.clear();
         GL11.glGetFloat(GL_MODELVIEW_MATRIX, MV);
         GL11.glGetFloat(GL_PROJECTION_MATRIX, PR);
-        Log.info("Font", "MV=[" + mv(0) + "," + mv(5) + "," + mv(12) + "," + mv(13) + "," + mv(15)
-            + "] PR=[" + pr(0) + "," + pr(5) + "," + pr(12) + "," + pr(13) + "," + pr(15) + "]");
     }
 
     private static void drawQuad(float x, float y, float w, float h) {

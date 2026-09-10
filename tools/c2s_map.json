@@ -1,0 +1,419 @@
+{
+ "IIIIIliliI": {
+  "send": [
+   [
+    "rust:build:subcode",
+    "ru/meproject/rustme/vanilla/network/world/building/SubmitCodeLockPacketData"
+   ],
+   [
+    "rust:build:codecld",
+    "ru/meproject/rustme/vanilla/network/world/building/CodeLockInputClosedPacketData"
+   ]
+  ],
+  "sub": []
+ },
+ "IIiiIIIliI": {
+  "send": [
+   [
+    "rust:inv:toggle",
+    "ru/rustme/network/inventory/ToggleInventoryStatePacketData"
+   ]
+  ],
+  "sub": []
+ },
+ "IiIIliiliI": {
+  "send": [
+   [
+    "rust:inv:fluid",
+    "ru/rustme/network/inventory/FluidTransferPacketData"
+   ],
+   [
+    "rust:inv:fluiddrink",
+    "ru/rustme/network/inventory/FluidDrinkPacketData"
+   ]
+  ],
+  "sub": []
+ },
+ "IiIiIIIliI": {
+  "send": [
+   [
+    "rust:mate:invrej",
+    "ru/rustme/network/team/TeamInvite$RejectedPacketData"
+   ]
+  ],
+  "sub": []
+ },
+ "IiillIiliI": {
+  "send": [
+   [
+    "rust:craft:sync",
+    "ru/rustme/network/craft/CraftQueueActionPacketData"
+   ],
+   [
+    "rust:craft:cancel",
+    "ru/rustme/network/craft/CraftQueueActionPacketData"
+   ],
+   [
+    "rust:craft:tofront",
+    "ru/rustme/network/craft/CraftQueueActionPacketData"
+   ],
+   [
+    "rust:craft:request",
+    "ru/rustme/network/craft/CraftRequestPacketData"
+   ]
+  ],
+  "sub": []
+ },
+ "IiillliliI": {
+  "send": [
+   [
+    "rust:inv:toggle",
+    "ru/rustme/network/inventory/ToggleInventoryStatePacketData"
+   ]
+  ],
+  "sub": []
+ },
+ "IilIiilliI": {
+  "send": [
+   [
+    "rust:vc:talkcng",
+    "ru/meproject/rustme/vanilla/network/voicechat/VoiceChatChangeTalkStatePacketData"
+   ]
+  ],
+  "sub": []
+ },
+ "IilIililiI": {
+  "send": [
+   [
+    "rust:misc:lguse",
+    "ru/meproject/rustme/vanilla/network/misc/hint/PerformLongUseActionPacketData"
+   ],
+   [
+    "rust:misc:shuse",
+    "ru/meproject/rustme/vanilla/network/misc/hint/PerformShortUseActionPacketData"
+   ]
+  ],
+  "sub": []
+ },
+ "IiliiiIliI": {
+  "send": [
+   [
+    "rust:mlrs:launch",
+    "ru/meproject/rustme/vanilla/network/mlrs/LaunchMlrsMissilePacketData"
+   ]
+  ],
+  "sub": []
+ },
+ "IlIIilIliI": {
+  "send": [
+   [
+    "rust:admin:spawn",
+    "ru/rustme/network/admin/AdminSpawnVehiclePacketData"
+   ],
+   [
+    "rust:admin:give",
+    "ru/rustme/network/admin/AdminGiveItemPacketData"
+   ]
+  ],
+  "sub": []
+ },
+ "IlIiliIliI": {
+  "send": [
+   [
+    "rust:craft:skin",
+    "ru/rustme/network/craft/CraftSkinPacketData"
+   ]
+  ],
+  "sub": []
+ },
+ "IliiIIIliI": {
+  "send": [
+   [
+    "rust:team:create",
+    "ru/rustme/network/team/Team$CreatePacketData"
+   ]
+  ],
+  "sub": []
+ },
+ "IlilIliliI": {
+  "send": [
+   [
+    null,
+    "ru/meproject/rustme/vanilla/network/assignfriend/CloseAssignFriendPacketData"
+   ]
+  ],
+  "sub": []
+ },
+ "IlillliliI": {
+  "send": [
+   [
+    "rust:inv:toggle",
+    "ru/rustme/network/inventory/ToggleInventoryStatePacketData"
+   ]
+  ],
+  "sub": []
+ },
+ "IlliiiIliI": {
+  "send": [
+   [
+    "rust:mlrs:select",
+    "ru/meproject/rustme/vanilla/network/common/model/Vec2i"
+   ]
+  ],
+  "sub": []
+ },
+ "IlllIliliI": {
+  "send": [
+   [
+    "rust:inv:toggle",
+    "ru/rustme/network/inventory/ToggleInventoryStatePacketData"
+   ]
+  ],
+  "sub": []
+ },
+ "iIIiIIIliI": {
+  "send": [
+   [
+    "rust:mate:kick",
+    "ru/rustme/network/team/Teammate$KickPacketData"
+   ],
+   [
+    "rust:mate:promote",
+    "ru/rustme/network/team/Teammate$PromotePacketData"
+   ]
+  ],
+  "sub": []
+ },
+ "iIiilliliI": {
+  "send": [
+   [
+    "rust:inv:toggle",
+    "ru/rustme/network/inventory/ToggleInventoryStatePacketData"
+   ]
+  ],
+  "sub": []
+ },
+ "iiIIiiIliI": {
+  "send": [
+   [
+    "rust:radial:close",
+    "ru/meproject/rustme/vanilla/network/radial/CloseRadialMenuPacketData"
+   ],
+   [
+    "rust:radial:click",
+    "ru/meproject/rustme/vanilla/network/radial/RadialMenuItemClickedPacketData"
+   ]
+  ],
+  "sub": []
+ },
+ "iiIiIIIliI": {
+  "send": [
+   [
+    "rust:mate:invac",
+    "ru/rustme/network/team/TeamInvite$AcceptedPacketData"
+   ]
+  ],
+  "sub": []
+ },
+ "iiIilliliI": {
+  "send": [
+   [
+    "rust:inv:toggle",
+    "ru/rustme/network/inventory/ToggleInventoryStatePacketData"
+   ]
+  ],
+  "sub": []
+ },
+ "iiIlliIliI": {
+  "send": [
+   [
+    "rust:donate:lootf",
+    "ru/meproject/rustme/vanilla/network/donate/DonateLootBoxFinishedOpeningPacketData"
+   ],
+   [
+    "rust:donate:oloot",
+    "ru/meproject/rustme/vanilla/network/donate/OpenLootBoxPacketData"
+   ]
+  ],
+  "sub": []
+ },
+ "iiiIIliliI": {
+  "send": [
+   [
+    null,
+    "ru/meproject/rustme/vanilla/network/assignfriend/SubmitAssignFriendPacketData"
+   ],
+   [
+    null,
+    "ru/meproject/rustme/vanilla/network/assignfriend/CloseAssignFriendPacketData"
+   ]
+  ],
+  "sub": []
+ },
+ "ilIIiiIliI": {
+  "send": [
+   [
+    "rust:textfld:cls",
+    "ru/meproject/rustme/vanilla/network/textfield/CloseTextFieldMenuPacketData"
+   ],
+   [
+    "rust:textfld:apply",
+    "ru/meproject/rustme/vanilla/network/textfield/ApplyTextFieldMenuPacketData"
+   ]
+  ],
+  "sub": []
+ },
+ "ilIiIlIliI": {
+  "send": [
+   [
+    "rust:craft:favorite",
+    "ru/rustme/network/craft/CraftFavoritePacketData"
+   ]
+  ],
+  "sub": []
+ },
+ "iliIiiIliI": {
+  "send": [
+   [
+    "rust:mlrs:closed",
+    "ru/meproject/rustme/vanilla/network/mlrs/MlrsScreenClosedPacketData"
+   ]
+  ],
+  "sub": []
+ },
+ "iliiIIIliI": {
+  "send": [
+   [
+    "rust:mate:openmenu",
+    "ru/rustme/network/team/TeamInvite$OpenInviteMenuPacketData"
+   ],
+   [
+    "rust:mate:quit",
+    "ru/rustme/network/team/Teammate$QuitPacketData"
+   ]
+  ],
+  "sub": []
+ },
+ "ililIliliI": {
+  "send": [
+   [
+    "rust:donate:buy",
+    "ru/meproject/rustme/vanilla/network/donate/ConfirmDonatePurchasePacketData"
+   ],
+   [
+    "rust:donate:buy",
+    "ru/meproject/rustme/vanilla/network/donate/ConfirmDonatePurchasePacketData"
+   ]
+  ],
+  "sub": []
+ },
+ "illIlliliI": {
+  "send": [
+   [
+    "rust:inv:toggle",
+    "ru/rustme/network/inventory/ToggleInventoryStatePacketData"
+   ]
+  ],
+  "sub": []
+ },
+ "lIiiilIliI": {
+  "send": [
+   [
+    "rust:inv:action",
+    "ru/rustme/network/inventory/InventoryActionPacketData"
+   ],
+   [
+    "rust:inv:itmact",
+    "ru/rustme/network/inventory/ItemActionPacketData"
+   ],
+   [
+    "rust:inv:split",
+    "ru/rustme/network/inventory/InventorySplitPacketData"
+   ]
+  ],
+  "sub": []
+ },
+ "lIllIliliI": {
+  "send": [
+   [
+    "rust:dmg:respawn",
+    "ru/meproject/rustme/vanilla/network/damage/RespawnPacketData"
+   ],
+   [
+    "rust:dmg:respawn",
+    "ru/meproject/rustme/vanilla/network/damage/RespawnPacketData"
+   ]
+  ],
+  "sub": []
+ },
+ "liIllliliI": {
+  "send": [
+   [
+    "rust:inv:toggle",
+    "ru/rustme/network/inventory/ToggleInventoryStatePacketData"
+   ]
+  ],
+  "sub": []
+ },
+ "liilliIliI": {
+  "send": [
+   [
+    "rust:donate:unpref",
+    "ru/meproject/rustme/vanilla/network/donate/UnselectDonatePrefixPacketData"
+   ]
+  ],
+  "sub": []
+ },
+ "llIllIiliI": {
+  "send": [
+   [
+    "rust:map:deluser",
+    "ru/meproject/rustme/vanilla/network/world/map/DeleteUserMarkerPacketData"
+   ],
+   [
+    "rust:map:crtuser",
+    "ru/meproject/rustme/vanilla/network/world/map/CreateUserMarkerPacketData"
+   ],
+   [
+    "rust:map:crtuser",
+    "ru/meproject/rustme/vanilla/network/world/map/CreateUserMarkerPacketData"
+   ]
+  ],
+  "sub": []
+ },
+ "llIllliliI": {
+  "send": [
+   [
+    "rust:inv:vendbuy",
+    "ru/rustme/network/inventory/VendingBuyPacketData"
+   ]
+  ],
+  "sub": []
+ },
+ "lliliiIliI": {
+  "send": [
+   [
+    "rust:resch:research",
+    "ru/rustme/network/research/ResearchTreeResearchClickPacketData"
+   ],
+   [
+    "rust:resch:closed",
+    "ru/rustme/network/research/ResearchTreeClosedPacketData"
+   ]
+  ],
+  "sub": []
+ },
+ "lllIlliliI": {
+  "send": [
+   [
+    "rust:inv:toggle",
+    "ru/rustme/network/inventory/ToggleInventoryStatePacketData"
+   ],
+   [
+    "rust:player:skin",
+    "ru/rustme/network/player/ApplySkinPacketData"
+   ]
+  ],
+  "sub": []
+ }
+}

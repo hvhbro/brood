@@ -3,6 +3,7 @@ package modules.impl;
 import events.EventBus;
 import events.EventBus.TickEvent;
 import modules.api.Module;
+import modules.api.Modules;
 import rustme.CheatMenuScreen;
 import utils.etc.GameContext;
 import utils.etc.Log;
@@ -51,6 +52,19 @@ public final class MenuModule extends Module {
     /** Экран закрылся (из самого экрана или заменился другим). */
     public static void notifyClosed() {
         menuOpen = false;
+    }
+
+    /**
+     * Полная синхронизация при закрытии экрана (из onGuiClosed, GUI-поток):
+     * menuOpen=false + state модуля Menu=false (без displayGuiScreen —
+     * экран уже закрыт вызывающим).
+     */
+    public static void onScreenClosed() {
+        menuOpen = false;
+        suppressUntilRelease = true;
+        try {
+            Modules.set("Menu", false);
+        } catch (Throwable ignore) {}
     }
 
     /** Не переоткрывать по RSHIFT, пока клавишу не отпустят. */

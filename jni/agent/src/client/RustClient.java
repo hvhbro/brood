@@ -7,6 +7,7 @@ import events.EventBus;
 import events.EventBus.TickEvent;
 import modules.impl.AutoSprint;
 import modules.impl.FullBright;
+import modules.impl.NoRecoil;
 import utils.etc.GameContext;
 import utils.etc.Log;
 
@@ -74,8 +75,16 @@ public class RustClient implements Runnable {
             autoSprint = new AutoSprint();
             new FullBright();
             new modules.impl.Esp();
+            new modules.impl.NoSlow();
+            new modules.impl.NoRecoil();
+            new modules.impl.Svo();
             new modules.impl.Tracers();
             new modules.impl.MenuModule();
+            new modules.impl.AimBot();
+            new modules.impl.InstantUse();
+            new modules.impl.JumpCircle();
+            new modules.impl.Strafe();
+            new modules.impl.SoundEsp();
         } catch (Throwable t) {
             Log.error("Agent", "module init failed", t);
             return;
@@ -107,7 +116,7 @@ public class RustClient implements Runnable {
                     ((modules.api.Module) arr[i]).tickBind(ctx, menuOpen);
                 }
                 long now = System.currentTimeMillis();
-                if (now - lastBeat >= 10000L) {
+                if (now - lastBeat >= 60000L) {
                     lastBeat = now;
                     llog("heartbeat, inWorld=" + inWorld);
                 }

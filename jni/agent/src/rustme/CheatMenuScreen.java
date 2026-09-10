@@ -55,13 +55,14 @@ public class CheatMenuScreen extends IlIlliliiI {
     private static final float WIN_W = 488f;
     private static final float WIN_H = 318f;
 
-    // ===== тема rock (dark) =====
-    private static final int ACCENT = 0xFF906BFF;
-    private static final int ACCENT2 = 0xFF5A4BFF;
-    private static final int BG = 0xFF18151D;      // 24,21,29
-    private static final int FLAT = 0xFF1A171F;    // 26,23,31
-    private static final int OUTLINE = 0xFF3D3647; // 61,54,71
+    // ===== тема rock (dark, палитра Class242 — точные значения) =====
+    private static final int ACCENT = 0xFF906BFF;   // 144,107,255
+    private static final int ACCENT2 = 0xFF4D00FF;  // 77,0,255 (второй градиент палитры)
+    private static final int BG = 0xFF18151D;       // 24,21,29 (окно @a90 → 229)
+    private static final int FLAT = 0xFF1A171F;     // 26,23,31 (ряды/чипы, альфа отдельно)
+    private static final int OUTLINE = 0xFF3D3647;  // 61,54,71 (@a25 → 63.75)
     private static final int WHITE = 0xFFFFFFFF;
+    private static final int BLACK_SOFT = 0xFF050407; // 5,4,7 (самый тёмный, палитра[7])
 
     private static final int CHIP_W = 17;
     private static final float ROW_H = 15f;
@@ -69,6 +70,9 @@ public class CheatMenuScreen extends IlIlliliiI {
     private static final float SEARCH_W = 81f, SEARCH_H = 12f;
     private static final float BIND_W = 72f, BIND_H = 11f;
     private static final float ANIM_MS = 140f;     // rock bind 140L
+    private static final float WIN_R = 12f;        // радиус окна (rock drawClientRect 12)
+    private static final float CHIP_R = 4f;        // радиус чипа
+    private static final float ROW_R = 3f;         // радиус ряда
 
     private static volatile CheatMenuScreen INSTANCE;
 
@@ -89,9 +93,39 @@ public class CheatMenuScreen extends IlIlliliiI {
     private int hudDrag;        // 0=нет, 1=watermark, 2=arraylist
     private float hudOffX, hudOffY;
     private final float[] rectBuf = new float[4];
+    /** Активный слайдер (Module.FloatSetting) при драге. */
+    private Object sliderDrag;
     /** Анимации enabled (Module → float[1] 0..1), как rock sig("enabled"). */
     private final HashMap anims = new HashMap();
+    /** Анимации элементов настроек (ключ → float[]): pill/слайдер/чипы. */
+    private final HashMap settingAnims = new HashMap();
     private long lastFrame;
+    private float lastAnimDt = 16f;
+
+    // ===== скролл настроек (rock scroll-контейнер) =====
+    private float scrollTarget, scrollCur;
+    private float settingsContentH;
+    private long lastScrollFrame;
+    private Module selectedAtLayout;
+    /** Кэш раскладки настроек последнего кадра (для хит-теста кликов). */
+    private final ArrayList settingRows = new ArrayList();
+    private boolean rowsValid;
+
+    /** Строка настроек: элемент + геометрия (content-space, без скролла). */
+    private static final class SRow {
+        final Module.Setting s;
+        final int kind;      // 0=section 1=bool 2=slider 3=mode 4=multi 5=color
+        final float y;
+        float h;
+        final float chipH;
+        final ArrayList cx = new ArrayList(); // чипы/свотчи: x
+        final ArrayList cy = new ArrayList(); // y (content-space)
+        final ArrayList cwd = new ArrayList(); // w
+        final ArrayList cdata = new ArrayList(); // Integer(индекс) / Integer(argb)
+        SRow(Module.Setting s, int kind, float y, float h, float chipH) {
+            this.s = s; this.kind = kind; this.y = y; this.h = h; this.chipH = chipH;
+        }
+    }
 
     private static boolean nameResolved;
     private static String userName = "player";
@@ -164,7 +198,10 @@ public class CheatMenuScreen extends IlIlliliiI {
 
     @Override
     public void iilillIlil() {
-        MenuModule.notifyClosed();
+        // Любое закрытие экрана (ESC/RSHIFT/замена другим GUI/инвентарь) —
+        // приводим state модуля Menu в соответствие экрану. Иначе Menu
+        // остаётся ON и дальнейшие тогглы рассинхронизированы.
+        MenuModule.onScreenClosed();
     }
 
     /** Вызывается из MenuModule.onDisable (главный агентный поток). */
@@ -247,10 +284,80 @@ public class CheatMenuScreen extends IlIlliliiI {
     public void IiIIIlIlil(int mx, int my, float partialTicks) {
         this.mouseX = mx;
         this.mouseY = my;
+        if (sliderDrag != null) {
+            Module.FloatSetting fs = (Module.FloatSetting) sliderDrag;
+            float trW = panelW - 14f;
+            float trX = panelX() + 7f;
+            // mx/my экранные → локальные панели
+            applySlider(fs, mx - curX - (trX - curX), trW);
+        }
+    }
+
+    private void applySlider(Module.FloatSetting fs, float localX, float trW) {
+        float t = localX / trW;
+        if (t < 0f) t = 0f;
+        if (t > 1f) t = 1f;
+        float v = fs.min + (fs.max - fs.min) * t;
+        v = Math.round(v / fs.step) * fs.step;
+        fs.value = Math.max(fs.min, Math.min(fs.max, v));
+    }
+
+    /** Клик по элементу настройки (wx/wy — локальные окна; ay — экранный y строки).
+     *  true = клик поглощён. */
+    private boolean handleSettingClick(SRow r, float wx, float wy, float ay) {
+        if (r.kind == 1) {
+            Module.BoolSetting bs = (Module.BoolSetting) r.s;
+            bs.set(!bs.get());
+            Log.info("Menu", bs.name + " -> " + (bs.get() ? "ON" : "OFF"));
+            return true;
+        }
+        if (r.kind == 2) {
+            float trX = panelX() + 7f;
+            float trW = panelW - 14f;
+            sliderDrag = r.s;
+            applySlider((Module.FloatSetting) r.s, wx - (trX - curX), trW);
+            return true;
+        }
+        if (r.kind == 3 || r.kind == 4 || r.kind == 5) {
+            for (int j = 0; j < r.cdata.size(); j++) {
+                float cxv = ((Float) r.cx.get(j)).floatValue();
+                float cyv = ((Float) r.cy.get(j)).floatValue() - scrollCur;
+                float cwv = ((Float) r.cwd.get(j)).floatValue();
+                if (!inRect(wx, wy, cxv - curX, cyv - curY, cwv, r.chipH)) continue;
+                if (r.kind == 3) {
+                    Module.ModeSetting ms = (Module.ModeSetting) r.s;
+                    int idx = ((Integer) r.cdata.get(j)).intValue();
+                    if (ms.index() != idx) {
+                        ms.value = idx;
+                        Log.info("Menu", ms.name + " -> " + ms.get());
+                    }
+                } else if (r.kind == 4) {
+                    Module.MultiSetting ms = (Module.MultiSetting) r.s;
+                    int idx = ((Integer) r.cdata.get(j)).intValue();
+                    ms.toggle(idx);
+                    Log.info("Menu", ms.name + ": " + ms.options[idx]
+                        + (ms.isSelected(idx) ? " ON" : " OFF"));
+                } else {
+                    Module.ColorSetting cs = (Module.ColorSetting) r.s;
+                    cs.argb = ((Integer) r.cdata.get(j)).intValue();
+                }
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public void IIlillIlil(int mx, int my, int button) {
+        // ЗАХВАТ МЫШИ-БИНДА (MOUSE1..MOUSE8) — до всей остальной обработки
+        if (capturing) {
+            capturing = false;
+            if (selected != null && button >= 0 && button <= 7) {
+                selected.bindKey = button;
+                Log.info("Menu", "bind " + selected.name + " -> " + keyName(button));
+            }
+            return;
+        }
         // ДРАГ HUD (ЛКМ): ватермарка, затем ArrayList
         if (button == 0) {
             utils.render.Watermark.getRect(this.liilIilil, rectBuf);
@@ -264,6 +371,13 @@ public class CheatMenuScreen extends IlIlliliiI {
             if (utils.render.CheatHud.getListW() > 0
                 && inRect(mx, my, rectBuf[0], rectBuf[1], rectBuf[2], Math.max(rectBuf[3], 14f))) {
                 hudDrag = 2;
+                hudOffX = mx - rectBuf[0];
+                hudOffY = my - rectBuf[1];
+                return;
+            }
+            utils.render.KeybindsWidget.getRect(rectBuf);
+            if (inRect(mx, my, rectBuf[0], rectBuf[1], rectBuf[2], Math.max(rectBuf[3], 14f))) {
+                hudDrag = 3;
                 hudOffX = mx - rectBuf[0];
                 hudOffY = my - rectBuf[1];
                 return;
@@ -289,6 +403,20 @@ public class CheatMenuScreen extends IlIlliliiI {
             capturing = true;
             Log.info("Menu", "capturing keybind for " + selected.name);
             return;
+        }
+
+        // элементы настроек выбранного модуля (кэш раскладки последнего кадра)
+        if (selected != null && button == 0 && rowsValid) {
+            float viewTop = headerY() + 22f + 4f;
+            float viewBot = curY + curH - 4f;
+            for (int i = 0; i < settingRows.size(); i++) {
+                SRow r = (SRow) settingRows.get(i);
+                if (!r.s.isVisible()) continue;
+                float ay = r.y - scrollCur;
+                if (ay + r.h <= viewTop || ay >= viewBot) continue; // за клипом скролла
+                if (!inRect(wx, wy, panelX() + 7f - curX, ay - curY, panelW - 14f, r.h)) continue;
+                if (handleSettingClick(r, wx, wy, ay)) return;
+            }
         }
 
         if (selected != null
@@ -336,6 +464,10 @@ public class CheatMenuScreen extends IlIlliliiI {
 
     @Override
     public void lIIlIlIlil(int mx, int my, int button) {
+        if (sliderDrag != null) {
+            sliderDrag = null;
+            return;
+        }
         if (hudDrag != 0) {
             hudDrag = 0;
             return;
@@ -358,6 +490,8 @@ public class CheatMenuScreen extends IlIlliliiI {
             utils.render.Watermark.setPos(mx - hudOffX, my - hudOffY);
         } else if (hudDrag == 2) {
             utils.render.CheatHud.setPos(mx - hudOffX, my - hudOffY);
+        } else if (hudDrag == 3) {
+            utils.render.KeybindsWidget.setPos(mx - hudOffX, my - hudOffY);
         } else if (dragging) {
             curX = mx - dragOffX;
             curY = my - dragOffY;
@@ -393,6 +527,32 @@ public class CheatMenuScreen extends IlIlliliiI {
         if (searchFocused && key == KEY_BACKSPACE && search.length() > 0) {
             search.setLength(search.length() - 1);
             afterSearchChanged();
+        }
+    }
+
+    /**
+     * handleMouseInput форка: вызывается на КАЖДОЕ событие очереди мыши
+     * (while(Mouse.next())). super разбирает клики/драг; колесо он игнорирует —
+     * читаем getEventDWheel напрямую из шима (rustme.IiiliilliI.lillilIIIl —
+     * event-очередь, та же семантика, что у iliiIlIIIl()=getEventButton,
+     * запись подтверждена дизасмом IlllilIIIl(int,bool,int)).
+     */
+    @Override
+    public void lIIillIlil() {
+        try {
+            super.lIIillIlil();
+        } catch (java.io.IOException ignore) {
+            return;
+        }
+        try {
+            int wheel = rustme.IiiliilliI.lillilIIIl();
+            if (wheel != 0 && selected != null
+                && mouseX >= panelX() && mouseX <= curX + curW
+                && mouseY >= curY && mouseY <= curY + curH) {
+                scrollTarget -= wheel * 26f;
+            }
+        } catch (Throwable ignore) {
+            // шим мыши недоступен — скролл просто не работает
         }
     }
 
@@ -478,15 +638,21 @@ public class CheatMenuScreen extends IlIlliliiI {
         }
     }
 
-    // ===== зоны =====
+    // ===== зоны (геометрия Class215 1:1) =====
 
     private static float panelX() { return curX + railW + modW; }
+    // рельса: колонка паддинг 3 (I_method_70a38517(3.0F)), чип по центру
     private static float chipX() { return curX + (railW - CHIP_W) * 0.5f; }
-    private static float chipY(int i) { return curY + topH + 3f + i * (CHIP_W + 3f); }
+    // чипы: колонка категорий идёт ПОСЛЕ logo-блока с gap 9 (rock var8 gap 9)
+    private static float chipY(int i) { return curY + topH + 9f + i * (CHIP_W + 3f); }
+    // settings-чип: gap 9.0 от последнего чипа НЕ используется — rock прижимает
+    // его низом окна с паддингом колонки (bottom 8): y = окно_низ - 8 - 17
     private static float setChipY() { return curY + curH - 8f - CHIP_W; }
+    // мод-колонка: title pad(5,8,1,8), список pad(1,5,5,4) gap 2 → ряд x=rail+5
     private static float rowX() { return curX + railW + 5f; }
     private static float rowW() { return modW - 9f; }
     private static float rowY(int i) { return curY + topH + 1f + i * (ROW_H + ROW_GAP); }
+    // панель: поиск в верхней строке topH, отступ слева 7
     private static float searchX() { return panelX() + 7f; }
     private static float searchY() { return curY + (topH - SEARCH_H) * 0.5f; }
     private static float avatarX() { return curX + curW - 5f - 12f; }
@@ -523,8 +689,15 @@ public class CheatMenuScreen extends IlIlliliiI {
         return (a << 24) | (r << 16) | (g << 8) | b;
     }
 
+    /** Центрирование текста по вертикали: rock использует высоту клетки шрифта
+     *  (fontHeight), не «size*1.2» — иначе текст визуально уползает вниз/вверх. */
     private static float vc(float boxH, float size) {
-        return (boxH - size * 1.2f) * 0.5f;
+        return (boxH - CustomFont.cellHeight(size, CustomFont.HUD_FONT)) * 0.5f;
+    }
+
+    /** То же для medium-шрифта. */
+    private static float vcM(float boxH, float size) {
+        return (boxH - CustomFont.cellHeight(size, CustomFont.WM_FONT)) * 0.5f;
     }
 
     /** Заголовки/акценты — sf_semibold (rock II-шрифт). */
@@ -568,6 +741,7 @@ public class CheatMenuScreen extends IlIlliliiI {
         long now = System.currentTimeMillis();
         float dt = lastFrame == 0L ? 16f : Math.min(64f, now - lastFrame);
         lastFrame = now;
+        lastAnimDt = dt;
         float step = dt / ANIM_MS;
         ArrayList list = visibleModules();
         for (int i = 0; i < list.size(); i++) {
@@ -594,14 +768,14 @@ public class CheatMenuScreen extends IlIlliliiI {
         if (GlassGrab.available(ctx)) {
             GlassGrab.drawWindowGlass(ctx, curX, curY, curW, curH, 12f);
         } else {
-            int bg = withAlpha(BG, 242);
+            int bg = withAlpha(BG, 229);
             RenderUtil.drawRoundedRectShader(ctx, curX, curY, curW, curH, 12f, bg, bg, bg, bg, 0.25f);
         }
         int sep = withAlpha(OUTLINE, 89);
         RenderUtil.drawRoundedBorder(ctx, curX, curY, curW, curH, 12f, 0.5f, sep);
         RenderUtil.drawRect(ctx, curX + railW - 1f, curY + 1f, 1f, curH - 2f, sep);
         RenderUtil.drawRect(ctx, curX + railW + modW - 1f, curY + 1f, 1f, curH - 2f, sep);
-        RenderUtil.drawRect(ctx, curX + railW + modW + 1f, curY + topH - 1f,
+        RenderUtil.drawRect(ctx, curX + railW + modW, curY + topH - 1f,
             panelW - 1f, 1f, sep);
     }
 
@@ -615,7 +789,7 @@ public class CheatMenuScreen extends IlIlliliiI {
             float cx = chipX(), cy = chipY(i);
             float sel = chipAnim[i];
             boolean hov = inRect(mouseX, mouseY, cx, cy, CHIP_W, CHIP_W);
-            int bg = mix(withAlpha(BG, 102), ACCENT, hov ? 0.025f : 0f);
+            int bg = mix(withAlpha(FLAT, 102), ACCENT, hov ? 0.025f : 0f);
             RenderUtil.drawRoundedRectShader(ctx, cx, cy, CHIP_W, CHIP_W, 4f, bg, bg, bg, bg, 0.25f);
             int ic = mix(WHITE, ACCENT, sel);
             ic = withAlpha(ic & 0xFFFFFF, (int) (255f * (0.62f + 0.38f * sel)));
@@ -625,7 +799,7 @@ public class CheatMenuScreen extends IlIlliliiI {
         // чип настроек (низ рельсы)
         float sx = chipX(), sy = setChipY();
         boolean hov = inRect(mouseX, mouseY, sx, sy, CHIP_W, CHIP_W);
-        int bg = mix(withAlpha(BG, 102), ACCENT, hov ? 0.025f : 0f);
+        int bg = mix(withAlpha(FLAT, 102), ACCENT, hov ? 0.025f : 0f);
         RenderUtil.drawRoundedRectShader(ctx, sx, sy, CHIP_W, CHIP_W, 4f, bg, bg, bg, bg, 0.25f);
         int ic = withAlpha(WHITE & 0xFFFFFF, (int) (255f * (0.58f + 0.35f * (hov ? 1f : 0f))));
         IconRender.drawIcon("setting", sx + 4f, sy + 4f, 9f, ic);
@@ -642,7 +816,9 @@ public class CheatMenuScreen extends IlIlliliiI {
         } else {
             title = "";
         }
-        text(title, curX + railW + 8f, curY + vc(topH, 9f), WHITE, 9f);
+        // title: pad(top5,left8,bottom1,right8), текст центрируется в оставшейся полосе
+        float tBoxY = curY + 5f, tBoxH = topH - 5f - 1f;
+        text(title, curX + railW + 8f, tBoxY + (tBoxH - CustomFont.cellHeight(9f, CustomFont.HUD_FONT)) * 0.5f, WHITE, 9f);
 
         ArrayList list = visibleModules();
         for (int i = 0; i < list.size(); i++) {
@@ -653,10 +829,10 @@ public class CheatMenuScreen extends IlIlliliiI {
             boolean hov = inRect(mouseX, mouseY, rx, ry, rowW(), ROW_H);
             int bg = mix(withAlpha(FLAT, 102), withAlpha(ACCENT, 102),
                 0.08f * en + 0.018f * sel + (hov ? 0.025f : 0f));
-            RenderUtil.drawRoundedRectShader(ctx, rx, ry, rowW(), ROW_H, 3f, bg, bg, bg, bg, 0.25f);
+            RenderUtil.drawRoundedRectShader(ctx, rx, ry, rowW(), ROW_H, ROW_R, bg, bg, bg, bg, 0.25f);
             int tc = mix(WHITE, ACCENT, 0.5f * en);
             tc = withAlpha(tc & 0xFFFFFF, (int) (255f * (0.6f + 0.3f * en + 0.1f * sel)));
-            textM(m.name, rx + 5f, ry + vc(ROW_H, 7f), tc, 7f);
+            textM(m.name, rx + 5f, ry + vcM(ROW_H, 7f), tc, 7f);
         }
     }
 
@@ -668,16 +844,16 @@ public class CheatMenuScreen extends IlIlliliiI {
         // --- верхняя строка: поиск + ник/LEEK + аватар ---
         float sx = searchX(), sy = searchY();
         boolean sHov = inRect(mouseX, mouseY, sx, sy, SEARCH_W, SEARCH_H);
-        int fieldBg = mix(withAlpha(BG, 173), WHITE, 0.035f + (sHov || searchFocused ? 0.035f : 0f));
+        int fieldBg = mix(withAlpha(FLAT, 173), WHITE, 0.035f + (sHov || searchFocused ? 0.035f : 0f));
         RenderUtil.drawRoundedRectShader(ctx, sx, sy, SEARCH_W, SEARCH_H, 3f, fieldBg, fieldBg, fieldBg, fieldBg, 0.25f);
         IconRender.drawIcon("search", sx + 3.5f, sy + 3.5f, 5f, withAlpha(WHITE, 122));
         String q = search.toString();
         float textX = sx + 11f;
         int fieldTc = withAlpha(WHITE, 184);
         if (q.length() == 0 && !searchFocused) {
-            textM("Search", textX, sy + vc(SEARCH_H, fsSmall), fieldTc, fsSmall);
+            textM("Search", textX, sy + vcM(SEARCH_H, fsSmall), fieldTc, fsSmall);
         } else {
-            textM(q, textX, sy + vc(SEARCH_H, fsSmall), fieldTc, fsSmall);
+            textM(q, textX, sy + vcM(SEARCH_H, fsSmall), fieldTc, fsSmall);
             if (searchFocused && (System.currentTimeMillis() / 400L) % 2L == 0L) {
                 RenderUtil.drawRect(ctx, textX + textWM(q, fsSmall) + 1f,
                     sy + SEARCH_H * 0.25f, 1f, SEARCH_H * 0.5f, fieldTc);
@@ -685,8 +861,11 @@ public class CheatMenuScreen extends IlIlliliiI {
         }
 
         float avX = avatarX(), avY = curY + (topH - 12f) * 0.5f;
+        // rock: круглый БЕЛЫЙ аватар-заглушка (drawRoundedTexture, radius=w/2,
+        // цвет палитры[5]=white); рисуем белую кружку с мягким краем
+        int avc = withAlpha(WHITE & 0xFFFFFF, 216);
         RenderUtil.drawRoundedRectShader(ctx, avX, avY, 12f, 12f, 6f,
-            ACCENT, ACCENT2, ACCENT, ACCENT2, 0.3f);
+            avc, avc, avc, avc, 0.3f);
         String un = userName();
         float unW = textW(un, fsSmall);
         text(un, avX - 3f - unW, sy - 1f, WHITE, fsSmall);
@@ -703,11 +882,11 @@ public class CheatMenuScreen extends IlIlliliiI {
             text("Settings " + selName(), panelX() + 7f, hy - 1f, WHITE, 12f);
 
             boolean kHov = inRect(mouseX, mouseY, bindX(), bindY(), BIND_W, BIND_H);
-            int kbg = mix(withAlpha(BG, 173), WHITE, capturing ? 0.07f : 0.035f + (kHov ? 0.035f : 0f));
+            int kbg = mix(withAlpha(FLAT, 173), WHITE, capturing ? 0.07f : 0.035f + (kHov ? 0.035f : 0f));
             RenderUtil.drawRoundedRectShader(ctx, bindX(), bindY(), BIND_W, BIND_H, 3f, kbg, kbg, kbg, kbg, 0.25f);
             String bl = capturing ? "Press a key..."
                 : (selected.bindKey != -1 ? "Key: " + keyName(selected.bindKey) : "Set bind");
-            textM(bl, bindX() + 4f, bindY() + vc(BIND_H, fsSmall), capturing ? WHITE : fieldTc, fsSmall);
+            textM(bl, bindX() + 4f, bindY() + vcM(BIND_H, fsSmall), capturing ? WHITE : fieldTc, fsSmall);
             if (capturing && (System.currentTimeMillis() / 400L) % 2L == 0L) {
                 RenderUtil.drawRect(ctx, bindX() + 4f + textWM(bl, fsSmall) + 1f,
                     bindY() + BIND_H * 0.25f, 1f, BIND_H * 0.5f, WHITE);
@@ -722,13 +901,51 @@ public class CheatMenuScreen extends IlIlliliiI {
             textM("Toggle: " + keyName(toggleKey), panelX() + 7f, hy + 16f,
                 withAlpha(WHITE, 148), fsRow);
 
-            // контент: настроек у модулей нет — rock-плейсхолдер
+            // контент: элементы настроек модуля + плавный скролл
+            // (rock scroll-контейнер: клип scissor'ом, ease ~90мс к target)
             float contentY = hy + 22f + 2f;
-            float contentH = curY + curH - 2f - contentY;
-            String ns = "No settings";
-            float nsW = textWM(ns, 9f);
-            textM(ns, panelX() + (panelW - nsW) * 0.5f,
-                contentY + Math.max(6f, contentH * 0.5f - 6f), withAlpha(WHITE, 140), 9f);
+            java.util.List sts = selected.settings();
+            if (selected != selectedAtLayout) {
+                selectedAtLayout = selected;
+                scrollTarget = 0f;
+                scrollCur = 0f;
+            }
+            float viewTop = contentY + 2f;
+            float viewBot = curY + curH - 4f;
+            float viewH = Math.max(20f, viewBot - viewTop);
+            settingRows.clear();
+            settingsContentH = layoutSettings(sts, settingRows, viewTop);
+            rowsValid = true;
+            float maxScroll = Math.max(0f, settingsContentH - viewH);
+            if (scrollTarget > maxScroll) scrollTarget = maxScroll;
+            if (scrollTarget < 0f) scrollTarget = 0f;
+            long nowMs = System.currentTimeMillis();
+            float sdt = lastScrollFrame == 0L ? 16f : Math.min(64f, nowMs - lastScrollFrame);
+            lastScrollFrame = nowMs;
+            scrollCur += (scrollTarget - scrollCur) * (1f - (float) Math.exp(-sdt / 90f));
+            if (Math.abs(scrollTarget - scrollCur) < 0.05f) scrollCur = scrollTarget;
+
+            boolean anyVisible = false;
+            for (int i = 0; i < settingRows.size(); i++) {
+                if (((SRow) settingRows.get(i)).s.isVisible()) { anyVisible = true; break; }
+            }
+            if (!anyVisible) {
+                float contentH = viewBot - contentY;
+                String ns = "No settings";
+                float nsW = textWM(ns, 9f);
+                textM(ns, panelX() + (panelW - nsW) * 0.5f,
+                    contentY + Math.max(6f, contentH * 0.5f - 6f), withAlpha(WHITE, 140), 9f);
+            } else {
+                scissorOn(ctx, panelX() + 1f, viewTop - 2f, panelW - 2f, viewH + 4f);
+                for (int i = 0; i < settingRows.size(); i++) {
+                    SRow r = (SRow) settingRows.get(i);
+                    if (!r.s.isVisible()) continue;
+                    float ay = r.y - scrollCur;
+                    if (ay + r.h < viewTop - 24f || ay > viewBot + 24f) continue;
+                    drawSetting(ctx, r, ay, lastAnimDt);
+                }
+                scissorOff();
+            }
         } else {
             float contentY = hy + 4f;
             CustomFont.drawGradientString("RUSTME", panelX() + 7f, contentY,
@@ -741,10 +958,238 @@ public class CheatMenuScreen extends IlIlliliiI {
         }
     }
 
+    // ===== элементы настроек (rock createComponent 1:1) =====
+
+    /** Раскладка списка настроек; возвращает высоту контента. */
+    private float layoutSettings(java.util.List sts, ArrayList out, float top) {
+        float y = top;
+        float sx = panelX() + 7f;
+        float sw = panelW - 14f;
+        float chipH = CustomFont.cellHeight(7f, CustomFont.WM_FONT) + 6f;
+        for (int i = 0; i < sts.size(); i++) {
+            Object o = sts.get(i);
+            if (o instanceof Module.SectionSetting) {
+                float h = 10f + CustomFont.cellHeight(9f, CustomFont.HUD_FONT) + 5f;
+                out.add(new SRow((Module.Setting) o, 0, y, h, 0f));
+                y += h;
+            } else if (o instanceof Module.BoolSetting) {
+                out.add(new SRow((Module.Setting) o, 1, y, 18f, 0f));
+                y += 18f;
+            } else if (o instanceof Module.ModeSetting) {
+                Module.ModeSetting ms = (Module.ModeSetting) o;
+                SRow r = new SRow(ms, 3, y, 0f, chipH);
+                float bottom = wrapChips(r, ms.modes, null, sx, sw, y + 15f, chipH, 2f);
+                r.h = bottom + 5f - y;
+                out.add(r);
+                y += r.h;
+            } else if (o instanceof Module.MultiSetting) {
+                Module.MultiSetting ms = (Module.MultiSetting) o;
+                SRow r = new SRow(ms, 4, y, 0f, chipH);
+                float bottom = wrapChips(r, ms.options, null, sx, sw, y + 15f, chipH, 2f);
+                r.h = bottom + 5f - y;
+                out.add(r);
+                y += r.h;
+            } else if (o instanceof Module.ColorSetting) {
+                SRow r = new SRow((Module.Setting) o, 5, y, 0f, chipH);
+                float bottom = wrapChips(r, null, Module.COLOR_SWATCHES, sx, sw, y + 15f, chipH, 2f);
+                r.h = bottom + 5f - y;
+                out.add(r);
+                y += r.h;
+            } else if (o instanceof Module.FloatSetting) {
+                out.add(new SRow((Module.Setting) o, 2, y, 32f, 0f));
+                y += 32f;
+            }
+        }
+        return y - top;
+    }
+
+    /** Чипы с переносом по ширине колонки; возвращает нижний край (content-space). */
+    private float wrapChips(SRow r, String[] names, int[] argbs,
+                            float sx, float sw, float y0, float chipH, float gap) {
+        float x = sx, y = y0;
+        int n = names != null ? names.length : argbs.length;
+        for (int j = 0; j < n; j++) {
+            float w = names != null ? textWM(names[j], 7f) + 6f : chipH;
+            if (x > sx && x + w > sx + sw + 0.01f) {
+                x = sx;
+                y += chipH + gap;
+            }
+            r.cx.add(Float.valueOf(x));
+            r.cy.add(Float.valueOf(y));
+            r.cwd.add(Float.valueOf(w));
+            r.cdata.add(Integer.valueOf(names != null ? j : argbs[j]));
+            x += w + gap;
+        }
+        return y + chipH;
+    }
+
+    private void drawSetting(GameContext ctx, SRow r, float ay, float dt) {
+        float sx = panelX() + 7f;
+        float sw = panelW - 14f;
+        if (r.kind == 0) {
+            // SectionSetting: pad(10,?,5), текст 9px sf_semibold white a0.9
+            text(r.s.name, sx + 6f, ay + 10f, withAlpha(WHITE, 230), 9f);
+            return;
+        }
+        if (r.kind == 1) {
+            // чекбокс: ряд h18, текст 8px (alpha 0.75+0.25 hover), pill 13x8 r3.5,
+            // knob 5x5 inset 1.5, ON=акцент OFF=bg@a102, анимация 300мс
+            Module.BoolSetting bs = (Module.BoolSetting) r.s;
+            boolean hov = inRect(mouseX, mouseY, sx, ay, sw, 18f);
+            float[] a = animOf(r.s);
+            stepLin(a, 0, bs.get() ? 1f : 0f, dt / 300f);
+            text(r.s.name, sx + 5f, ay + vc(18f, 8f), withAlpha(WHITE, hov ? 255 : 191), 8f);
+            float px = sx + sw - 5f - 13f;
+            float py = ay + 5f;
+            int fill = mix(withAlpha(BG, 102), ACCENT, a[0]);
+            RenderUtil.drawRoundedRectShader(ctx, px, py, 13f, 8f, 3.5f, fill, fill, fill, fill, 0.25f);
+            float kx = px + 1.5f + 5f * a[0];
+            RenderUtil.drawRoundedRectShader(ctx, kx, py + 1.5f, 5f, 5f, 2f,
+                WHITE, WHITE, WHITE, WHITE, 0.25f);
+            return;
+        }
+        if (r.kind == 2) {
+            // слайдер: label 8px + значение справа 7px, track h3, knob r3
+            // (кольцо акцент 1.5px + тёмный центр), value-анимация 300мс
+            Module.FloatSetting fs = (Module.FloatSetting) r.s;
+            boolean hov = inRect(mouseX, mouseY, sx, ay, sw, r.h);
+            float[] a = animOf(r.s);
+            a[0] += (fs.value - a[0]) * clamp01(dt / 300f);
+            text(r.s.name, sx + 6f, ay + 3f, withAlpha(WHITE, 190), 8f);
+            String vs = fmtVal(fs);
+            textM(vs, sx + sw - 6f - textWM(vs, 7f), ay + 4f, withAlpha(WHITE, 210), 7f);
+            float ty = ay + 20f;
+            float t = clamp01(fs.max > fs.min ? (a[0] - fs.min) / (fs.max - fs.min) : 0f);
+            int track = withAlpha(BG, 102);
+            RenderUtil.drawRoundedRectShader(ctx, sx, ty, sw, 3f, 1.5f, track, track, track, track, 0.25f);
+            if (t > 0.003f) {
+                int fa = withAlpha(ACCENT & 0xFFFFFF, hov ? 191 : 255);
+                RenderUtil.drawRoundedRectShader(ctx, sx, ty, Math.max(3f, sw * t), 3f, 1.5f,
+                    fa, fa, fa, fa, 0.25f);
+            }
+            float kx = sx + sw * t;
+            float ky = ty + 1.5f;
+            RenderUtil.drawRoundedBorder(ctx, kx - 3f, ky - 3f, 6f, 6f, 3f, 1.5f, ACCENT);
+            RenderUtil.drawRoundedRectShader(ctx, kx - 1.5f, ky - 1.5f, 3f, 3f, 1.5f,
+                track, track, track, track, 0.25f);
+            return;
+        }
+        if (r.kind == 3 || r.kind == 4) {
+            // чипы режимов/мультибокса: текст 7px, pad 3, r2.5, gap 2,
+            // bg: dark→акцент 0.2*hover; выбран: акцент→dark 0.2*hover; анимация 220мс
+            Module.ModeSetting mode = r.kind == 3 ? (Module.ModeSetting) r.s : null;
+            Module.MultiSetting multi = r.kind == 4 ? (Module.MultiSetting) r.s : null;
+            if (multi != null) {
+                String cnt = multi.count() + " of " + multi.options.length;
+                textM(cnt, sx + sw - 6f - textWM(cnt, 7f), ay + 3f, withAlpha(WHITE, 133), 7f);
+            }
+            text(r.s.name, sx + 6f, ay + 2f, withAlpha(WHITE, 190), 8f);
+            float[] aa = animArr(r.s, r.cdata.size());
+            int dark = withAlpha(BG, 102);
+            for (int j = 0; j < r.cdata.size(); j++) {
+                float cxv = ((Float) r.cx.get(j)).floatValue();
+                float cyv = ((Float) r.cy.get(j)).floatValue() - scrollCur;
+                float cwv = ((Float) r.cwd.get(j)).floatValue();
+                boolean sel = mode != null ? mode.index() == j : multi.isSelected(j);
+                boolean hov = inRect(mouseX, mouseY, cxv, cyv, cwv, r.chipH);
+                stepLin(aa, j, sel ? 1f : 0f, dt / 220f);
+                int base = mix(dark, ACCENT, 0.2f * (hov ? 1f : 0f));
+                int bg = base;
+                if (sel) {
+                    int selBg = mix(ACCENT, dark, 0.2f * (hov ? 1f : 0f));
+                    bg = mix(base, selBg, aa[j]);
+                }
+                RenderUtil.drawRoundedRectShader(ctx, cxv, cyv, cwv, r.chipH, 2.5f,
+                    bg, bg, bg, bg, 0.25f);
+                String label = mode != null ? mode.modes[j] : multi.options[j];
+                int ta = (int) (255f * (0.75f + 0.25f * aa[j]));
+                textM(label, cxv + 3f, cyv + 3f, withAlpha(WHITE, ta), 7f);
+            }
+            return;
+        }
+        if (r.kind == 5) {
+            // цвет: ряд свотчей 11x11 r3, выбранный — кольцо акцента
+            text(r.s.name, sx + 6f, ay + 2f, withAlpha(WHITE, 190), 8f);
+            Module.ColorSetting cs = (Module.ColorSetting) r.s;
+            for (int j = 0; j < r.cdata.size(); j++) {
+                int argb = ((Integer) r.cdata.get(j)).intValue();
+                float cxv = ((Float) r.cx.get(j)).floatValue() + 3f;
+                float cyv = ((Float) r.cy.get(j)).floatValue() + 3f - scrollCur;
+                boolean sel = cs.argb == argb;
+                boolean hov = inRect(mouseX, mouseY, cxv - 3f, cyv - 3f, r.chipH, r.chipH);
+                RenderUtil.drawRoundedRectShader(ctx, cxv, cyv, 11f, 11f, 3f,
+                    argb, argb, argb, argb, 0.25f);
+                if (sel) {
+                    RenderUtil.drawRoundedBorder(ctx, cxv - 1.5f, cyv - 1.5f, 14f, 14f,
+                        4.5f, 1f, hov ? WHITE : ACCENT);
+                }
+            }
+        }
+    }
+
+    private float[] animOf(Object key) {
+        float[] a = (float[]) settingAnims.get(key);
+        if (a == null) {
+            a = new float[1];
+            settingAnims.put(key, a);
+        }
+        return a;
+    }
+
+    private float[] animArr(Object key, int n) {
+        float[] a = (float[]) settingAnims.get(key);
+        if (a == null || a.length != n) {
+            a = new float[n];
+            settingAnims.put(key, a);
+        }
+        return a;
+    }
+
+    /** Линейный шаг 0..1 за фиксированную длительность (rock sig-анимации). */
+    private static void stepLin(float[] a, int idx, float target, float k) {
+        if (k > 1f) k = 1f;
+        if (k < 0f) k = 0f;
+        if (a[idx] < target) a[idx] = Math.min(target, a[idx] + k);
+        else if (a[idx] > target) a[idx] = Math.max(target, a[idx] - k);
+    }
+
+    private static float clamp01(float f) {
+        return f < 0f ? 0f : (f > 1f ? 1f : f);
+    }
+
+    private static String fmtVal(Module.FloatSetting fs) {
+        if (fs.step >= 1f) return String.valueOf(Math.round(fs.value));
+        if (fs.step >= 0.1f) return String.format("%.1f", Float.valueOf(fs.value));
+        return String.format("%.2f", Float.valueOf(fs.value));
+    }
+
+    /** Scissor в физических пикселях (RenderUtil.scissorStart считает scale
+     *  грубо — тут guiScale точный). */
+    private static void scissorOn(GameContext ctx, float x, float y, float w, float h) {
+        int scale = Math.max(1, Math.round(GuiScale.get(ctx)));
+        int fbH = ctx.fbHeight > 0 ? ctx.fbHeight : (int) (ctx.scaledHeight * scale);
+        org.lwjglx.opengl.GL11.glEnable(org.lwjglx.opengl.GL11.GL_SCISSOR_TEST);
+        org.lwjglx.opengl.GL11.glScissor(Math.round(x * scale),
+            Math.round(fbH - (y + h) * scale),
+            Math.max(1, Math.round(w * scale)), Math.max(1, Math.round(h * scale)));
+    }
+
+    private static void scissorOff() {
+        org.lwjglx.opengl.GL11.glDisable(org.lwjglx.opengl.GL11.GL_SCISSOR_TEST);
+    }
+
     // ===== утилиты =====
 
     private static String keyName(int key) {
-        if (key <= 0) return "-";
+        if (key < 0) return "-";
+        if (key == 0) return "MOUSE1";
+        if (key == 1) return "MOUSE2";
+        if (key == 2) return "MOUSE3";
+        if (key == 3) return "MOUSE4";
+        if (key == 4) return "MOUSE5";
+        if (key == 5) return "MOUSE6";
+        if (key == 6) return "MOUSE7";
+        if (key == 7) return "MOUSE8";
         if (key == 32) return "SPACE";
         if (key == 256) return "ESC";
         if (key == 258) return "TAB";
