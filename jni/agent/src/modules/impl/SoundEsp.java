@@ -89,7 +89,7 @@ public final class SoundEsp extends Module {
      * проверок. display=="" → скрыть.
      */
     private static final String[][] CATEGORY_CHAIN = {
-        {"step", ""},
+        {"step.", "Footsteps"}, {"footstep", "Footsteps"},
         {"timed_explosive", "C4"}, {"timed.explosive", "C4"}, {"timedexplosive", "C4"},
         {"explosive_rifle", "Explosive Ammo"}, {"explosive.rifle", "Explosive Ammo"},
         {"explosive_bullet", "Explosive Ammo"}, {"explosive.bullet", "Explosive Ammo"},
@@ -101,17 +101,21 @@ public final class SoundEsp extends Module {
         {"f1_grenade", "F1 Grenade"}, {"f1.grenade", "F1 Grenade"}, {"f1", "F1 Grenade"},
         {"he_grenade", "HE Grenade"}, {"he.grenade", "HE Grenade"},
         {"supply_drop", "Airdrop"}, {"supplydrop", "Airdrop"}, {"airdrop", "Airdrop"},
+        {"supply.drop", "Airdrop"},
         {"helicopter", "Helicopter"}, {"patrol_helicopter", "Helicopter"},
         {"patrolhelicopter", "Helicopter"}, {"minicopter", "Helicopter"},
         {"copter", "Helicopter"}, {"heli", "Helicopter"},
         {"bradley", "Bradley"},
         {"autoturret", "Auto Turret"}, {"auto.turret", "Auto Turret"},
         {"flame_turret", "Flame Turret"}, {"flameturret", "Flame Turret"},
+        {"flame.turret", "Flame Turret"},
         {"samsite", "SAM Site"},
         {"landmine", "Landmine"}, {"mine.detonate", "Landmine"},
         {"cargo_ship", "Cargo Ship"}, {"cargoship", "Cargo Ship"},
+        {"cargo.ship", "Cargo Ship"},
         {"chinook", "Chinook"}, {"ch47", "Chinook"},
         {"scrap_transport", "Scrap Heli"}, {"scraptransport", "Scrap Heli"},
+        {"scrap.transport", "Scrap Heli"},
         {"assault.rifle", "Assault Rifle"},
         {"bolt_action", "Bolt Action"}, {"bolt.action", "Bolt Action"},
         {"semi.rifle", "Semi Rifle"}, {"semiauto_rifle", "Semi Rifle"},
@@ -142,7 +146,7 @@ public final class SoundEsp extends Module {
             @Override
             public void onEvent(TickEvent event) {
                 try {
-                    if (isState()) tick(event);
+                    tick(event); // поллим всегда: Hitmarker ждёт hit-звуки даже при выключенном SoundEsp
                 } catch (Throwable t) {
                     Log.error("SoundEsp", "tick exception", t);
                 }
@@ -161,7 +165,13 @@ public final class SoundEsp extends Module {
         if (ctx.mc == null || ctx.gs == null) return;
         if (!sndResolved) resolveSoundChain(ctx);
         if (!sndResolved) return;
+        // при выключенном SoundEsp поллим реже (50мс) — 1мс-рефлексия не нужна,
+        // но hit-звуки для Hitmarker должны ловиться всегда
+        long nowMs = System.currentTimeMillis();
+        if (!isState() && nowMs - lastPoll < 50L) return;
+        lastPoll = nowMs;
         pollSounds(ctx);
+        if (!isState()) return;
         long now = System.currentTimeMillis();
         long life = (long) (stLife.value * 1000f);
         synchronized (marks) {
@@ -170,6 +180,42 @@ public final class SoundEsp extends Module {
                 SoundMark m = it.next();
                 if (now - m.lastSeen > life) it.remove();
             }
+        }
+    }
+
+    // ===== Hit-звуки (серверное подтверждение попаданий → Hitmarker) =====
+
+    /** Слушатель hurt/hit-звуков (позиция = жертва). */
+    public interface HitSoundListener {
+        void onHitSound(String name, float x, float y, float z);
+    }
+
+    private static final ArrayList<HitSoundListener> hitListeners = new ArrayList<HitSoundListener>();
+    private long lastPoll;
+
+    public static void addHitSoundListener(HitSoundListener l) {
+        synchronized (hitListeners) {
+            if (!hitListeners.contains(l)) hitListeners.add(l);
+        }
+    }
+
+    /** Потенциальные звуки попадания (форк ванильный по звукам: hurt/flesh). */
+    private static boolean isHitSound(String name) {
+        if (name == null) return false;
+        String s = name.toLowerCase();
+        return s.contains("hurt") || s.contains("hit") || s.contains("flesh") || s.contains("damage");
+    }
+
+    private void notifyHitListeners(String name, float x, float y, float z) {
+        ArrayList<HitSoundListener> copy;
+        synchronized (hitListeners) {
+            if (hitListeners.isEmpty()) return;
+            copy = new ArrayList<HitSoundListener>(hitListeners);
+        }
+        for (int i = 0; i < copy.size(); i++) {
+            try {
+                copy.get(i).onHitSound(name, x, y, z);
+            } catch (Throwable ignore) {}
         }
     }
 
@@ -245,8 +291,11 @@ public final class SoundEsp extends Module {
                 float y = (Float) sms[2].invoke(isound);
                 float z = (Float) sms[3].invoke(isound);
                 if (name == null) continue;
-                diagParse("sound: " + name + " @(" + (int) x + "," + (int) y + "," + (int) z + ")");
-                classifyAndAdd(name, x, y, z);
+                if (isHitSound(name)) {
+                    notifyHitListeners(name, x, y, z);
+                    diagParse("hit-sound: " + name + " @(" + (int) x + "," + (int) y + "," + (int) z + ")");
+                }
+                if (isState()) classifyAndAdd(name, x, y, z);
             }
         } catch (Throwable t) {
             long now = System.currentTimeMillis();
@@ -295,7 +344,7 @@ public final class SoundEsp extends Module {
     /** Отображение по имени звука; null = скрыть. */
     public static String classify(String sound) {
         if (sound == null) return null;
-        String s = sound.toLowerCase();
+        String s = sound.toLowerCase().replace('_', '.');
         for (int i = 0; i < CATEGORY_CHAIN.length; i++) {
             if (s.contains(CATEGORY_CHAIN[i][0])) {
                 return CATEGORY_CHAIN[i][1].isEmpty() ? null : CATEGORY_CHAIN[i][1];

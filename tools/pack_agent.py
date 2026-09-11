@@ -18,7 +18,14 @@ sys.path.insert(0, os.path.join(TOOLS, '..'))
 import decryptor as D  # noqa: E402
 from encode_protected import encode_protected  # noqa: E402
 
-DEFAULT_JAVAC = r"C:\Users\Admin\AppData\Local\Programs\Eclipse Adoptium\jdk-8.0.504.1-hotspot\bin\javac.exe"
+# JDK8-пути по приоритету: наш Program Files (реально установлен) → старый
+# AppData-путь (остался от чужой машины/переезда JDK). Первый существующий.
+DEFAULT_JAVAC_CANDIDATES = [
+    r"C:\Program Files\Eclipse Adoptium\jdk-8.0.502.7-hotspot\bin\javac.exe",
+    r"C:\Users\Admin\AppData\Local\Programs\Eclipse Adoptium\jdk-8.0.504.1-hotspot\bin\javac.exe",
+]
+DEFAULT_JAVAC = next((c for c in DEFAULT_JAVAC_CANDIDATES if os.path.isfile(c)),
+                     DEFAULT_JAVAC_CANDIDATES[0])
 DEFAULT_ENTRY = "client/RustClient"
 
 
@@ -113,6 +120,7 @@ def collect_sources(src_dir):
 ASSETS_TO_EMBED = [
     # (имя ассета, относительный путь от src/assets)
     ("putin", "putin.png"),
+    ("arrow", "arrow.png"),
 ]
 
 
@@ -147,6 +155,7 @@ def generate_asset_data(src_dir):
         "    public static byte[] get(String name) {\n"
         "        String[] chunks;\n"
         '        if ("putin".equals(name)) chunks = PUTIN;\n'
+        '        else if ("arrow".equals(name)) chunks = ARROW;\n'
         "        else return null;\n"
         "        StringBuilder sb = new StringBuilder();\n"
         "        for (int i = 0; i < chunks.length; i++) sb.append(chunks[i]);\n"

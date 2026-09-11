@@ -57,7 +57,7 @@ public final class Watermark {
     public static float getTotalW(int scaledWidth) {
         try {
             MsdfFont f = CustomFont.WM_FONT;
-            float textW = CustomFont.getWidth("ваня стирается", TEXT_SIZE, f);
+            float textW = CustomFont.getWidth("Brood", TEXT_SIZE, f);
             float leftW = CustomFont.getWidth(leftLabel(), TEXT_SIZE, f);
             float flowW = PAD_LEFT + textW + PAD_RIGHT;
             float barsW = (PING_THRESHOLDS.length - 1) * BAR_STEP + BAR_W;
@@ -83,7 +83,7 @@ public final class Watermark {
     /** Остров + пинг-бары (без лейбла) — центрируемая часть. */
     private static float coreGroupW() {
         MsdfFont f = CustomFont.WM_FONT;
-        float textW = CustomFont.getWidth("ваня стирается", TEXT_SIZE, f);
+        float textW = CustomFont.getWidth("Brood", TEXT_SIZE, f);
         float flowW = PAD_LEFT + textW + PAD_RIGHT;
         float barsW = (PING_THRESHOLDS.length - 1) * BAR_STEP + BAR_W;
         return flowW + BARS_GAP + barsW;
@@ -280,7 +280,7 @@ public final class Watermark {
     public static float render(int scaledWidth) {
         try {
             MsdfFont f = CustomFont.WM_FONT;
-            String text = "ваня стирается";
+            String text = "Brood";
             float textW = CustomFont.getWidth(text, TEXT_SIZE, f);
             if (textW <= 0f) return 0f;
 

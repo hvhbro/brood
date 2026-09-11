@@ -168,7 +168,20 @@ public final class JumpCircle extends Module {
             double camY = (tp ? ly : lpy + (ly - lpy) * partialTicks) + me.iliilIiilI();
             double camZ = tp ? lz : lpz + (lz - lpz) * partialTicks;
             float yaw = me.IIiIillIII(), pitch = me.iilIIIlIII();
-            double yr = Math.toRadians(yaw), pr = Math.toRadians(pitch);
+            // третье лицо: позиция камеры со смещением+клипом, front — разворот
+            int tpv = Esp.thirdPersonView();
+            float effYaw = yaw, effPitch = pitch;
+            if (tpv == 2) {
+                effYaw = yaw + 180f;
+                effPitch = -pitch;
+            }
+            if (tpv != 0) {
+                double[] tpCam = Esp.thirdPersonCam(ctx, camX, camY, camZ, yaw, pitch, tpv);
+                camX = tpCam[0];
+                camY = tpCam[1];
+                camZ = tpCam[2];
+            }
+            double yr = Math.toRadians(effYaw), pr = Math.toRadians(effPitch);
             // базисы камеры: F — взгляд (MC: pitch+ = вниз), R = cross(F, up), U = cross(R, F)
             float fx = (float) (-Math.sin(yr) * Math.cos(pr));
             float fy = (float) (-Math.sin(pr));

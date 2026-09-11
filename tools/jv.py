@@ -9,7 +9,15 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DUMP = os.path.join(ROOT, 'dump', 'classes', 'minecraft')
 MAP = os.path.join(ROOT, 'tools', 'disk_name_map.json')
 TMP = os.path.join(ROOT, 'tools', 'javap_tmp7')
-JAVAP = r'C:\Users\Admin\AppData\Local\Programs\Eclipse Adoptium\jdk-8.0.504.1-hotspot\bin\javap.exe'
+# javap: сначала прежний путь, потом установленные JDK (путь 8.0.504 пропал —
+# JDK обновлялся; берём первый существующий, иначе 'javap' из PATH)
+JAVAP_CANDIDATES = [
+    r'C:\Users\Admin\AppData\Local\Programs\Eclipse Adoptium\jdk-8.0.504.1-hotspot\bin\javap.exe',
+    r'C:\Program Files\Eclipse Adoptium\jdk-8.0.502.7-hotspot\bin\javap.exe',
+    r'javap',
+]
+JAVAP = next((c for c in JAVAP_CANDIDATES
+              if c == 'javap' or os.path.exists(c)), 'javap')
 
 def main():
     args = sys.argv[1:]

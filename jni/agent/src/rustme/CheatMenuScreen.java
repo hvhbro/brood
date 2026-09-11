@@ -3,6 +3,7 @@ package rustme;
 import modules.api.Module;
 import modules.api.Modules;
 import modules.impl.MenuModule;
+import utils.etc.ConfigManager;
 import utils.etc.GameContext;
 import utils.etc.Log;
 import utils.render.CustomFont;
@@ -88,6 +89,38 @@ public class CheatMenuScreen extends IlIlliliiI {
     private Module selected;
     private boolean searchFocused;
     private final StringBuilder search = new StringBuilder();
+
+    // ===== вкладка CONFIG (чип настроек внизу рельсы) =====
+    private boolean configMode;
+    private final StringBuilder cfgName = new StringBuilder();
+    private boolean cfgNameFocused;
+    private final ArrayList cfgList = new ArrayList(); // имена файлов без .rm
+    private int cfgSel = -1;
+    private String cfgMsg;
+    private boolean cfgMsgOk;
+    private long cfgMsgAt;
+
+    // ===== вкладка Friends (поле ввода + список, см. drawFriendsPanel) =====
+    private final StringBuilder friendName = new StringBuilder();
+    private boolean friendFocused;
+    private String friendMsg;
+    private boolean friendMsgOk;
+    private long friendMsgAt;
+    private int friendSel = -1;
+
+    // ===== ColorPicker (rockstar iIii_Class12, 143x136) =====
+    private static final int PICKER_W = 143;
+    private static final int PICKER_H = 136;
+    private boolean pickerOpen;
+    private Module.ColorSetting pickerTarget;
+    private String pickerTitle = "";
+    private float pickerX, pickerY;
+    private boolean pickerDrag;
+    private float pickerDragOffX, pickerDragOffY;
+    private boolean svDrag, hueDrag;
+    private float pHue, pSat, pBright; // HSV; s растёт вправо, v убывает вниз
+    private final ArrayList pickerPresets = new ArrayList(); // Integer(argb)
+    private boolean presetsLoaded;
     private boolean capturing;
     private int mouseX, mouseY;
     private int hudDrag;        // 0=нет, 1=watermark, 2=arraylist
@@ -104,7 +137,9 @@ public class CheatMenuScreen extends IlIlliliiI {
 
     // ===== скролл настроек (rock scroll-контейнер) =====
     private float scrollTarget, scrollCur;
-    private float settingsContentH;
+    // ===== скролл списка модулей (вкладки переполняются — Visuals и др.) =====
+    private float modScrollTarget, modScrollCur;
+    private int modScrollCat = -2;    private float settingsContentH;
     private long lastScrollFrame;
     private Module selectedAtLayout;
     /** Кэш раскладки настроек последнего кадра (для хит-теста кликов). */
@@ -130,8 +165,13 @@ public class CheatMenuScreen extends IlIlliliiI {
     private static boolean nameResolved;
     private static String userName = "player";
     private static boolean scaleApplied;
-    /** GLFW-коды: 256 ESC, 259 BACKSPACE. */
+    /** Память меню между открытиями: вкладка, выбранный модуль, скролл настроек. */
+    private static int lastCatIndex = -1;
+    private static String lastSelectedName;
+    private static final HashMap<String, float[]> scrollStore = new HashMap<String, float[]>();
+    /** GLFW-коды: 256 ESC, 257 ENTER, 259 BACKSPACE. */
     private static final int KEY_ESC = 256;
+    private static final int KEY_ENTER = 257;
     private static final int KEY_BACKSPACE = 259;
 
     public CheatMenuScreen() {
@@ -202,6 +242,18 @@ public class CheatMenuScreen extends IlIlliliiI {
         // приводим state модуля Menu в соответствие экрану. Иначе Menu
         // остаётся ON и дальнейшие тогглы рассинхронизированы.
         MenuModule.onScreenClosed();
+        // пикер цвета — попап экрана, закрываем вместе с меню
+        pickerOpen = false;
+        pickerTarget = null;
+        svDrag = false;
+        hueDrag = false;
+        pickerDrag = false;
+        // память меню: вкладка + модуль + скролл настроек
+        lastCatIndex = catIndex;
+        lastSelectedName = selected != null ? selected.name : null;
+        if (selected != null) {
+            scrollStore.put(selected.name, new float[]{scrollTarget, scrollCur});
+        }
     }
 
     /** Вызывается из MenuModule.onDisable (главный агентный поток). */
@@ -234,7 +286,20 @@ public class CheatMenuScreen extends IlIlliliiI {
             }
             lst.add(m);
         }
-        if (catIndex >= categories.size()) catIndex = 0;
+        if (lastCatIndex >= 0 && lastCatIndex < categories.size()) {
+            catIndex = lastCatIndex;   // восстановление последней вкладки
+        } else {
+            catIndex = 0;
+        }
+        if (selected == null && lastSelectedName != null) {
+            for (int i = 0; i < Modules.all().size(); i++) {
+                Module m = (Module) Modules.all().get(i);
+                if (m.name.equals(lastSelectedName)) {
+                    selected = m;
+                    break;
+                }
+            }
+        }
         if (selected == null && catIndex < catModules.size()) {
             ArrayList lst = (ArrayList) catModules.get(catIndex);
             if (!lst.isEmpty()) selected = (Module) lst.get(0);
@@ -267,6 +332,8 @@ public class CheatMenuScreen extends IlIlliliiI {
     /** Поиск: автоперевыбор первого результата (rock I_method_9b0fe91a). */
     private void afterSearchChanged() {
         String q = search.toString().trim();
+        modScrollTarget = 0f;
+        modScrollCur = 0f;
         if (q.length() == 0) return;
         ArrayList list = visibleModules();
         if (list.isEmpty()) {
@@ -284,6 +351,18 @@ public class CheatMenuScreen extends IlIlliliiI {
     public void IiIIIlIlil(int mx, int my, float partialTicks) {
         this.mouseX = mx;
         this.mouseY = my;
+        if (pickerOpen && (svDrag || hueDrag || pickerDrag)) {
+            if (svDrag) {
+                updateSv(mx - pickerX, my - pickerY);
+            } else if (hueDrag) {
+                updateHue(my - pickerY);
+            } else {
+                pickerX = mx - pickerDragOffX;
+                pickerY = my - pickerDragOffY;
+                clampPicker();
+            }
+            return;
+        }
         if (sliderDrag != null) {
             Module.FloatSetting fs = (Module.FloatSetting) sliderDrag;
             float trW = panelW - 14f;
@@ -309,6 +388,10 @@ public class CheatMenuScreen extends IlIlliliiI {
             Module.BoolSetting bs = (Module.BoolSetting) r.s;
             bs.set(!bs.get());
             Log.info("Menu", bs.name + " -> " + (bs.get() ? "ON" : "OFF"));
+            return true;
+        }
+        if (r.kind == 6) {
+            openPicker((Module.ColorSetting) r.s);
             return true;
         }
         if (r.kind == 2) {
@@ -358,6 +441,58 @@ public class CheatMenuScreen extends IlIlliliiI {
             }
             return;
         }
+
+        // ===== ColorPicker: попап выше всего меню =====
+        if (pickerOpen) {
+            float px = mx - pickerX;
+            float py = my - pickerY;
+            boolean inside = px >= 0f && py >= 0f && px <= PICKER_W && py <= PICKER_H;
+            if (button == 1) { // RMB: удалить пресет, иначе — ничего
+                int hit = presetHit(px, py);
+                if (hit >= 0 && hit < pickerPresets.size()) {
+                    pickerPresets.remove(hit);
+                    savePickerPresets();
+                }
+                return;
+            }
+            if (!inside) { // клик мимо окна — закрыть (как у rock)
+                closePicker();
+                return;
+            }
+            if (inRect(px, py, PICKER_W - 15f, 5f, 10f, 10f)) { // xmark
+                closePicker();
+                return;
+            }
+            if (inRect(px, py, 6f, 20f, 114f, 70f)) { // SV-бокс
+                svDrag = true;
+                updateSv(px, py);
+                return;
+            }
+            if (inRect(px, py, PICKER_W - 18f, 20f, 12f, 70f)) { // hue-бар
+                hueDrag = true;
+                updateHue(py);
+                return;
+            }
+            int hit = presetHit(px, py);
+            if (hit >= 0) {
+                if (hit < pickerPresets.size()) { // применить пресет
+                    float[] hsv = rgbToHsv(((Integer) pickerPresets.get(hit)).intValue());
+                    pHue = hsv[0];
+                    pSat = hsv[1];
+                    pBright = hsv[2];
+                    applyPicker();
+                } else if (pickerPresets.size() < 10) { // кнопка "+"
+                    pickerPresets.add(Integer.valueOf(hsvToRgb(pHue, pSat, pBright)));
+                    savePickerPresets();
+                }
+                return;
+            }
+            // тянуть окно за любую свободную точку (rock: draggable)
+            pickerDrag = true;
+            pickerDragOffX = mx - pickerX;
+            pickerDragOffY = my - pickerY;
+            return;
+        }
         // ДРАГ HUD (ЛКМ): ватермарка, затем ArrayList
         if (button == 0) {
             utils.render.Watermark.getRect(this.liilIilil, rectBuf);
@@ -389,6 +524,9 @@ public class CheatMenuScreen extends IlIlliliiI {
 
         if (inRect(wx, wy, searchX() - curX, searchY() - curY, SEARCH_W, SEARCH_H)) {
             searchFocused = true;
+            cfgNameFocused = false;
+            friendFocused = false;
+            configMode = false;
             return;
         }
         searchFocused = false;
@@ -403,6 +541,52 @@ public class CheatMenuScreen extends IlIlliliiI {
             capturing = true;
             Log.info("Menu", "capturing keybind for " + selected.name);
             return;
+        }
+
+        // ===== вкладка CONFIG: клики по элементам панели =====
+        if (configMode && selected == null && wy > topH && wx >= railW + modW) {
+            if (button != 0) return;
+            float csw = panelW - 14f;
+            float csx = panelX() + 7f;
+            if (inRect(wx, wy, csx - curX, cfgFieldY() - curY, csw, 12f)) {
+                cfgNameFocused = true;
+                searchFocused = false;
+                friendFocused = false;
+                return;
+            }
+            cfgNameFocused = false;
+            float w3 = (csw - 8f) / 3f;
+            for (int b = 0; b < 3; b++) {
+                if (inRect(wx, wy, csx + b * (w3 + 4f) - curX, cfgBtnY() - curY, w3, 13f)) {
+                    cfgAct(b); // 0=Save 1=Load 2=Delete
+                    return;
+                }
+            }
+            float w2 = (csw - 4f) / 2f;
+            for (int b = 0; b < 2; b++) {
+                if (inRect(wx, wy, csx + b * (w2 + 4f) - curX, cfgBtn2Y() - curY, w2, 13f)) {
+                    cfgAct(3 + b); // 3=Reload 4=Open dir
+                    return;
+                }
+            }
+            float viewBot = curY + curH - 6f;
+            for (int i = 0; i < cfgList.size(); i++) {
+                float ry = cfgListY() + i * 15f - scrollCur;
+                if (ry + 13f <= cfgListY() || ry >= viewBot) continue;
+                if (inRect(wx, wy, csx - curX, ry - curY, csw, 13f)) {
+                    cfgSel = i;
+                    cfgName.setLength(0);
+                    cfgName.append((String) cfgList.get(i));
+                    Log.info("Config", "selected: " + cfgList.get(i));
+                    return;
+                }
+            }
+            return;
+        }
+
+        // вкладка Friends: поле ввода + список (свой хит-тест; мимо — дальше)
+        if (selected != null && "Friends".equals(selected.name) && button == 0) {
+            if (friendsClick(wx, wy)) return;
         }
 
         // элементы настроек выбранного модуля (кэш раскладки последнего кадра)
@@ -425,15 +609,23 @@ public class CheatMenuScreen extends IlIlliliiI {
             return;
         }
 
-        // чип настроек (низ рельсы) — home: сброс поиска и выбора
+        // чип настроек (низ рельсы) — вкладка CONFIG; повторный клик — выход
         if (inRect(wx, wy, chipX() - curX, setChipY() - curY, CHIP_W, CHIP_W)) {
             search.setLength(0);
             selected = null;
+            if (configMode) {
+                configMode = false;
+                scrollTarget = 0f;
+                scrollCur = 0f;
+            } else {
+                enterConfigMode();
+            }
             return;
         }
 
         for (int i = 0; i < categories.size(); i++) {
             if (inRect(wx, wy, chipX() - curX, chipY(i) - curY, CHIP_W, CHIP_W)) {
+                configMode = false;
                 catIndex = i;
                 search.setLength(0);
                 ArrayList lst = (ArrayList) catModules.get(i);
@@ -443,13 +635,18 @@ public class CheatMenuScreen extends IlIlliliiI {
         }
 
         ArrayList list = visibleModules();
+        float modTop = curY + topH + 1f;
+        float modBot = curY + curH - 4f;
         for (int i = 0; i < list.size(); i++) {
-            if (inRect(wx, wy, rowX() - curX, rowY(i) - curY, rowW(), ROW_H)) {
+            float ry = rowY(i) - modScrollCur;
+            if (ry + ROW_H <= modTop || ry >= modBot) continue; // вне клипа скролла
+            if (inRect(wx, wy, rowX() - curX, ry - curY, rowW(), ROW_H)) {
                 Module m = (Module) list.get(i);
                 if (button == 0) {
                     m.toggle();
                 } else if (button == 1) {
                     selected = m;
+                    configMode = false;
                 }
                 return;
             }
@@ -464,6 +661,11 @@ public class CheatMenuScreen extends IlIlliliiI {
 
     @Override
     public void lIIlIlIlil(int mx, int my, int button) {
+        if (pickerOpen) {
+            svDrag = false;
+            hueDrag = false;
+            pickerDrag = false;
+        }
         if (sliderDrag != null) {
             sliderDrag = null;
             return;
@@ -528,6 +730,27 @@ public class CheatMenuScreen extends IlIlliliiI {
             search.setLength(search.length() - 1);
             afterSearchChanged();
         }
+        if (cfgNameFocused && key == KEY_BACKSPACE && cfgName.length() > 0) {
+            cfgName.setLength(cfgName.length() - 1);
+        }
+        if (friendFocused && key == KEY_BACKSPACE && friendName.length() > 0) {
+            friendName.setLength(friendName.length() - 1);
+        }
+        if (friendFocused && key == KEY_ENTER) {
+            friendAddFromInput();
+        }
+        // Friends: Ctrl+C — скопировать выбранного, Ctrl+V — вставить из буфера
+        if (selected != null && "Friends".equals(selected.name)) {
+            boolean ctrl = ctrlDown();
+            if (ctrl && key == 67) { // C
+                friendCopySelected();
+                return;
+            }
+            if (ctrl && key == 86) { // V
+                friendPaste();
+                return;
+            }
+        }
     }
 
     /**
@@ -546,10 +769,16 @@ public class CheatMenuScreen extends IlIlliliiI {
         }
         try {
             int wheel = rustme.IiiliilliI.lillilIIIl();
-            if (wheel != 0 && selected != null
-                && mouseX >= panelX() && mouseX <= curX + curW
-                && mouseY >= curY && mouseY <= curY + curH) {
-                scrollTarget -= wheel * 26f;
+            if (wheel != 0) {
+                // колонка модулей — свой скролл
+                if (mouseX >= rowX() && mouseX <= rowX() + rowW()
+                    && mouseY >= curY && mouseY <= curY + curH) {
+                    modScrollTarget -= wheel * 26f;
+                } else if ((selected != null || (configMode && selected == null))
+                    && mouseX >= panelX() && mouseX <= curX + curW
+                    && mouseY >= curY && mouseY <= curY + curH) {
+                    scrollTarget -= wheel * 26f;
+                }
             }
         } catch (Throwable ignore) {
             // шим мыши недоступен — скролл просто не работает
@@ -585,6 +814,23 @@ public class CheatMenuScreen extends IlIlliliiI {
 
     @Override
     public void liIIIlIliI(char c) {
+        if (cfgNameFocused) {
+            if (c >= 32 && c < 127 && cfgName.length() < 24) {
+                if (Character.isLetterOrDigit(c) || c == ' ' || c == '-' || c == '_' || c == '.') {
+                    cfgName.append(c);
+                }
+            }
+            return;
+        }
+        if (friendFocused) {
+            if (ctrlDown()) return; // Ctrl+C/V обрабатываются в iIIliIlliI
+            if (friendName.length() < 16) {
+                boolean ok = (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
+                    || (c >= '0' && c <= '9') || c == '_';
+                if (ok) friendName.append(c);
+            }
+            return;
+        }
         if (!searchFocused) return;
         if (c >= 32 && c < 127 && search.length() < 24) {
             search.append(c);
@@ -632,6 +878,7 @@ public class CheatMenuScreen extends IlIlliliiI {
             if (anim) {
                 RenderUtil.scaleEnd();
             }
+            s.drawPicker(ctx); // попап поверх всего (без scale-анимации)
             org.lwjglx.opengl.GL11.glColor4f(1f, 1f, 1f, 1f);
         } catch (Throwable tt) {
             Log.error("Menu", "renderOverlay failed", tt);
@@ -796,12 +1043,14 @@ public class CheatMenuScreen extends IlIlliliiI {
             IconRender.drawIcon(categoryIcon(cat), cx + 4f, cy + 4f, 9f, ic);
         }
 
-        // чип настроек (низ рельсы)
+        // чип настроек (низ рельсы) — вкладка CONFIG
         float sx = chipX(), sy = setChipY();
         boolean hov = inRect(mouseX, mouseY, sx, sy, CHIP_W, CHIP_W);
-        int bg = mix(withAlpha(FLAT, 102), ACCENT, hov ? 0.025f : 0f);
+        int bg = mix(withAlpha(FLAT, 102), ACCENT, (hov || configMode) ? 0.025f : 0f);
         RenderUtil.drawRoundedRectShader(ctx, sx, sy, CHIP_W, CHIP_W, 4f, bg, bg, bg, bg, 0.25f);
-        int ic = withAlpha(WHITE & 0xFFFFFF, (int) (255f * (0.58f + 0.35f * (hov ? 1f : 0f))));
+        int ic = configMode
+            ? withAlpha(ACCENT & 0xFFFFFF, 255)
+            : withAlpha(WHITE & 0xFFFFFF, (int) (255f * (0.58f + 0.35f * (hov ? 1f : 0f))));
         IconRender.drawIcon("setting", sx + 4f, sy + 4f, 9f, ic);
     }
 
@@ -821,11 +1070,29 @@ public class CheatMenuScreen extends IlIlliliiI {
         text(title, curX + railW + 8f, tBoxY + (tBoxH - CustomFont.cellHeight(9f, CustomFont.HUD_FONT)) * 0.5f, WHITE, 9f);
 
         ArrayList list = visibleModules();
+        // сброс скролла списка при смене вкладки
+        if (modScrollCat != catIndex) {
+            modScrollCat = catIndex;
+            modScrollTarget = 0f;
+            modScrollCur = 0f;
+        }
+        float modTop = curY + topH + 1f;
+        float modBot = curY + curH - 4f;
+        float modViewH = Math.max(20f, modBot - modTop);
+        float modMaxScroll = Math.max(0f, list.size() * (ROW_H + ROW_GAP) - modViewH);
+        if (modScrollTarget > modMaxScroll) modScrollTarget = modMaxScroll;
+        if (modScrollTarget < 0f) modScrollTarget = 0f;
+        long modNow = System.currentTimeMillis();
+        float modDt = lastScrollFrame == 0L ? 16f : Math.min(64f, modNow - lastScrollFrame);
+        modScrollCur += (modScrollTarget - modScrollCur) * (1f - (float) Math.exp(-modDt / 90f));
+        if (Math.abs(modScrollTarget - modScrollCur) < 0.05f) modScrollCur = modScrollTarget;
+        scissorOn(ctx, rowX(), modTop - 2f, rowW(), modViewH + 4f);
         for (int i = 0; i < list.size(); i++) {
             Module m = (Module) list.get(i);
             float en = animFor(m)[0];
             float sel = m == selected ? 1f : 0f;
-            float rx = rowX(), ry = rowY(i);
+            float rx = rowX(), ry = rowY(i) - modScrollCur;
+            if (ry + ROW_H < modTop - 24f || ry > modBot + 24f) continue;
             boolean hov = inRect(mouseX, mouseY, rx, ry, rowW(), ROW_H);
             int bg = mix(withAlpha(FLAT, 102), withAlpha(ACCENT, 102),
                 0.08f * en + 0.018f * sel + (hov ? 0.025f : 0f));
@@ -834,6 +1101,7 @@ public class CheatMenuScreen extends IlIlliliiI {
             tc = withAlpha(tc & 0xFFFFFF, (int) (255f * (0.6f + 0.3f * en + 0.1f * sel)));
             textM(m.name, rx + 5f, ry + vcM(ROW_H, 7f), tc, 7f);
         }
+        scissorOff();
     }
 
     // ===== панель (rock II_method_18597158) =====
@@ -903,15 +1171,35 @@ public class CheatMenuScreen extends IlIlliliiI {
 
             // контент: элементы настроек модуля + плавный скролл
             // (rock scroll-контейнер: клип scissor'ом, ease ~90мс к target)
+            boolean friendsTab = "Friends".equals(selected.name);
             float contentY = hy + 22f + 2f;
             java.util.List sts = selected.settings();
             if (selected != selectedAtLayout) {
+                // скролл настроек сохраняем по модулю и восстанавливаем
+                if (selectedAtLayout != null) {
+                    scrollStore.put(selectedAtLayout.name,
+                        new float[]{scrollTarget, scrollCur});
+                }
                 selectedAtLayout = selected;
-                scrollTarget = 0f;
-                scrollCur = 0f;
+                float[] mem = selected != null
+                    ? (float[]) scrollStore.get(selected.name) : null;
+                if (mem != null) {
+                    scrollTarget = mem[0];
+                    scrollCur = mem[1];
+                } else {
+                    scrollTarget = 0f;
+                    scrollCur = 0f;
+                }
             }
             float viewTop = contentY + 2f;
             float viewBot = curY + curH - 4f;
+            if (friendsTab) {
+                // свой контент вкладки (скролл/клип внутри, rowsValid гасим —
+                // иначе кэш чужих настроек ловил бы фантомные клики)
+                settingRows.clear();
+                rowsValid = false;
+                drawFriendsPanel(ctx, hy, viewTop, viewBot);
+            } else {
             float viewH = Math.max(20f, viewBot - viewTop);
             settingRows.clear();
             settingsContentH = layoutSettings(sts, settingRows, viewTop);
@@ -945,7 +1233,10 @@ public class CheatMenuScreen extends IlIlliliiI {
                     drawSetting(ctx, r, ay, lastAnimDt);
                 }
                 scissorOff();
+                }
             }
+        } else if (configMode) {
+            drawConfigPanel(ctx);
         } else {
             float contentY = hy + 4f;
             CustomFont.drawGradientString("RUSTME", panelX() + 7f, contentY,
@@ -958,9 +1249,619 @@ public class CheatMenuScreen extends IlIlliliiI {
         }
     }
 
+    // ===== вкладка CONFIG (конфиг-система, utils.etc.ConfigManager) =====
+
+    // геометрия панели конфигов (единственный источник — и для рендера, и для кликов)
+    private static float cfgFieldY() { return headerY() + 30f; }
+    private static float cfgBtnY()  { return cfgFieldY() + 18f; }
+    private static float cfgBtn2Y() { return cfgBtnY() + 18f; }
+    private static float cfgListY() { return cfgBtn2Y() + 19f; }
+
+    private void enterConfigMode() {
+        configMode = true;
+        search.setLength(0);
+        searchFocused = false;
+        selected = null;
+        selectedAtLayout = null; // конфиг-скролл не должен перезаписать память настроек модуля
+        cfgNameFocused = false;
+        refreshConfigs();
+    }
+
+    private void refreshConfigs() {
+        cfgList.clear();
+        cfgSel = -1;
+        ConfigManager.ensureDir();
+        String[] names = ConfigManager.list();
+        for (int i = 0; i < names.length; i++) cfgList.add(names[i]);
+        scrollTarget = 0f;
+        scrollCur = 0f;
+    }
+
+    private void cfgMsg(String s, boolean ok) {
+        cfgMsg = s;
+        cfgMsgOk = ok;
+        cfgMsgAt = System.currentTimeMillis();
+    }
+
+    private void cfgSelectByName(String name) {
+        cfgSel = -1;
+        for (int i = 0; i < cfgList.size(); i++) {
+            if (name.equals(cfgList.get(i))) {
+                cfgSel = i;
+                return;
+            }
+        }
+    }
+
+    /** Кнопки: 0=Save 1=Load 2=Delete 3=Reload 4=Open dir. GUI-поток —
+     *  setState модулей безопасен (как обычный клик по ряду). */
+    private void cfgAct(int id) {
+        try {
+            if (id == 3) { // Reload — перечитать папку
+                refreshConfigs();
+                cfgMsg("found " + cfgList.size() + " config(s)", true);
+                Log.info("Config", "reload: " + cfgList.size() + " file(s)");
+                return;
+            }
+            if (id == 4) { // Open dir
+                ConfigManager.openDir();
+                cfgMsg("folder opened", true);
+                return;
+            }
+            String name = cfgName.toString().trim();
+            if (name.length() == 0 && cfgSel >= 0 && cfgSel < cfgList.size()) {
+                name = (String) cfgList.get(cfgSel);
+            }
+            name = ConfigManager.sanitize(name);
+            if (id == 0) { // Save
+                ConfigManager.save(name);
+                refreshConfigs();
+                cfgSelectByName(name);
+                cfgName.setLength(0);
+                cfgName.append(name);
+                cfgMsg("saved: " + name, true);
+            } else if (id == 1) { // Load
+                int n = ConfigManager.load(name);
+                refreshConfigs();
+                cfgSelectByName(name);
+                cfgName.setLength(0);
+                cfgName.append(name);
+                cfgMsg("loaded: " + name + " (" + n + " modules)", true);
+            } else if (id == 2) { // Delete
+                boolean ok = ConfigManager.delete(name);
+                refreshConfigs();
+                cfgMsg(ok ? "deleted: " + name : "not found: " + name, ok);
+            }
+        } catch (Throwable t) {
+            Log.error("Config", "cfgAct " + id + " failed", t);
+            String m = t.toString();
+            if (m.length() > 44) m = m.substring(0, 44);
+            cfgMsg(m, false);
+        }
+    }
+
+    private void drawBtn(GameContext ctx, String label, float x, float y, float w, float h) {
+        boolean hov = inRect(mouseX, mouseY, x, y, w, h);
+        int bg = mix(withAlpha(FLAT, 173), ACCENT, hov ? 0.10f : 0f);
+        RenderUtil.drawRoundedRectShader(ctx, x, y, w, h, 3f, bg, bg, bg, bg, 0.25f);
+        float tw = textWM(label, 6f);
+        textM(label, x + (w - tw) * 0.5f, y + vcM(h, 6f), withAlpha(WHITE, hov ? 255 : 190), 6f);
+    }
+
+    private void drawConfigPanel(GameContext ctx) {
+        float fsSmall = 6f;
+        float sx = panelX() + 7f;
+        float sw = panelW - 14f;
+        float cy = headerY() + 4f;
+        long now = System.currentTimeMillis();
+
+        CustomFont.drawGradientString("CONFIG", sx, cy, ACCENT, ACCENT2, 11f, CustomFont.HUD_FONT);
+
+        // статус: свежее сообщение операции либо счётчик файлов
+        if (cfgMsg != null && now - cfgMsgAt < 4000L) {
+            int mc = cfgMsgOk ? 0xFF4DFF6E : 0xFFFF5040;
+            textM(cfgMsg, sx, cy + 17f, withAlpha(mc & 0xFFFFFF, 235), fsSmall);
+        } else {
+            textM(cfgList.size() + " configs in folder", sx, cy + 17f,
+                withAlpha(WHITE, 120), fsSmall);
+        }
+
+        // поле имени конфига
+        float fy = cfgFieldY();
+        boolean fHov = inRect(mouseX, mouseY, sx, fy, sw, 12f);
+        int fieldBg = mix(withAlpha(FLAT, 173), WHITE, 0.035f + (fHov || cfgNameFocused ? 0.035f : 0f));
+        RenderUtil.drawRoundedRectShader(ctx, sx, fy, sw, 12f, 3f, fieldBg, fieldBg, fieldBg, fieldBg, 0.25f);
+        String nm = cfgName.toString();
+        int fieldTc = withAlpha(WHITE, 184);
+        if (nm.length() == 0 && !cfgNameFocused) {
+            textM("Config name", sx + 4f, fy + vcM(12f, fsSmall), withAlpha(WHITE, 110), fsSmall);
+        } else {
+            textM(nm, sx + 4f, fy + vcM(12f, fsSmall), fieldTc, fsSmall);
+            if (cfgNameFocused && (now / 400L) % 2L == 0L) {
+                RenderUtil.drawRect(ctx, sx + 4f + textWM(nm, fsSmall) + 1f,
+                    fy + 3f, 1f, 6f, fieldTc);
+            }
+        }
+
+        // кнопки: ряд 1 Save/Load/Delete, ряд 2 Reload/Open dir
+        float w3 = (sw - 8f) / 3f;
+        drawBtn(ctx, "Save", sx, cfgBtnY(), w3, 13f);
+        drawBtn(ctx, "Load", sx + w3 + 4f, cfgBtnY(), w3, 13f);
+        drawBtn(ctx, "Delete", sx + 2f * (w3 + 4f), cfgBtnY(), w3, 13f);
+        float w2 = (sw - 4f) / 2f;
+        drawBtn(ctx, "Reload", sx, cfgBtn2Y(), w2, 13f);
+        drawBtn(ctx, "Open dir", sx + w2 + 4f, cfgBtn2Y(), w2, 13f);
+
+        // список конфигов (скролл через scrollTarget/scrollCur — они свободны)
+        float ly = cfgListY();
+        float viewBot = curY + curH - 6f;
+        float maxScroll = Math.max(0f, cfgList.size() * 15f - (viewBot - ly));
+        if (scrollTarget > maxScroll) scrollTarget = maxScroll;
+        if (scrollTarget < 0f) scrollTarget = 0f;
+        float sdt = lastScrollFrame == 0L ? 16f : Math.min(64f, now - lastScrollFrame);
+        lastScrollFrame = now;
+        scrollCur += (scrollTarget - scrollCur) * (1f - (float) Math.exp(-sdt / 90f));
+        if (Math.abs(scrollTarget - scrollCur) < 0.05f) scrollCur = scrollTarget;
+
+        if (cfgList.isEmpty()) {
+            String ns = "No configs";
+            float nsW = textWM(ns, 9f);
+            textM(ns, panelX() + (panelW - nsW) * 0.5f,
+                ly + Math.max(6f, (viewBot - ly) * 0.5f - 6f), withAlpha(WHITE, 140), 9f);
+            return;
+        }
+        scissorOn(ctx, panelX() + 1f, ly - 2f, panelW - 2f, (viewBot - ly) + 4f);
+        for (int i = 0; i < cfgList.size(); i++) {
+            float ry = ly + i * 15f - scrollCur;
+            if (ry + 13f < ly - 20f || ry > viewBot + 20f) continue;
+            String n = (String) cfgList.get(i);
+            boolean hov = inRect(mouseX, mouseY, sx, ry, sw, 13f);
+            boolean sel = i == cfgSel;
+            int bg = sel ? mix(withAlpha(ACCENT, 150), withAlpha(BG, 102), 0.2f)
+                : mix(withAlpha(FLAT, 102), withAlpha(ACCENT, 102), hov ? 0.15f : 0f);
+            RenderUtil.drawRoundedRectShader(ctx, sx, ry, sw, 13f, 3f, bg, bg, bg, bg, 0.25f);
+            textM(n, sx + 5f, ry + vcM(13f, 7f),
+                sel ? WHITE : withAlpha(WHITE, hov ? 210 : 150), 7f);
+            if (sel) {
+                RenderUtil.drawRect(ctx, sx, ry, 1.5f, 13f, ACCENT);
+            }
+        }
+        scissorOff();
+    }
+
+    // ===== вкладка Friends (список друзей: ввод + добавление/удаление) =====
+
+    private static float frFieldY(float contentY) { return contentY; }
+    private static float frListY(float contentY) { return contentY + 34f; }
+
+    /** Зажат ли Ctrl (L=341/R=345) — для copy/paste хоткеев. */
+    private static boolean ctrlDown() {
+        try {
+            GameContext ctx = GameContext.get();
+            return ctx.isKeyDown(341) || ctx.isKeyDown(345);
+        } catch (Throwable ignore) {
+            return false;
+        }
+    }
+
+    private void friendAddFromInput() {
+        String n = friendName.toString().trim();
+        if (utils.etc.Friends.add(n)) {
+            friendMsg = "Added " + n.trim();
+            friendMsgOk = true;
+            friendName.setLength(0);
+        } else {
+            friendMsg = "Bad nick / already added";
+            friendMsgOk = false;
+        }
+        friendMsgAt = System.currentTimeMillis();
+    }
+
+    /** Ctrl+C: ник выбранного друга в системный буфер обмена. */
+    private void friendCopySelected() {
+        try {
+            String[] names = utils.etc.Friends.list();
+            if (friendSel < 0 || friendSel >= names.length) {
+                friendMsg = "Nothing selected";
+                friendMsgOk = false;
+                friendMsgAt = System.currentTimeMillis();
+                return;
+            }
+            java.awt.datatransfer.StringSelection ss =
+                new java.awt.datatransfer.StringSelection(names[friendSel]);
+            java.awt.Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, null);
+            friendMsg = "Copied " + names[friendSel];
+            friendMsgOk = true;
+            friendMsgAt = System.currentTimeMillis();
+            Log.info("Menu", "friend copied: " + names[friendSel]);
+        } catch (Throwable t) {
+            friendMsg = "Copy failed";
+            friendMsgOk = false;
+            friendMsgAt = System.currentTimeMillis();
+        }
+    }
+
+    /** Ctrl+V: текст из буфера в поле ввода (только ник-символы, max 16). */
+    private void friendPaste() {
+        try {
+            java.awt.datatransfer.Clipboard clip =
+                java.awt.Toolkit.getDefaultToolkit().getSystemClipboard();
+            Object data = clip.getData(java.awt.datatransfer.DataFlavor.stringFlavor);
+            if (!(data instanceof String)) {
+                friendMsg = "Clipboard empty";
+                friendMsgOk = false;
+                friendMsgAt = System.currentTimeMillis();
+                return;
+            }
+            String s = (String) data;
+            int added = 0;
+            for (int i = 0; i < s.length() && friendName.length() < 16; i++) {
+                char c = s.charAt(i);
+                boolean ok = (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
+                    || (c >= '0' && c <= '9') || c == '_';
+                if (ok) {
+                    friendName.append(c);
+                    added++;
+                }
+            }
+            friendFocused = true;
+            searchFocused = false;
+            cfgNameFocused = false;
+            if (added == 0) {
+                friendMsg = "Clipboard empty";
+                friendMsgOk = false;
+            } else {
+                friendMsg = null;
+            }
+            friendMsgAt = System.currentTimeMillis();
+        } catch (Throwable t) {
+            friendMsg = "Paste failed";
+            friendMsgOk = false;
+            friendMsgAt = System.currentTimeMillis();
+        }
+    }
+
+    /** Хит-тест панели друзей. true = клик обработан. */
+    private boolean friendsClick(float wx, float wy) {
+        float sx = panelX() + 7f;
+        float sw = panelW - 14f;
+        float contentY = headerY() + 22f + 2f + 2f;
+        float fy = frFieldY(contentY);
+        float fw = sw - 50f;
+        if (inRect(wx, wy, sx - curX, fy - curY, fw, 13f)) {
+            friendFocused = true;
+            searchFocused = false;
+            cfgNameFocused = false;
+            return true;
+        }
+        if (inRect(wx, wy, sx + sw - 46f - curX, fy - curY, 46f, 13f)) {
+            friendFocused = true;
+            friendAddFromInput();
+            return true;
+        }
+        String[] names = utils.etc.Friends.list();
+        float ly = frListY(contentY);
+        float viewBot = curY + curH - 4f;
+        for (int i = 0; i < names.length; i++) {
+            float ry = ly + i * 15f - scrollCur;
+            if (ry + 13f < ly - 20f || ry > viewBot + 20f) continue;
+            // крестик удаления
+            if (inRect(wx, wy, sx + sw - 13f - curX, ry - curY, 13f, 13f)) {
+                if (utils.etc.Friends.remove(names[i])) {
+                    friendMsg = "Removed " + names[i];
+                    friendMsgOk = true;
+                    friendMsgAt = System.currentTimeMillis();
+                    if (friendSel == i) friendSel = -1;
+                    else if (friendSel > i) friendSel--;
+                }
+                return true;
+            }
+            if (inRect(wx, wy, sx - curX, ry - curY, sw, 13f)) {
+                friendSel = i; // выбор для Ctrl+C
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** Контент вкладки: поле + Add + счётчик + скроллящийся список. */
+    private void drawFriendsPanel(GameContext ctx, float hy, float viewTop, float viewBot) {
+        float fsSmall = 6f;
+        float sx = panelX() + 7f;
+        float sw = panelW - 14f;
+        float contentY = hy + 22f + 2f + 2f;
+        long now = System.currentTimeMillis();
+
+        // поле ввода
+        float fy = frFieldY(contentY);
+        float fw = sw - 50f;
+        boolean fHov = inRect(mouseX, mouseY, sx, fy, fw, 13f);
+        int fieldBg = mix(withAlpha(FLAT, 173), WHITE, 0.035f + (fHov || friendFocused ? 0.035f : 0f));
+        RenderUtil.drawRoundedRectShader(ctx, sx, fy, fw, 13f, 3f, fieldBg, fieldBg, fieldBg, fieldBg, 0.25f);
+        String nm = friendName.toString();
+        int fieldTc = withAlpha(WHITE, 184);
+        if (nm.length() == 0 && !friendFocused) {
+            textM("Player nickname", sx + 4f, fy + vcM(13f, fsSmall), withAlpha(WHITE, 110), fsSmall);
+        } else {
+            textM(nm, sx + 4f, fy + vcM(13f, fsSmall), fieldTc, fsSmall);
+            if (friendFocused && (now / 400L) % 2L == 0L) {
+                RenderUtil.drawRect(ctx, sx + 4f + textWM(nm, fsSmall) + 1f,
+                    fy + 3.5f, 1f, 6f, fieldTc);
+            }
+        }
+        drawBtn(ctx, "Add", sx + sw - 46f, fy, 46f, 13f);
+
+        // статус: свежее сообщение либо счётчик
+        if (friendMsg != null && now - friendMsgAt < 4000L) {
+            int mc = friendMsgOk ? 0xFF4DFF6E : 0xFFFF5040;
+            textM(friendMsg, sx, fy + 16f, withAlpha(mc & 0xFFFFFF, 235), fsSmall);
+        } else {
+            int n = utils.etc.Friends.count();
+            textM(n + (n == 1 ? " friend" : " friends"),
+                sx, fy + 16f, withAlpha(WHITE, 120), fsSmall);
+        }
+
+        // список (скролл через общие scrollTarget/scrollCur)
+        String[] names = utils.etc.Friends.list();
+        float ly = frListY(contentY);
+        float maxScroll = Math.max(0f, names.length * 15f - (viewBot - ly));
+        if (scrollTarget > maxScroll) scrollTarget = maxScroll;
+        if (scrollTarget < 0f) scrollTarget = 0f;
+        float sdt = lastScrollFrame == 0L ? 16f : Math.min(64f, now - lastScrollFrame);
+        lastScrollFrame = now;
+        scrollCur += (scrollTarget - scrollCur) * (1f - (float) Math.exp(-sdt / 90f));
+        if (Math.abs(scrollTarget - scrollCur) < 0.05f) scrollCur = scrollTarget;
+
+        if (names.length == 0) {
+            String ns = "No friends";
+            float nsW = textWM(ns, 9f);
+            textM(ns, panelX() + (panelW - nsW) * 0.5f,
+                ly + Math.max(6f, (viewBot - ly) * 0.5f - 6f), withAlpha(WHITE, 140), 9f);
+            return;
+        }
+        scissorOn(ctx, panelX() + 1f, ly - 2f, panelW - 2f, (viewBot - ly) + 4f);
+        for (int i = 0; i < names.length; i++) {
+            float ry = ly + i * 15f - scrollCur;
+            if (ry + 13f < ly - 20f || ry > viewBot + 20f) continue;
+            boolean hov = inRect(mouseX, mouseY, sx, ry, sw, 13f);
+            boolean sel = i == friendSel;
+            int bg = sel ? mix(withAlpha(ACCENT, 150), withAlpha(BG, 102), 0.2f)
+                : mix(withAlpha(FLAT, 102), withAlpha(ACCENT, 102), hov ? 0.15f : 0f);
+            RenderUtil.drawRoundedRectShader(ctx, sx, ry, sw, 13f, 3f, bg, bg, bg, bg, 0.25f);
+            textM(names[i], sx + 5f, ry + vcM(13f, 7f),
+                sel ? WHITE : withAlpha(WHITE, hov ? 210 : 150), 7f);
+            if (sel) {
+                RenderUtil.drawRect(ctx, sx, ry, 1.5f, 13f, ACCENT);
+            }
+            float xx = sx + sw - 13f;
+            boolean xhov = inRect(mouseX, mouseY, xx, ry, 13f, 13f);
+            textM("x", xx + 4f, ry + vcM(13f, 7f),
+                xhov ? 0xFFFF5040 : withAlpha(WHITE, 130), 7f);
+        }
+        scissorOff();
+    }
+
+    // ===== ColorPicker (rockstar iIii_Class12, 143x136, 1:1) =====
+
+    private static float[] rgbToHsv(int argb) {
+        float r = ((argb >> 16) & 0xFF) / 255f;
+        float g = ((argb >> 8) & 0xFF) / 255f;
+        float b = (argb & 0xFF) / 255f;
+        float max = Math.max(r, Math.max(g, b));
+        float min = Math.min(r, Math.min(g, b));
+        float d = max - min;
+        float h = 0f;
+        if (d > 1e-6f) {
+            if (max == r) h = ((g - b) / d) % 6f;
+            else if (max == g) h = (b - r) / d + 2f;
+            else h = (r - g) / d + 4f;
+            h /= 6f;
+            if (h < 0f) h += 1f;
+        }
+        float s = max <= 1e-6f ? 0f : d / max;
+        return new float[]{h, s, max};
+    }
+
+    private static int hsvToRgb(float h, float s, float v) {
+        h = h - (float) Math.floor(h);
+        int i = (int) (h * 6f);
+        float f = h * 6f - i;
+        float p = v * (1f - s);
+        float q = v * (1f - f * s);
+        float t = v * (1f - (1f - f) * s);
+        float r, g, b;
+        int k = i % 6;
+        if (k == 0) { r = v; g = t; b = p; }
+        else if (k == 1) { r = q; g = v; b = p; }
+        else if (k == 2) { r = p; g = v; b = t; }
+        else if (k == 3) { r = p; g = q; b = v; }
+        else if (k == 4) { r = t; g = p; b = v; }
+        else { r = v; g = p; b = q; }
+        return 0xFF000000 | (((int) (r * 255f + 0.5f)) << 16)
+            | (((int) (g * 255f + 0.5f)) << 8) | (int) (b * 255f + 0.5f);
+    }
+
+    private void openPicker(Module.ColorSetting cs) {
+        pickerTarget = cs;
+        pickerTitle = cs.name;
+        float[] hsv = rgbToHsv(cs.argb);
+        pHue = hsv[0];
+        pSat = hsv[1];
+        pBright = hsv[2];
+        pickerX = mouseX - PICKER_W * 0.5f;
+        pickerY = mouseY - 30f;
+        clampPicker();
+        svDrag = false;
+        hueDrag = false;
+        pickerDrag = false;
+        ensurePresets();
+        pickerOpen = true;
+        Log.info("Menu", "color picker open: " + cs.name);
+    }
+
+    private void closePicker() {
+        pickerOpen = false;
+        pickerTarget = null;
+        svDrag = false;
+        hueDrag = false;
+        pickerDrag = false;
+    }
+
+    /** Живая запись выбранного цвета в настройку (как consumer у rock). */
+    private void applyPicker() {
+        if (pickerTarget != null) {
+            pickerTarget.argb = hsvToRgb(pHue, pSat, pBright);
+        }
+    }
+
+    private void clampPicker() {
+        if (pickerX + PICKER_W + 5f > liilIilil) pickerX = liilIilil - PICKER_W - 5f;
+        if (pickerY + PICKER_H + 5f > iiilIilil) pickerY = iiilIilil - PICKER_H - 5f;
+        if (pickerX < 5f) pickerX = 5f;
+        if (pickerY < 5f) pickerY = 5f;
+    }
+
+    private void ensurePresets() {
+        if (presetsLoaded) return;
+        presetsLoaded = true;
+        pickerPresets.clear();
+        int[] saved = ConfigManager.loadPresets();
+        if (saved != null && saved.length > 0) {
+            for (int i = 0; i < saved.length; i++) {
+                pickerPresets.add(Integer.valueOf(saved[i]));
+            }
+        } else {
+            // дефолты rockstar (Class149.I_field_7865b31)
+            pickerPresets.add(Integer.valueOf(0xFF007AFF));
+            pickerPresets.add(Integer.valueOf(0xFF34C759));
+            pickerPresets.add(Integer.valueOf(0xFFFFCC00));
+            pickerPresets.add(Integer.valueOf(0xFFFF3B30));
+            pickerPresets.add(Integer.valueOf(0xFF9747FF));
+        }
+    }
+
+    private void savePickerPresets() {
+        int[] arr = new int[pickerPresets.size()];
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = ((Integer) pickerPresets.get(i)).intValue();
+        }
+        ConfigManager.savePresets(arr);
+    }
+
+    private void updateSv(float px, float py) {
+        float tX = (px - 6f) / 114f;
+        float tY = (py - 20f) / 70f;
+        if (tX < 0f) tX = 0f;
+        if (tX > 1f) tX = 1f;
+        if (tY < 0f) tY = 0f;
+        if (tY > 1f) tY = 1f;
+        pSat = tX;
+        pBright = 1f - tY;
+        applyPicker();
+    }
+
+    private void updateHue(float py) {
+        float t = (py - 22f) / 66f; // как у rock: маркер 22+64*hue, drag 66px
+        if (t < 0f) t = 0f;
+        if (t > 1f) t = 1f;
+        pHue = t;
+        applyPicker();
+    }
+
+    /** Хит-тест пресетов/«+»: -1 мимо, <size пресет, size = плюс. */
+    private int presetHit(float px, float py) {
+        ensurePresets();
+        float f = 0f, f2 = 0f;
+        for (int i = 0; i < pickerPresets.size(); i++) {
+            if (inRect(px, py, 45f + f, PICKER_H - 36f + f2, 11f, 11f)) return i;
+            f += 20f;
+            if (45f + f > PICKER_W) { f = 0f; f2 += 18f; }
+        }
+        if (pickerPresets.size() < 10
+            && inRect(px, py, 45f + f, PICKER_H - 36f + f2, 11f, 11f)) {
+            return pickerPresets.size();
+        }
+        return -1;
+    }
+
+    private void drawPicker(GameContext ctx) {
+        if (!pickerOpen) return;
+        float x = pickerX, y = pickerY;
+
+        // окно r7 (тень у нас нет — рамка как у окна меню)
+        int wbg = withAlpha(BG, 229);
+        RenderUtil.drawRoundedRectShader(ctx, x, y, PICKER_W, PICKER_H, 7f,
+            wbg, wbg, wbg, wbg, 0.25f);
+        RenderUtil.drawRoundedBorder(ctx, x, y, PICKER_W, PICKER_H, 7f, 0.5f,
+            withAlpha(OUTLINE, 89));
+
+        float tw = textW(pickerTitle, 7f);
+        text(pickerTitle, x + (PICKER_W - tw) * 0.5f, y + 7f, WHITE, 7f);
+
+        // xmark (10x10 r5)
+        boolean xHov = inRect(mouseX, mouseY, x + PICKER_W - 15f, y + 5f, 10f, 10f);
+        int xb = withAlpha(FLAT, xHov ? 220 : 173);
+        RenderUtil.drawRoundedRectShader(ctx, x + PICKER_W - 15f, y + 5f, 10f, 10f, 5f,
+            xb, xb, xb, xb, 0.25f);
+        IconRender.drawIcon("xmark", x + PICKER_W - 15f, y + 5f, 10f, WHITE);
+
+        // SV-бокс 114x70 r4: TL=white(s0,v1) TR=hue(s1,v1) BL/BR=black(v0)
+        int hueFull = hsvToRgb(pHue, 1f, 1f);
+        RenderUtil.drawRoundedRectShader(ctx, x + 6f, y + 20f, 114f, 70f, 4f,
+            0xFFFFFFFF, hueFull, 0xFF000000, 0xFF000000, 0.25f);
+        int cur = hsvToRgb(pHue, pSat, pBright);
+        float cxs = x + 6f + 114f * pSat;
+        float cys = y + 20f + 70f * (1f - pBright);
+        RenderUtil.drawRoundedRectShader(ctx, cxs - 3.5f, cys - 3.5f, 7f, 7f, 2.5f,
+            WHITE, WHITE, WHITE, WHITE, 0.25f);
+        RenderUtil.drawRoundedRectShader(ctx, cxs - 2.5f, cys - 2.5f, 5f, 5f, 1.5f,
+            cur, cur, cur, cur, 0.25f);
+
+        // hue-бар 12x70 справа: 6 сегментов радуги + рамка r4 + маркер 8x2
+        float hx = x + PICKER_W - 18f, hy = y + 20f;
+        float seg = 70f / 6f;
+        for (int i = 0; i < 6; i++) {
+            RenderUtil.drawRect(ctx, hx, hy + seg * i, 12f, seg + 0.5f,
+                hsvToRgb(i / 6f, 1f, 1f));
+        }
+        RenderUtil.drawRoundedBorder(ctx, hx, hy, 12f, 70f, 4f, 0.5f, withAlpha(OUTLINE, 89));
+        RenderUtil.drawRect(ctx, hx + 2f, y + 22f + 64f * pHue, 8f, 2f, WHITE);
+
+        // текущий цвет 29x29 r5 (низ-лево)
+        RenderUtil.drawRoundedRectShader(ctx, x + 6f, y + PICKER_H - 36f, 29f, 29f, 5f,
+            cur, cur, cur, cur, 0.25f);
+
+        // пресеты 11x11 r4.5 шаг 20 (перенос), затем "+"
+        ensurePresets();
+        float f = 0f, f2 = 0f;
+        int curRgb = cur & 0xFFFFFF;
+        for (int i = 0; i < pickerPresets.size(); i++) {
+            int c = ((Integer) pickerPresets.get(i)).intValue();
+            float sxp = x + 45f + f, syp = y + PICKER_H - 36f + f2;
+            boolean hov = inRect(mouseX, mouseY, sxp, syp, 11f, 11f);
+            RenderUtil.drawRoundedRectShader(ctx, sxp, syp, 11f, 11f, 4.5f,
+                c, c, c, c, 0.25f);
+            boolean sel = (c & 0xFFFFFF) == curRgb;
+            if (sel || hov) {
+                RenderUtil.drawRoundedBorder(ctx, sxp - 1f, syp - 1f, 13f, 13f, 5.5f, 0.5f,
+                    sel ? WHITE : withAlpha(WHITE, 150));
+            }
+            f += 20f;
+            if (45f + f > PICKER_W) { f = 0f; f2 += 18f; }
+        }
+        if (pickerPresets.size() < 10) {
+            float sxp = x + 45f + f, syp = y + PICKER_H - 36f + f2;
+            int pb = withAlpha(FLAT, 173);
+            RenderUtil.drawRoundedRectShader(ctx, sxp, syp, 11f, 11f, 4.5f, pb, pb, pb, pb, 0.25f);
+            RenderUtil.drawRect(ctx, sxp + 3.5f, syp + 5f, 4f, 1f, WHITE);
+            RenderUtil.drawRect(ctx, sxp + 5f, syp + 3.5f, 1f, 4f, WHITE);
+        }
+    }
+
     // ===== элементы настроек (rock createComponent 1:1) =====
 
-    /** Раскладка списка настроек; возвращает высоту контента. */
+    /** Раскладка списка настроек; возвращает высоту контента.
+     *  Скрытые (visibleWhen) НЕ занимают места — список «расхлопывается». */
     private float layoutSettings(java.util.List sts, ArrayList out, float top) {
         float y = top;
         float sx = panelX() + 7f;
@@ -968,6 +1869,7 @@ public class CheatMenuScreen extends IlIlliliiI {
         float chipH = CustomFont.cellHeight(7f, CustomFont.WM_FONT) + 6f;
         for (int i = 0; i < sts.size(); i++) {
             Object o = sts.get(i);
+            if (o instanceof Module.Setting && !((Module.Setting) o).isVisible()) continue;
             if (o instanceof Module.SectionSetting) {
                 float h = 10f + CustomFont.cellHeight(9f, CustomFont.HUD_FONT) + 5f;
                 out.add(new SRow((Module.Setting) o, 0, y, h, 0f));
@@ -990,11 +1892,18 @@ public class CheatMenuScreen extends IlIlliliiI {
                 out.add(r);
                 y += r.h;
             } else if (o instanceof Module.ColorSetting) {
-                SRow r = new SRow((Module.Setting) o, 5, y, 0f, chipH);
-                float bottom = wrapChips(r, null, Module.COLOR_SWATCHES, sx, sw, y + 15f, chipH, 2f);
-                r.h = bottom + 5f - y;
-                out.add(r);
-                y += r.h;
+                Module.ColorSetting cs = (Module.ColorSetting) o;
+                if (cs.picker) {
+                    // ColorPicker-строка (rock ColorSetting): label + чип 10x10
+                    out.add(new SRow(cs, 6, y, 18f, 0f));
+                    y += 18f;
+                } else {
+                    SRow r = new SRow(cs, 5, y, 0f, chipH);
+                    float bottom = wrapChips(r, null, Module.COLOR_SWATCHES, sx, sw, y + 15f, chipH, 2f);
+                    r.h = bottom + 5f - y;
+                    out.add(r);
+                    y += r.h;
+                }
             } else if (o instanceof Module.FloatSetting) {
                 out.add(new SRow((Module.Setting) o, 2, y, 32f, 0f));
                 y += 32f;
@@ -1105,6 +2014,15 @@ public class CheatMenuScreen extends IlIlliliiI {
                 int ta = (int) (255f * (0.75f + 0.25f * aa[j]));
                 textM(label, cxv + 3f, cyv + 3f, withAlpha(WHITE, ta), 7f);
             }
+            return;
+        }
+        if (r.kind == 6) {
+            // ColorPicker-строка (rock ColorSetting): текст 8px + чип 10x10 r3
+            Module.ColorSetting cs = (Module.ColorSetting) r.s;
+            boolean hov = inRect(mouseX, mouseY, sx, ay, sw, 18f);
+            text(r.s.name, sx + 5f, ay + vc(18f, 8f), withAlpha(WHITE, hov ? 255 : 191), 8f);
+            RenderUtil.drawRoundedRectShader(ctx, sx + sw - 5f - 10f, ay + 4f, 10f, 10f, 3f,
+                cs.argb, cs.argb, cs.argb, cs.argb, 0.25f);
             return;
         }
         if (r.kind == 5) {

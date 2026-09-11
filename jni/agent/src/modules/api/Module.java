@@ -147,6 +147,8 @@ public abstract class Module {
     /** Цвет (ARGB): выбор из фиксированной палитры свотчей. */
     public static class ColorSetting extends Setting {
         public int argb;
+        /** true = в меню открывать ColorPicker (rockstar) вместо свотчей. */
+        public boolean picker;
         public ColorSetting(String name, int def) {
             super(name);
             this.argb = def;

@@ -57,8 +57,10 @@ public final class Esp extends Module {
     private static final int BOX_COLOR = 0xFF906BFF; // акцент темы
     private static final int TEXT_COLOR = 0xFFFFFFFF;
     private static final int PING_COLOR = 0xFF00FF5A; // зелёный пинг
+    private static final int FRIEND_COLOR = 0xFF4DFF6E; // ESP друзей (бокс+ник+дист)
     private static final float TEXT_SIZE = 7f;
     private static final double TELEPORT_DELTA = 8.0; // скачок = телепорт, не интерполируем
+    private static final double THIRD_PERSON_DIST = 4.0; // дистанция камеры 3-го лица (ваниль)
     private static final int CORNERS = 8;
     private static final double NEAR = 0.05;
     private static final double W_CLAMP = 0.05;      // псевдо-клип w за плоскостью камеры
@@ -92,6 +94,7 @@ public final class Esp extends Module {
 
     // --- результаты кадра (переиспользуемые буферы, рендер однопоточный) ---
     private static float[] boxBuf;    // 4 float на бокс: x0,y0,x1,y1 (scaled)
+    private static boolean[] friendBuf; // бокс друга (зелёный ESP)
     private static String[] labelBuf; // подпись «имя Nm»
     private static int[] pingBuf;     // пинг игрока бокса, -1 = неизвестен
     private static int[] distBuf;     // дистанция бокса (м)
@@ -152,8 +155,21 @@ public final class Esp extends Module {
                 + lp.iliilIiilI(); // getEyeHeight = height*0.85
             camYaw = lp.IIiIillIII();
             camPitch = lp.iilIIIlIII();
-            double yr = Math.toRadians((double) camYaw + 180.0);
-            double pr = Math.toRadians((double) camPitch);
+            // --- третье лицо (Thirdperson): смещение камеры + разворот front ---
+            float effYaw = camYaw, effPitch = camPitch;
+            int tpv = thirdPersonView();
+            if (tpv == 2) {
+                effYaw = camYaw + 180f;
+                effPitch = -camPitch;
+            }
+            if (tpv != 0) {
+                double[] tp = thirdPersonCam(ctx, camX, camY, camZ, camYaw, camPitch, tpv);
+                camX = tp[0];
+                camY = tp[1];
+                camZ = tp[2];
+            }
+            double yr = Math.toRadians((double) effYaw + 180.0);
+            double pr = Math.toRadians((double) effPitch);
             vCosY = Math.cos(yr);
             vSinY = Math.sin(yr);
             vCosP = Math.cos(pr);
@@ -192,8 +208,10 @@ public final class Esp extends Module {
             List<?> players = (List<?>) ctx.playersField.get(ctx.world);
             if (players != null && !players.isEmpty()) {
                 Object[] arr = players.toArray(new Object[0]); // снапшот: игра мутирует список
-                if (boxBuf == null || boxBuf.length < arr.length * 4) {
+                if (boxBuf == null || boxBuf.length < arr.length * 4
+                    || friendBuf == null || friendBuf.length < arr.length + 8) {
                     boxBuf = new float[arr.length * 4 + 16];
+                    friendBuf = new boolean[arr.length + 8];
                     labelBuf = new String[arr.length + 8];
                     pingBuf = new int[arr.length + 8];
                     distBuf = new int[arr.length + 8];
@@ -213,9 +231,6 @@ public final class Esp extends Module {
                     statTotal++;
                     IIlIIliIiI e = (IIlIIliIiI) el;
                     collectBox(e, partialTicks, scaledW, scaledH);
-                    // Dormant: обновляем живую позицию (призрак рисуется после ухода из списка)
-                    dormUpdate(e.iiIIIIlIII(),
-                        e.IlIiillIII(), e.liiiIllIII(), e.lIilillIII());
                 }
             }
             statDrawn = drawnCount;
@@ -223,18 +238,19 @@ public final class Esp extends Module {
             // --- Dormant: призраки игроков, пропавших из списка <4.48с назад ---
             if (DORMANT_ENABLED) dormRender(ctx, partialTicks, scaledW, scaledH);
 
-            // --- PASS 1: все боксы ОДНИМ begin/end ---
+            // --- PASS 1: все боксы ОДНИМ begin/end (цвет на бокс: друзья зелёные) ---
             if (drawnCount > 0) {
                 GL11.glEnable(GL11.GL_BLEND);
                 GL11.glDisable(GL11.GL_TEXTURE_2D);
                 GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-                GL11.glColor4ub(
-                    (byte) ((BOX_COLOR >> 16) & 0xFF),
-                    (byte) ((BOX_COLOR >> 8) & 0xFF),
-                    (byte) (BOX_COLOR & 0xFF),
-                    (byte) ((BOX_COLOR >> 24) & 0xFF));
                 GL11.glBegin(GL11.GL_QUADS);
                 for (int i = 0; i < drawnCount; i++) {
+                    int bc = friendBuf[i] ? FRIEND_COLOR : BOX_COLOR;
+                    GL11.glColor4ub(
+                        (byte) ((bc >> 16) & 0xFF),
+                        (byte) ((bc >> 8) & 0xFF),
+                        (byte) (bc & 0xFF),
+                        (byte) ((bc >> 24) & 0xFF));
                     float x0 = boxBuf[i * 4], y0 = boxBuf[i * 4 + 1];
                     float x1 = boxBuf[i * 4 + 2], y1 = boxBuf[i * 4 + 3];
                     // верхняя грань
@@ -323,7 +339,7 @@ public final class Esp extends Module {
 
                     float boxCx = (boxBuf[i * 4] + boxBuf[i * 4 + 2]) / 2f;
 
-                    // ник + пинг: по центру бокса
+                    // ник + пинг: по центру бокса (друзья — зелёным)
                     float tx = boxCx - line1W / 2f;
                     if (tx < 2f) tx = 2f;
                     if (tx + line1W > scaledW - 2f) tx = scaledW - line1W - 2f;
@@ -352,11 +368,13 @@ public final class Esp extends Module {
                     if (distX < 2f) distX = 2f;
                     if (distX + line2W > scaledW - 2f) distX = scaledW - line2W - 2f;
 
-                    CustomFont.drawString(name, tx, topY, TEXT_COLOR, false, TEXT_SIZE, f);
+                    CustomFont.drawString(name, tx, topY,
+                        friendBuf[i] ? FRIEND_COLOR : TEXT_COLOR, false, TEXT_SIZE, f);
                     if (pingStr != null) {
                         CustomFont.drawString(pingStr, tx + nameW + gap, topY, PING_COLOR, false, TEXT_SIZE, f);
                     }
-                    CustomFont.drawString(dist, distX, bottomY, TEXT_COLOR, false, TEXT_SIZE, f);
+                    CustomFont.drawString(dist, distX, bottomY,
+                        friendBuf[i] ? FRIEND_COLOR : TEXT_COLOR, false, TEXT_SIZE, f);
                 }
             }
 
@@ -365,6 +383,15 @@ public final class Esp extends Module {
             statBehindPrev = statBehind;
         } catch (Throwable t) {
             Log.error("ESP", "render exception", t);
+        }
+    }
+
+    /** Друг ли (по нику). Пустой ник — не друг. */
+    private static boolean isFriendName(String name) {
+        try {
+            return name != null && !name.isEmpty() && utils.etc.Friends.isFriend(name);
+        } catch (Throwable ignore) {
+            return false;
         }
     }
 
@@ -425,7 +452,10 @@ public final class Esp extends Module {
         labelBuf[drawnCount] = name; // дистанция теперь под боксом (distBuf)
         pingBuf[drawnCount] = entityPing(e);
         distBuf[drawnCount] = (int) Math.round(Math.sqrt(distSq));
+        friendBuf[drawnCount] = isFriendName(name);
         gearCountBuf[drawnCount] = gearResolvedNow ? collectGear(e, drawnCount) : 0;
+        // Dormant: живые данные призрака (ник/пинг/позиция — рисуется после ухода из списка)
+        dormUpdate(e.iiIIIIlIII(), px, py, pz, name, pingBuf[drawnCount]);
         drawnCount++;
     }
 
@@ -504,8 +534,20 @@ public final class Esp extends Module {
                 + lp.iliilIiilI();
             camYaw = lp.IIiIillIII();
             camPitch = lp.iilIIIlIII();
-            double yr = Math.toRadians((double) camYaw + 180.0);
-            double pr = Math.toRadians((double) camPitch);
+            float effYaw2 = camYaw, effPitch2 = camPitch;
+            int tpv2 = thirdPersonView();
+            if (tpv2 == 2) {
+                effYaw2 = camYaw + 180f;
+                effPitch2 = -camPitch;
+            }
+            if (tpv2 != 0) {
+                double[] tp2 = thirdPersonCam(ctx, camX, camY, camZ, camYaw, camPitch, tpv2);
+                camX = tp2[0];
+                camY = tp2[1];
+                camZ = tp2[2];
+            }
+            double yr = Math.toRadians((double) effYaw2 + 180.0);
+            double pr = Math.toRadians((double) effPitch2);
             vCosY = Math.cos(yr);
             vSinY = Math.sin(yr);
             vCosP = Math.cos(pr);
@@ -536,6 +578,102 @@ public final class Esp extends Module {
         }
     }
 
+    /** Режим вида 0/1/2 из Thirdperson (0 = первое лицо). */
+    public static int thirdPersonView() {
+        try {
+            int v = Thirdperson.currentView();
+            if (v >= 0 && v <= 2) return v;
+        } catch (Throwable ignore) {}
+        return 0;
+    }
+
+    /**
+     * Позиция камеры третьего лица (ванильный orientCamera): view 1 (сзади) =
+     * глаза минус взгляд*dist, view 2 (спереди) = глаза плюс взгляд*dist,
+     * с клипом о блоки лучом глаза→камера. Взгляд — из СЫРЫХ yaw/pitch
+     * (MC: pitch+ = вниз), разворот front применяется к НАПРАВЛЕНИЮ view,
+     * а не к смещению. Возвращает {x,y,z} (новый массив).
+     */
+    public static double[] thirdPersonCam(GameContext ctx, double ex, double ey, double ez,
+                                          float yaw, float pitch, int view) {
+        double[] out = new double[3];
+        double yr = Math.toRadians((double) yaw);
+        double pr = Math.toRadians((double) pitch);
+        double lx = -Math.sin(yr) * Math.cos(pr);
+        double ly = -Math.sin(pr);
+        double lz = Math.cos(yr) * Math.cos(pr);
+        double s = view == 2 ? THIRD_PERSON_DIST : -THIRD_PERSON_DIST;
+        double dx = ex + lx * s, dy = ey + ly * s, dz = ez + lz * s;
+        try {
+            double[] clip = clipCamera(ctx, ex, ey, ez, dx, dy, dz);
+            if (clip != null) {
+                dx = clip[0];
+                dy = clip[1];
+                dz = clip[2];
+            }
+        } catch (Throwable ignore) {}
+        out[0] = dx;
+        out[1] = dy;
+        out[2] = dz;
+        return out;
+    }
+
+    // ===== клип камеры о блоки (луч World.IlIilllllI, fail-open без клипа) =====
+    private static java.lang.reflect.Constructor<?> tpVecCtor;
+    private static java.lang.reflect.Method tpRayM;
+    private static java.lang.reflect.Field tpHitVecF;  // HitResult.iIIiIlIlI (Vec3)
+    private static java.lang.reflect.Field tpVXF, tpVYF, tpVZF; // Vec3 xyz (double)
+    private static boolean tpReconTried;
+    private static boolean tpClipFailedLogged;
+
+    /** Точка клипа камеры о блок или null (чисто / нет recon). */
+    private static double[] clipCamera(GameContext ctx, double x0, double y0, double z0,
+                                       double x1, double y1, double z1) {
+        try {
+            if (!tpReconTried) {
+                tpReconTried = true;
+                Class vecC = ctx.gameLoader.loadClass("rustme.lliililIiI");
+                tpVecCtor = vecC.getConstructor(Double.TYPE, Double.TYPE, Double.TYPE);
+                tpRayM = ctx.worldClass.getMethod("IlIilllllI", vecC, vecC);
+                Class hitC = ctx.gameLoader.loadClass("rustme.lIiililIiI");
+                tpHitVecF = getFieldR(hitC, "iIIiIlIlI");
+                tpVXF = getFieldR(vecC, "liiIIlIlI");
+                tpVYF = getFieldR(vecC, "IiiIIlIlI");
+                tpVZF = getFieldR(vecC, "IIiIIlIlI");
+            }
+            if (tpVecCtor == null || tpRayM == null || ctx.world == null) return null;
+            Object a = tpVecCtor.newInstance(Double.valueOf(x0), Double.valueOf(y0), Double.valueOf(z0));
+            Object b = tpVecCtor.newInstance(Double.valueOf(x1), Double.valueOf(y1), Double.valueOf(z1));
+            Object hit = tpRayM.invoke(ctx.world, a, b);
+            if (hit == null || tpHitVecF == null) return null;
+            Object hv = tpHitVecF.get(hit);
+            if (hv == null || tpVXF == null) return null;
+            return new double[]{
+                ((Double) tpVXF.get(hv)).doubleValue(),
+                ((Double) tpVYF.get(hv)).doubleValue(),
+                ((Double) tpVZF.get(hv)).doubleValue()
+            };
+        } catch (Throwable t) {
+            if (!tpClipFailedLogged) {
+                tpClipFailedLogged = true;
+                Log.error("ESP", "camera clip failed (fail-open)", t);
+            }
+            return null;
+        }
+    }
+
+    private static java.lang.reflect.Field getFieldR(Class c, String name) throws Throwable {
+        try {
+            java.lang.reflect.Field f = c.getField(name);
+            f.setAccessible(true);
+            return f;
+        } catch (Throwable t) {
+            java.lang.reflect.Field f = c.getDeclaredField(name);
+            f.setAccessible(true);
+            return f;
+        }
+    }
+
     /** Проекция точки мира -> scaled-экран. Возвращает RAW cw (<=0 — за камерой). */
     // ===== Dormant ESP (порт конкурента: memoryEspDormant, 4.48с) =====
     private static final boolean DORMANT_ENABLED = true;
@@ -546,12 +684,25 @@ public final class Esp extends Module {
         new java.util.HashMap<Long, double[]>();
     private static final java.util.HashMap<Long, String> dormName =
         new java.util.HashMap<Long, String>();
+    private static final java.util.HashMap<Long, Integer> dormPing =
+        new java.util.HashMap<Long, Integer>();
 
-    /** Обновление живой позиции (из основного цикла). */
-    private static void dormUpdate(long id, double x, double y, double z) {
-        double[] p = dormPos.get(Long.valueOf(id));
-        if (p == null) { p = new double[4]; dormPos.put(Long.valueOf(id), p); }
+    /** Обновление живых данных призрака (из collectBox — ник/пинг уже посчитаны). */
+    private static void dormUpdate(long id, double x, double y, double z, String name, int ping) {
+        Long key = Long.valueOf(id);
+        // на друзей dormant не работает: не храним + чистим старый призрак
+        if (isFriendName(name)) {
+            if (dormPos.remove(key) != null) {
+                dormName.remove(key);
+                dormPing.remove(key);
+            }
+            return;
+        }
+        double[] p = dormPos.get(key);
+        if (p == null) { p = new double[4]; dormPos.put(key, p); }
         p[0] = x; p[1] = y; p[2] = z; p[3] = System.currentTimeMillis();
+        if (name != null && !name.isEmpty()) dormName.put(key, name);
+        dormPing.put(key, Integer.valueOf(ping));
     }
 
     /** Призрак: рисуем бокс по последней позиции, если игрок пропал <4.48с. */
@@ -565,10 +716,23 @@ public final class Esp extends Module {
                 java.util.Map.Entry<Long, double[]> en = it.next();
                 double[] p = en.getValue();
                 long age = now - (long) p[3];
-                if (age > DORMANT_TIME_MS) { it.remove(); dormName.remove(en.getKey()); continue; }
+                if (age > DORMANT_TIME_MS) {
+                    it.remove();
+                    dormName.remove(en.getKey());
+                    dormPing.remove(en.getKey());
+                    continue;
+                }
+                // друзья не рисуются (даже если добавили уже после пропажи)
+                String dn = (String) dormName.get(en.getKey());
+                if (isFriendName(dn)) {
+                    it.remove();
+                    dormName.remove(en.getKey());
+                    dormPing.remove(en.getKey());
+                    continue;
+                }
                 // рисуем только если игрок УШЁЛ из живого списка (иначе он в основных боксах)
                 if (age > 100L) {
-                    renderDormantBox(ctx, p, age, scaledW, scaledH);
+                    renderDormantBox(ctx, en.getKey().longValue(), p, age, scaledW, scaledH);
                 }
             }
         } catch (Throwable t) {
@@ -576,8 +740,8 @@ public final class Esp extends Module {
         }
     }
 
-    /** Полупрозрачный жёлтый бокс призрака + надпись "DORMANT X.Xs". */
-    private static void renderDormantBox(GameContext ctx, double[] p, long age,
+    /** Полупрозрачный жёлтый бокс призрака + подписи как в обычном ESP. */
+    private static void renderDormantBox(GameContext ctx, long id, double[] p, long age,
                                          int scaledW, int scaledH) {
         float[] out = TMP;
         // 8 углов призрачного бокса (стандартный рост 1.8)
@@ -613,11 +777,44 @@ public final class Esp extends Module {
         int col = (alpha << 24) | 0xFFD700;
         drawBoxEdges(pts, corners, col);
 
-        // подпись
-        String label = "DORMANT " + String.format(java.util.Locale.ROOT, "%.1fs", age / 1000.0);
-        GameContext gctx = GameContext.get();
-        if (CustomFont.HUD_FONT != null) {
-            CustomFont.drawString(label, minX, minY - 10, col, false, 7, CustomFont.HUD_FONT);
+        // подписи как в обычном ESP: ник + пинг сверху, дистанция снизу
+        // (от последней известной позиции до камеры)
+        String name = dormName.get(Long.valueOf(id));
+        if (name != null && !name.isEmpty() && CustomFont.HUD_FONT != null) {
+            MsdfFont f = CustomFont.HUD_FONT;
+            float cellH = CustomFont.cellHeight(TEXT_SIZE, f);
+            float gap = 2.5f;
+            Integer pingO = (Integer) dormPing.get(Long.valueOf(id));
+            int ping = pingO != null ? pingO.intValue() : -1;
+            double ddx = p[0] - camX, ddy = p[1] - camY, ddz = p[2] - camZ;
+            String dist = String.valueOf((int) Math.round(
+                Math.sqrt(ddx * ddx + ddy * ddy + ddz * ddz))) + "m";
+
+            float nameW = CustomFont.getWidth(name, TEXT_SIZE, f);
+            String pingStr = ping >= 0 ? String.valueOf(ping) + "ms" : null;
+            float pingW = pingStr != null ? CustomFont.getWidth(pingStr, TEXT_SIZE, f) : 0f;
+            float line1W = nameW + (pingStr != null ? gap + pingW : 0f);
+            float line2W = CustomFont.getWidth(dist, TEXT_SIZE, f);
+
+            float boxCx = (minX + maxX) / 2f;
+            float tx = boxCx - line1W / 2f;
+            if (tx < 2f) tx = 2f;
+            if (tx + line1W > scaledW - 2f) tx = scaledW - line1W - 2f;
+
+            float topY = minY - cellH - 2f;
+            if (topY < 2f) topY = 2f;
+
+            float bottomY = maxY + 2f;
+            if (bottomY + cellH > scaledH) bottomY = scaledH - cellH - 1f;
+            float distX = boxCx - line2W / 2f;
+            if (distX < 2f) distX = 2f;
+            if (distX + line2W > scaledW - 2f) distX = scaledW - line2W - 2f;
+
+            CustomFont.drawString(name, tx, topY, TEXT_COLOR, false, TEXT_SIZE, f);
+            if (pingStr != null) {
+                CustomFont.drawString(pingStr, tx + nameW + gap, topY, PING_COLOR, false, TEXT_SIZE, f);
+            }
+            CustomFont.drawString(dist, distX, bottomY, TEXT_COLOR, false, TEXT_SIZE, f);
         }
     }
 

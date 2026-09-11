@@ -133,6 +133,12 @@ public final class GlassGrab {
         return ok;
     }
 
+    /** Доступ к full-res копии кадра (для sky/tint passes). После grab(). */
+    public static int getCopyTex() { return copyTex; }
+
+    /** Доступ к размытой копии (1/2 разрешения). После grab(). */
+    public static int getBlurTex() { return blurTex; }
+
     /** Копия + блюр. В начале renderOverlay, пока бэкбуфер ещё цел. */
     public static void grab(GameContext ctx) {
         if (!init(ctx)) return;

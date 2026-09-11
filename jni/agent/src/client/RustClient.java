@@ -85,11 +85,32 @@ public class RustClient implements Runnable {
             new modules.impl.JumpCircle();
             new modules.impl.Strafe();
             new modules.impl.SoundEsp();
+            new modules.impl.ItemEsp();
+            new modules.impl.KillEffect();
+            new modules.impl.Hotbar();
+            new modules.impl.AntiOverlay();
+            new modules.impl.NoSlowJagger();
+            new modules.impl.Ambience();
+            new modules.impl.CustomTime();
+            new modules.impl.CustomSky();
+            new modules.impl.CustomFov();
+            new modules.impl.Saturation();
+            new modules.impl.MotionBlur();
+            new modules.impl.Arrows();
+            new modules.impl.Hitmarker();
+            new modules.impl.ViewModel();
+            new modules.impl.Thirdperson();
+            new modules.impl.Friends();
         } catch (Throwable t) {
             Log.error("Agent", "module init failed", t);
             return;
         }
         llog("modules created");
+
+        // папка конфигов (%LOCALAPPDATA%\RustMe) — создаём сразу при старте
+        try {
+            utils.etc.ConfigManager.ensureDir();
+        } catch (Throwable ignore) {}
 
         // HUD: подменяем GuiIngame на наш (рендер-метод зовёт игра на главном потоке)
         try {

@@ -7,6 +7,9 @@ import org.lwjglx.opengl.GL11;
 
 import events.EventBus;
 import events.EventBus.TickEvent;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelOutboundHandlerAdapter;
+import io.netty.channel.ChannelPromise;
 import modules.api.Module;
 import rustme.IIlIIliIiI;
 import utils.etc.GameContext;
@@ -39,6 +42,18 @@ import utils.render.Watermark;
  * Клавиша: R (GLFW 82, как aimBind=82 у конкурента).
  * Дефолты из их профиля: aimFov=120, aimPredictScale=1.0, aimPingComp=0.6,
  * aimLatency=~95мс (компенсация сетевого лага на trackingSince), aimBone=Head(1.62).
+ *
+ * РЕЖИМ (настройка Mode): Vector — как сейчас (доворот камеры через setRotation);
+ * Silent — тот же пайплайн 1:1 (снапшоты, предикт, баллистика, дроп), но камера
+ * НЕ трогается. Два слоя доставки (оба повторяют vector 1:1 для сервера):
+ *  1) слушатель события атаки rustme.llilliiliI на шине мода (постится из
+ *     gs.lIiIiilliI ДО действия): прямой контроллер.IiliIIlliI(player, target)
+ *     + отмена события — покрывает melee/entity-механику;
+ *  2) Netty outbound-хендлер "rustme-silent" (перед энкодером): переписывает
+ *     yaw/pitch C03-пакетов (IIiiilIIiI/lIiiilIIiI, поля liiIliilI/iIiIliilI)
+ *     на silent-углы — покрывает серверную баллистику пушек (swing-пакет
+ *     несёт только arc, направление сервер берёт из взгляда). Углы клампятся
+ *     тем же MAX_TURN от прошлого (паритет динамики с vector).
  */
 public final class AimBot extends Module {
 
@@ -54,24 +69,37 @@ public final class AimBot extends Module {
     private static final double EYE_HEIGHT_STAND = 1.62;
     private static final double KNOCKED_OFFSET = 0.25;
     private static final double MAG0 = 0.2;            // шаг ring-buffer снимков
+    // Вертикаль (фикс скачков на прыжках, лог 09-11): сырой velY whiplash'ит.
+    private static final double VY_UP_MAX = 9.0;       // кламп vy вверх (прыжок ~7)
+    private static final double VY_DOWN_MAX = -12.0;   // кламп vy вниз
+    private static final double VY_EMA = 0.35;         // сглаживание vy
+    private static final long VY_SPAN_MS = 250L;       // окно span-земли
+    private static final double VY_GROUND_SPAN = 0.15; // span Y < этого = земля → vy=0
+    private static final double Y_LEAD_MAX = 3.5;      // кап вертикального лида (м)
 
     // Настройки (их дефолты; элементы в меню: Module.addSetting/addBool)
-    private final Module.FloatSetting stFov = addSetting("FOV", 10f, 180f, 1f, 120f);
+    private final Module.ModeSetting stMode = addMode("Mode", new String[]{"Vector", "Silent"}, 0);
+    private final Module.FloatSetting stFov = addSetting("FOV", 10f, 360f, 1f, 120f);
     private final Module.FloatSetting stPingComp = addSetting("Ping Comp", 0.1f, 2f, 0.05f, 0.5f);
     private final Module.FloatSetting stPredict = addSetting("Prediction", 0.1f, 3f, 0.05f, 1.0f);
     private final Module.BoolSetting stDrawFov = addBool("Draw FOV", true);
     private final Module.BoolSetting stPredictY = addBool("Predict Y", true);
+    private final Module.BoolSetting stVisible = addBool("Visible Check", true);
+    private final Module.BoolSetting stAutoShoot = addBool("Auto Shoot", false);
+    private final Module.FloatSetting stShootInterval = addSetting("Shoot Interval", 25f, 1000f, 5f, 60f);
 
     private float aimFov() { return stFov.value; }
+    private boolean silentMode() { return stMode.index() == 1; }
     private float aimPingComp() { return stPingComp.value; }
     private float aimPredictScale() { return stPredict.value; }
     private boolean drawFov() { return stDrawFov.get(); }
-    private static final boolean aimVisibleCheck = true;
+    private boolean visibleCheck() { return stVisible.get(); }
     private static final boolean aimIgnoreKnocked = false;
     private static final boolean aimDebug = true;
 
     private long lastLog;
     private long lastAimWrite;
+    private int candTotal, candFov, candVis; // счётчики no-target-диагностики
 
     // ==== Диагностика для пост-анализа промахов (09-10) ====
     private long lastStateLog;      // aim-строка состояния: раз в 100мс
@@ -79,12 +107,568 @@ public final class AimBot extends Module {
     private long lastResetLog;      // ресеты кольца: раз в 1с
     private long lastVelClampLog;
     private long lastTargetId = -1; // для ACQ/SWITCH/LOST-событий
+    private long lastTargetSeen;    // когда последняя цель была в прицеле
     private boolean lastLmb;        // edge ЛКМ = маркер выстрела в логе
+    private Object attackKb;        // (legacy, не используется — см. ClickWorker)
+    private boolean autoShootPressed;
+    private long lastAutoShootLog;
+    private long lastAutoClick;
+    private ClickWorker clickWorker;
+
+    /** Эмуляция ЛКМ на уровне ОС (поток-воркер, без лямбд). */
+    private static final class ClickWorker implements Runnable {
+        volatile boolean requested;
+        private boolean robotReady;
+        private java.awt.Robot robot;
+
+        ClickWorker() {
+            Thread t = new Thread(this, "RustMe-Click");
+            t.setDaemon(true);
+            t.start();
+        }
+
+        @Override
+        public void run() {
+            while (true) {
+                if (requested) {
+                    requested = false;
+                    if (!robotReady) {
+                        try {
+                            robot = new java.awt.Robot();
+                            robotReady = true;
+                        } catch (Throwable t) {
+                            Log.error("AimBot", "robot init failed", t);
+                        }
+                    }
+                    if (robotReady) {
+                        try {
+                            robot.mousePress(java.awt.event.InputEvent.BUTTON1_DOWN_MASK);
+                            Thread.sleep(15);
+                            robot.mouseRelease(java.awt.event.InputEvent.BUTTON1_DOWN_MASK);
+                        } catch (Throwable ignore) {}
+                    }
+                }
+                try { Thread.sleep(5); } catch (InterruptedException e) { return; }
+            }
+        }
+    }
+
+    private void requestClick() {
+        if (clickWorker == null) clickWorker = new ClickWorker();
+        clickWorker.requested = true;
+    }
+
+    /**
+     * Слушатель события атаки мода (rustme.llilliiliI). Вызывается шиной
+     * СИНХРОННО на главном потоке ДО действия игры (gs.lIiIiilliI: пост,
+     * затем чтение отмены). Весь код в try/catch — исключение не должно
+     * ломать чужой удар.
+     */
+    private static final class AttackListener implements kotlin.jvm.functions.Function1 {
+        @Override
+        public Object invoke(Object e) {
+            try {
+                AimBot inst = INSTANCE;
+                if (inst != null) inst.onAttackEvent(e);
+            } catch (Throwable t) {
+                Log.error("AimBot", "attack listener failed", t);
+            }
+            try {
+                AimBot inst = INSTANCE;
+                Object u = inst != null ? inst.unitInstance : null;
+                if (u != null) return u;
+            } catch (Throwable ignore) {}
+            return null;
+        }
+    }
+
+    /** Стиринг удара в silent-режиме (главный поток, синхронно до действия). */
+    private void onAttackEvent(Object e) {
+        try {
+            steerEvents++;
+            if (steerEvents == 1) {
+                Log.info("AimBot", "attack events flowing (bus subscription live)");
+            }
+            if (!isState() || !silentMode()) return;
+            GameContext ctx = GameContext.get();
+            if (!ctx.inWorld) return;
+            if (e == null || attackEventC == null) return;
+            if (!attackEventC.isInstance(e)) return;
+            Object tgt = silentTarget;
+            if (tgt == null || !silentHave) return;
+            if (!(tgt instanceof IIlIIliIiI)) return;
+            if (System.currentTimeMillis() - silentTime > 1000L) return; // протухший таргет
+            Object player = ctx.player;
+            if (player == null || attackController == null || attackEntityM == null) return;
+            // прямой удар по нашей цели (тот же вызов, что сделала бы игра:
+            // пакет сущности + замах), затем отмена игрового действия
+            try {
+                attackEntityM.invoke(attackController, player, tgt);
+            } catch (Throwable t) {
+                Log.error("AimBot", "silent attack invoke failed", t);
+                return; // НЕ отменяем — пусть игра бьёт как обычно
+            }
+            try {
+                if (resetCooldownM != null && cooldownEnum != null) {
+                    resetCooldownM.invoke(player, cooldownEnum);
+                }
+            } catch (Throwable ignore) {}
+            try {
+                if (cancelM != null) cancelM.invoke(e, Boolean.TRUE);
+            } catch (Throwable ignore) {}
+            steerShots++;
+            long now = System.currentTimeMillis();
+            if (now - lastSteerLog > 2000L) {
+                lastSteerLog = now;
+                String nm = "?";
+                try { nm = nameOf((IIlIIliIiI) tgt); } catch (Throwable ignore) {}
+                Log.info("AimBot", "silent steer: shots=" + steerShots
+                    + " events=" + steerEvents + " target=" + nm
+                    + " yaw=" + f1(silentYaw) + " pitch=" + f1(silentPitch));
+            }
+        } catch (Throwable t) {
+            Log.error("AimBot", "steer failed", t);
+        }
+    }
+
+    /**
+     * Подписка на событие атаки (паттерн форка 1:1: синглтон iiIiliIiiI +
+     * IIlIIIlIIl(Class, Function1)). Ленивая, с троттлингом; проверка —
+     * размер handler-листа llIIIIlIIl(Class).
+     */
+    private void ensureBus(GameContext ctx) {
+        if (busSubscribed) return;
+        long now = System.currentTimeMillis();
+        if (now - lastBusAttempt < 5000L) return;
+        lastBusAttempt = now;
+        try {
+            if (ctx.gameLoader == null || ctx.gs == null) return;
+            ClassLoader ld = ctx.gameLoader;
+            Class busC = ld.loadClass("rustme.lIllIilliI");
+            Object bus = busC.getField("iiIiliIiiI").get(null);
+            if (bus == null) {
+                Log.info("AimBot", "bus: singleton null");
+                return;
+            }
+            attackEventC = ld.loadClass("rustme.llilliiliI");
+            Method sub = null;
+            for (Method m : busC.getMethods()) {
+                if (!m.getName().equals("IIlIIIlIIl")) continue;
+                if (m.getParameterCount() != 2) continue;
+                if (m.getParameterTypes()[0] != Class.class) continue;
+                sub = m;
+                break;
+            }
+            if (sub == null) {
+                Log.error("AimBot", "bus: subscribe method not found", null);
+                return;
+            }
+            sub.invoke(bus, attackEventC, new AttackListener());
+            // Проверка llIIIIlIIl НЕ репрезентативна (в проде возвращает 0 при
+            // живом потоке событий — см. лог: attackEvents растут) — только инфо.
+            // Proof-of-subscription = сами события (steerEvents в слушателе).
+            try {
+                Method listM = busC.getMethod("llIIIIlIIl", Class.class);
+                Object lst = listM.invoke(null, attackEventC);
+                int n = lst instanceof java.util.List ? ((java.util.List) lst).size() : -1;
+                Log.info("AimBot", "bus subscribed llilliiliI (list query=" + n + ")");
+            } catch (Throwable ignore) {}
+            // контроллер атаки + отмена + кулдаун (имена из дизасма lIiIiilliI)
+            try {
+                Object gs = ctx.gs;
+                Object ctl = getFieldR(gs.getClass(), "iIiIiiIl").get(gs);
+                Class ctlC = ld.loadClass("rustme.liIlIIliiI");
+                if (ctl != null && ctlC.isInstance(ctl)) {
+                    attackController = ctl;
+                    Class wrapperC = ld.loadClass("rustme.IIiIIiIIiI");
+                    Class entityC = ld.loadClass("rustme.IIlIIliIiI");
+                    attackEntityM = ctlC.getMethod("IiliIIlliI", wrapperC, entityC);
+                }
+                Class spC = ctx.localSpClass;
+                if (spC != null) {
+                    Class cdC = ld.loadClass("rustme.llIIIilIiI");
+                    resetCooldownM = spC.getMethod("IIIliIiilI", cdC);
+                    cooldownEnum = cdC.getField("lliilIIlI").get(null);
+                }
+                cancelM = attackEventC.getMethod("lIIillliil", Boolean.TYPE);
+            } catch (Throwable t) {
+                Log.error("AimBot", "bus: attack refs resolve failed", t);
+            }
+            try {
+                Class uC = Class.forName("kotlin.Unit", true, ld);
+                unitInstance = uC.getField("INSTANCE").get(null);
+            } catch (Throwable ignore) {}
+            busSubscribed = true;
+            Log.info("AimBot", "silent refs: controller=" + (attackController != null)
+                + " attack=" + (attackEntityM != null)
+                + " reset=" + (resetCooldownM != null && cooldownEnum != null)
+                + " cancel=" + (cancelM != null));
+        } catch (Throwable t) {
+            Log.error("AimBot", "bus subscribe failed", t);
+        }
+    }
+
+    private static Field getFieldR(Class c, String name) throws Throwable {
+        try {
+            Field f = c.getField(name);
+            f.setAccessible(true);
+            return f;
+        } catch (Throwable t) {
+            Field f = c.getDeclaredField(name);
+            f.setAccessible(true);
+            return f;
+        }
+    }
+
+    private void clearSilent() {
+        silentHave = false;
+        silentTarget = null;
+        lastSilentId = -1L;
+    }
+
+    /**
+     * Outbound-хендлер Netty (видит пакеты ДО энкодера — addLast встаёт
+     * у хвоста цепочки). Переписывает взгляд C03 на silent-углы, всё
+     * остальное (включая inbound) проходит нетронутым. Любая ошибка =
+     * passthrough: сеть ломать нельзя.
+     */
+    private static final class SilentOutbound extends ChannelOutboundHandlerAdapter {
+        @Override
+        public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
+            try {
+                AimBot inst = INSTANCE;
+                if (inst != null && inst.isState() && inst.silentMode() && inst.silentHave) {
+                    Object tgt = inst.silentTarget;
+                    long age = System.currentTimeMillis() - inst.silentTime;
+                    if (tgt != null && age >= 0 && age < 500L) {
+                        float yaw = inst.silentYaw;
+                        float pitch = inst.silentPitch;
+                        while (yaw > 180f) yaw -= 360f;
+                        while (yaw < -180f) yaw += 360f;
+                        if (pitch > 90f) pitch = 90f;
+                        else if (pitch < -90f) pitch = -90f;
+                        Object out = msg;
+                        try {
+                            out = inst.applySilentLook(msg, yaw, pitch);
+                        } catch (Throwable ignore) {
+                            out = msg;
+                        }
+                        if (out != msg) inst.c03Upgrades++;
+                        inst.c03Rewrites++;
+                        long now = System.currentTimeMillis();
+                        if (now - inst.lastRewriteLog > 5000L) {
+                            inst.lastRewriteLog = now;
+                            Log.info("AimBot", "C03 spoof: rewrites=" + inst.c03Rewrites
+                                + " upgrades=" + inst.c03Upgrades
+                                + " yaw=" + f1(yaw) + " pitch=" + f1(pitch));
+                        }
+                        ctx.write(out, promise);
+                        return;
+                    }
+                }
+            } catch (Throwable t) {
+                long now = System.currentTimeMillis();
+                try {
+                    AimBot inst = INSTANCE;
+                    if (inst != null && now - inst.lastPipeErr > 10000L) {
+                        inst.lastPipeErr = now;
+                        Log.error("AimBot", "C03 handler failed (passthrough)", t);
+                    }
+                } catch (Throwable ignore) {}
+            }
+            ctx.write(msg, promise); // ВСЕГДА вперёд — дропать пакеты запрещено
+        }
+    }
+
+    /** Поиск живого Channel: SP/world/mc → handler → NetworkManager → Channel. */
+    private void ensurePipeline(GameContext ctx) {
+        try {
+            if (ctx.gameLoader == null || ctx.world == null) return;
+            long now = System.currentTimeMillis();
+            if (now - lastPipeAttempt < 3000L) return;
+            lastPipeAttempt = now;
+            ClassLoader ld = ctx.gameLoader;
+            if (posRotC == null || c03YawF == null || c03PitchF == null) {
+                if (!resolveC03(ld)) return;
+            }
+            Object ch = findChannel(ctx, ld);
+            if (ch == null) {
+                if (now - lastPipeLog > 10000L) {
+                    lastPipeLog = now;
+                    Log.info("AimBot", "C03: channel not found yet");
+                }
+                return;
+            }
+            if (ch == hookedChannel) return;
+            installHandler(ch, ld);
+            hookedChannel = ch;
+            Log.info("AimBot", "C03: handler installed on new channel");
+        } catch (Throwable t) {
+            Log.error("AimBot", "pipeline ensure failed", t);
+        }
+    }
+
+    /** C03-классы + yaw/pitch поля (имена из дизасма writePacketData). */
+    private boolean resolveC03(ClassLoader ld) {
+        try {
+            Class pr = ld.loadClass("rustme.IIiiilIIiI"); // PositionRotation
+            Class rt = ld.loadClass("rustme.lIiiilIIiI"); // Rotation
+            Field yf = pr.getField("liiIliilI");
+            yf.setAccessible(true);
+            Field pf = pr.getField("iIiIliilI");
+            pf.setAccessible(true);
+            if (yf.getType() != Float.TYPE || pf.getType() != Float.TYPE) {
+                Log.error("AimBot", "C03: yaw/pitch fields not float", null);
+                return false;
+            }
+            posRotC = pr;
+            rotC = rt;
+            c03YawF = yf;
+            c03PitchF = pf;
+            // upgrade-резолв (best-effort: без него только in-place rewrite)
+            try {
+                Class pc = ld.loadClass("rustme.iIiiilIIiI"); // Position
+                Class bc = ld.loadClass("rustme.iliiilIIiI"); // base
+                java.lang.reflect.Constructor<?> prCtor =
+                    pr.getConstructor(Double.TYPE, Double.TYPE, Double.TYPE,
+                        Float.TYPE, Float.TYPE, Boolean.TYPE);
+                java.lang.reflect.Constructor<?> rCtor =
+                    rt.getConstructor(Float.TYPE, Float.TYPE, Boolean.TYPE);
+                Field xf = pc.getField("IIiIiIilI");
+                xf.setAccessible(true);
+                Field yff = pc.getField("llliiIilI");
+                yff.setAccessible(true);
+                Field zf = pc.getField("liiIiIilI");
+                zf.setAccessible(true);
+                Field ogf = pc.getField("IiliIiilI");
+                ogf.setAccessible(true);
+                Field bogf = bc.getField("IiliIiilI");
+                bogf.setAccessible(true);
+                if (xf.getType() == Double.TYPE && yff.getType() == Double.TYPE
+                    && zf.getType() == Double.TYPE && ogf.getType() == Boolean.TYPE
+                    && bogf.getType() == Boolean.TYPE) {
+                    posC = pc;
+                    baseC = bc;
+                    posRotCtor = prCtor;
+                    rotCtor = rCtor;
+                    posXF = xf;
+                    posYF = yff;
+                    posZF = zf;
+                    posOnGroundF = ogf;
+                    baseOnGroundF = bogf;
+                }
+            } catch (Throwable t) {
+                Log.error("AimBot", "C03: upgrade refs failed (in-place only)", t);
+            }
+            Log.info("AimBot", "C03 resolved: IIiiilIIiI/lIiiilIIiI yaw=liiIliilI pitch=iIiIliilI"
+                + " upgrade=" + (posRotCtor != null && rotCtor != null));
+            return true;
+        } catch (Throwable t) {
+            Log.error("AimBot", "C03 resolve failed", t);
+            return false;
+        }
+    }
+
+    /**
+     * Применить silent-взгляд к исходящему пакету (event-loop поток Netty).
+     * Возвращает пакет для отправки: тот же (in-place) или пересобранный
+     * upgrade (Position→PositionRotation, base→Rotation). Трогает только
+     * поля пакета — состояние игры не читает/не пишет.
+     */
+    private Object applySilentLook(Object msg, float yaw, float pitch) {
+        try {
+            Class pr = posRotC, rc = rotC;
+            if ((pr != null && pr.isInstance(msg)) || (rc != null && rc.isInstance(msg))) {
+                Field yf = c03YawF, pf = c03PitchF;
+                if (yf == null || pf == null) return msg;
+                yf.setFloat(msg, yaw);
+                pf.setFloat(msg, pitch);
+                return msg;
+            }
+            Class pc = posC;
+            if (pc != null && pc.isInstance(msg) && posRotCtor != null
+                && posXF != null && posYF != null && posZF != null && posOnGroundF != null) {
+                double x = ((Double) posXF.get(msg)).doubleValue();
+                double y = ((Double) posYF.get(msg)).doubleValue();
+                double z = ((Double) posZF.get(msg)).doubleValue();
+                boolean og = ((Boolean) posOnGroundF.get(msg)).booleanValue();
+                return posRotCtor.newInstance(Double.valueOf(x), Double.valueOf(y),
+                    Double.valueOf(z), Float.valueOf(yaw), Float.valueOf(pitch),
+                    Boolean.valueOf(og));
+            }
+            Class bc = baseC;
+            if (bc != null && msg.getClass() == bc && rotCtor != null && baseOnGroundF != null) {
+                boolean og = ((Boolean) baseOnGroundF.get(msg)).booleanValue();
+                return rotCtor.newInstance(Float.valueOf(yaw), Float.valueOf(pitch),
+                    Boolean.valueOf(og));
+            }
+        } catch (Throwable ignore) {}
+        return msg;
+    }
+
+    /** Handler → NetworkManager → Channel (сканы по instanceof, не по именам). */
+    private Object findChannel(GameContext ctx, ClassLoader ld) {
+        try {
+            Class handlerC;
+            try {
+                handlerC = ld.loadClass("rustme.iliilIliiI");
+            } catch (Throwable t) {
+                return null;
+            }
+            Object handler = scanInstance(ctx.player, handlerC);
+            if (handler == null) handler = scanInstance(ctx.world, handlerC);
+            if (handler == null && ctx.mc != null) handler = scanInstance(ctx.mc, handlerC);
+            if (handler == null) return null;
+            netHandler = handler; // кэш для proactive-отправки взгляда
+            Class nmC;
+            try {
+                nmC = ld.loadClass("rustme.IllIlIIIiI");
+            } catch (Throwable t) {
+                return null;
+            }
+            Object nm = scanInstance(handler, nmC);
+            if (nm == null) return null;
+            Class chC;
+            try {
+                chC = Class.forName("io.netty.channel.Channel", true, ld);
+            } catch (Throwable t) {
+                return null;
+            }
+            return scanInstance(nm, chC);
+        } catch (Throwable t) {
+            return null;
+        }
+    }
+
+    /**
+     * Упреждающий Rotation со silent-взглядом сразу при смене цели
+     * (не ждём следующего клиентского тика). sendPacket потокобезопасен
+     * (очередь event loop), вызывается с агентного потока. Best-effort.
+     */
+    private void sendProactiveLook(GameContext ctx) {
+        try {
+            long now = System.currentTimeMillis();
+            if (now - lastProactiveMs < PROACTIVE_MIN_MS) return;
+            if (netHandler == null || rotC == null) return;
+            if (sendPacketM == null || onGroundF == null) {
+                if (!sendTried) {
+                    sendTried = true;
+                    try {
+                        sendPacketM = netHandler.getClass().getMethod("llIlIllilI",
+                            ctx.gameLoader.loadClass("rustme.llillIIIiI"));
+                    } catch (Throwable t) {
+                        Log.error("AimBot", "proactive: send method not found", t);
+                        return;
+                    }
+                    try {
+                        Class c = ctx.localSpClass;
+                        while (c != null && onGroundF == null) {
+                            try {
+                                onGroundF = c.getDeclaredField("lliililiI");
+                                onGroundF.setAccessible(true);
+                            } catch (Throwable ignore) {
+                                c = c.getSuperclass();
+                            }
+                        }
+                    } catch (Throwable ignore) {}
+                }
+                if (sendPacketM == null) return;
+            }
+            float yaw = silentYaw, pitch = silentPitch;
+            boolean og = true;
+            try {
+                if (onGroundF != null && ctx.player != null) og = onGroundF.getBoolean(ctx.player);
+            } catch (Throwable ignore) {}
+            java.lang.reflect.Constructor<?> ctor = rotCtor;
+            if (ctor == null && rotC != null) {
+                try {
+                    ctor = rotC.getConstructor(Float.TYPE, Float.TYPE, Boolean.TYPE);
+                } catch (Throwable ignore) {}
+            }
+            if (ctor == null) return;
+            Object pkt = ctor.newInstance(Float.valueOf(yaw), Float.valueOf(pitch), Boolean.valueOf(og));
+            sendPacketM.invoke(netHandler, pkt);
+            lastProactiveMs = now;
+        } catch (Throwable t) {
+            long now = System.currentTimeMillis();
+            if (now - lastPipeErr > 10000L) {
+                lastPipeErr = now;
+                Log.error("AimBot", "proactive look failed", t);
+            }
+        }
+    }
+
+    /** Первое non-null поле, assignable к want (по иерархии вверх). */
+    private static Object scanInstance(Object owner, Class want) {        if (owner == null || want == null) return null;
+        try {
+            Class c = owner.getClass();
+            while (c != null && c != Object.class) {
+                Field[] fs;
+                try {
+                    fs = c.getDeclaredFields();
+                } catch (Throwable t) {
+                    c = c.getSuperclass();
+                    continue;
+                }
+                for (int i = 0; i < fs.length; i++) {
+                    try {
+                        fs[i].setAccessible(true);
+                        Object v = fs[i].get(owner);
+                        if (v != null && want.isInstance(v)) return v;
+                    } catch (Throwable ignore) {}
+                }
+                c = c.getSuperclass();
+            }
+        } catch (Throwable ignore) {}
+        return null;
+    }
+
+    /** Установка хендлера на event loop (потокобезопасно для Netty). */
+    private void installHandler(final Object ch, ClassLoader ld) throws Exception {
+        final Method getPipeline = ch.getClass().getMethod("pipeline");
+        final Object pl = getPipeline.invoke(ch);
+        Class handlerType = Class.forName("io.netty.channel.ChannelHandler", true, ld);
+        final Method addLast = pl.getClass().getMethod("addLast", String.class, handlerType);
+        final Method remove = pl.getClass().getMethod("remove", String.class);
+        Object loop = ch.getClass().getMethod("eventLoop").invoke(ch);
+        Method exec = loop.getClass().getMethod("execute", Runnable.class);
+        exec.invoke(loop, new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    try {
+                        remove.invoke(pl, "rustme-silent");
+                    } catch (Throwable ignore) {}
+                    addLast.invoke(pl, "rustme-silent", new SilentOutbound());
+                } catch (Throwable t) {
+                    Log.error("AimBot", "pipeline install failed", t);
+                }
+            }
+        });
+    }
+
+    /**
+     * Была ли entityId нашей недавней целью (<= withinMs) и по буферу
+     * снимков она находилась в радиусе radius от (x,y,z) — атрибуция
+     * «мы убили этого игрока» для KillEffect. id=-1 если нет.
+     */
+    public static long recentTargetNear(double x, double y, double z, double radius, long withinMs) {
+        AimBot inst = INSTANCE;
+        if (inst == null || inst.lastTargetId < 0) return -1;
+        if (System.currentTimeMillis() - inst.lastTargetSeen > withinMs) return -1;
+        Snapshot[] buf = (Snapshot[]) inst.buffers.get(Long.valueOf(inst.lastTargetId));
+        if (buf == null) return -1;
+        Snapshot n = buf[0];
+        double dx = n.x - x, dy = n.y - y, dz = n.z - z;
+        if (dx * dx + dy * dy + dz * dz > radius * radius) return -1;
+        return inst.lastTargetId;
+    }
     private final java.util.HashMap<Long, String> nameCache = new java.util.HashMap<Long, String>();
 
     // Anti-lag буферы на игрока (per-entity ring): entityId → Position[] + время
     private final java.util.HashMap<Long, Snapshot[]> buffers = new java.util.HashMap<Long, Snapshot[]>();
     private final java.util.HashMap<Long, Long> trackingSince = new java.util.HashMap<Long, Long>();
+    private final java.util.HashMap<Long, Double> smoothVy = new java.util.HashMap<Long, Double>();
 
     // reflection-кэш (ленивый)
     private boolean resolved;
@@ -94,6 +678,67 @@ public final class AimBot extends Module {
     private Method rotateMethod;       // Entity.iiiiIllIII(FF)V = setRotation(yaw,pitch)
     private Field inventoryField;      // wrapper.iIliiIiII (InventoryPlayer) — с иерархией
     private Object world;
+
+    // ==== Silent-снапшот (пишет aimTick агентного потока, читает слушатель
+    // шины на ГЛАВНОМ потоке синхронно перед ударом — volatile) ====
+    private volatile Object silentTarget;  // IIlIIliIiI best entity (null = нет цели)
+    private volatile float silentYaw;
+    private volatile float silentPitch;
+    private volatile long silentTime;
+    private volatile boolean silentHave;
+
+    // ==== Шина мода (атака-событие) ====
+    private volatile boolean busSubscribed;
+    private volatile long lastBusAttempt;
+    private volatile Object attackController; // gs.iIiIiiIl (liIlIIliiI)
+    private volatile Method attackEntityM;    // IiliIIlliI(wrapper, entity)
+    private volatile Method resetCooldownM;   // playerSP.IIIliIiilI(llIIIilIiI)
+    private volatile Object cooldownEnum;     // llIIIilIiI.lliilIIlI
+    private volatile Class attackEventC;      // rustme.llilliiliI
+    private volatile Method cancelM;          // lIIillliil(Z)
+    private volatile Object unitInstance;     // kotlin.Unit.INSTANCE (возврат слушателя)
+    private volatile long steerEvents;        // постов атаки seen
+    private volatile long steerShots;         // перенаправлено ударов
+    private volatile long lastSteerLog;
+    private volatile long lastBusStatLog;
+
+    // ==== C03-спуф (Netty pipeline; серверная баллистика идёт от взгляда) ====
+    // Пушки бьют НЕ entity-пакетами (55 стиров = 0 киллов, лог 09-11), а
+    // серверным рейкастом из C03-взгляда (swing-пакет несёт только arc).
+    // Хендлер в outbound-цепочке ПЕРЕД энкодером переписывает yaw/pitch
+    // PositionRotation/Rotation на silent-углы; камера не трогается.
+    private volatile Class posRotC;           // rustme.IIiiilIIiI
+    private volatile Class rotC;              // rustme.lIiiilIIiI
+    private volatile Field c03YawF;           // liiIliilI:F (база iliiilIIiI)
+    private volatile Field c03PitchF;         // iIiIliilI:F
+    // upgrade бескрылых пакетов: Position(iIiiilIIiI: x,y,z,onGround) и
+    // base(iliiilIIiI, точный класс: onGround) пересобираем со взглядом,
+    // иначе стоя/идя сервер смотрит старым взглядом (промахи в silent)
+    private volatile Class posC;              // rustme.iIiiilIIiI
+    private volatile Class baseC;             // rustme.iliiilIIiI
+    private volatile java.lang.reflect.Constructor<?> posRotCtor; // (DDDFFZ)
+    private volatile java.lang.reflect.Constructor<?> rotCtor;    // (FFZ)
+    private volatile Field posXF, posYF, posZF, posOnGroundF;
+    private volatile Field baseOnGroundF;
+    private volatile Object hookedChannel;    // текущий канал (identity)
+    private volatile long lastPipeAttempt;
+    private volatile long c03Rewrites;
+    private volatile long c03Upgrades;
+    private volatile long lastRewriteLog;
+    private volatile long lastPipeLog;
+    private volatile long lastPipeErr;
+    // упреждающий взгляд: смена цели шлёт Rotation сразу (не ждём тик),
+    // автоогонь молчит 150мс пока взгляд едет до сервера (иначе первые пули мимо)
+    private static final long SETTLE_MS = 150L;
+    private static final long PROACTIVE_MIN_MS = 100L;
+    private volatile long lastAcquireMs;
+    private volatile long lastSilentId = -1L;
+    private volatile long lastProactiveMs;
+    private volatile long lastSettleLog;
+    private volatile Object netHandler;       // iliilIliiI (для proactive send)
+    private volatile Method sendPacketM;      // llIlIllilI(llillIIIiI)
+    private volatile Field onGroundF;         // SP.lliililiI:Z
+    private volatile boolean sendTried;
 
     private static final class Snapshot {
         long t;
@@ -128,9 +773,11 @@ public final class AimBot extends Module {
         if (!event.isInWorld() || ctx.player == null) {
             buffers.clear();
             trackingSince.clear();
+            smoothVy.clear();
             nameCache.clear();
             lastTargetId = -1;
             lastLmb = false;
+            clearSilent();
             return;
         }
         // сбор снимков позиций ВСЕГДА (для предикта нужны данные ДО нажатия R)
@@ -150,6 +797,11 @@ public final class AimBot extends Module {
         }
     }
 
+    @Override
+    protected void onDisable() {
+        clearSilent();
+    }
+
     /** Обновляет ring-buffer позиций всех игроков (шаг снимка >= MAG0). */
     private void collectSnapshots(GameContext ctx) throws Exception {
         Object worldNow = ctx.world;
@@ -157,6 +809,7 @@ public final class AimBot extends Module {
             world = worldNow;
             buffers.clear();
             trackingSince.clear();
+            smoothVy.clear();
         }
         java.util.List<?> players = (java.util.List<?>) ctx.playersField.get(ctx.world);
         if (players == null || players.isEmpty()) return;
@@ -208,9 +861,13 @@ public final class AimBot extends Module {
                 }
                 continue;
             }
-            // сдвиг: [0] ← новый, остальные ← старые (delta = движение за интервал)
+            // сдвиг: [0] ← новый, остальные ← старые (delta = движение за интервал).
+            // t КОПИРУЕТСЯ ОБЯЗАТЕЛЬНО: без него buf[1].t заморожен на момент
+            // ресета → dt = секунды → vel занижен в десятки раз → «не предиктит»
+            // (лог 09-10: dt=1502..2706мс при живом движении цели).
             for (int s = buf.length - 1; s > 0; s--) {
                 buf[s].x = buf[s - 1].x; buf[s].y = buf[s - 1].y; buf[s].z = buf[s - 1].z;
+                buf[s].t = buf[s - 1].t;
             }
             buf[0].x = px; buf[0].y = py; buf[0].z = pz; buf[0].t = now;
             // trackingSince не сбрасываем — elapsed растёт пока следим за целью
@@ -219,6 +876,8 @@ public final class AimBot extends Module {
 
     private void aimTick(GameContext ctx) throws Exception {
         resolve(ctx);
+        ensureBus(ctx);
+        ensurePipeline(ctx);
         Object me = ctx.player;
         IIlIIliIiI meE = (IIlIIliIiI) me;
         // глаза: interpolated
@@ -230,51 +889,15 @@ public final class AimBot extends Module {
         int ammoType = classifyAmmo(ctx);
         if (ammoType < 1) return; // diag() выше покажет где сорвалось
 
-        java.util.List<?> players = (java.util.List<?>) ctx.playersField.get(ctx.world);
-        if (players == null) return;
-        Object[] arr = players.toArray(new Object[0]);
-
-        IIlIIliIiI best = null;
-        double bestScore = Double.MAX_VALUE;
-        double bestAimY = 0;
-        double bestDist = 0;
-        int candTotal = 0, candFov = 0, candVis = 0; // для no-target диагностики
-
-        for (int i = 0; i < arr.length; i++) {
-            Object w = arr[i];
-            if (w == null || ctx.localSpClass.isInstance(w)) continue;
-            if (!(w instanceof IIlIIliIiI)) continue;
-            candTotal++;
-            IIlIIliIiI e = (IIlIIliIiI) w;
-            double tx = e.IlIiillIII(), ty = e.liiiIllIII(), tz = e.lIilillIII();
-            double dx = tx - mx, dy = ty - my, dz = tz - mz;
-            double dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-            if (dist < DIST_MIN || dist > DIST_MAX) continue;
-
-            boolean knocked = isKnocked(e);
-            if (aimIgnoreKnocked && knocked) continue;
-
-            // FOV-гейт: угол взгляд→цель <= aimFov/2
-            double yawTo = Math.toDegrees(Math.atan2(dz, dx)) - 90.0;
-            double pitchTo = -Math.toDegrees(Math.atan2(dy, Math.sqrt(dx * dx + dz * dz)));
-            double dyaw = wrapDeg(yawTo - myYaw);
-            double dpitch = pitchTo - myPitch;
-            double ang = Math.sqrt(dyaw * dyaw + dpitch * dpitch);
-            if (ang > aimFov() * 0.5) continue;
-            candFov++;
-
-            if (aimVisibleCheck && !isVisible(ctx, mx, my, mz, tx, ty + EYE_HEIGHT_STAND, tz)) continue;
-            candVis++;
-
-            if (ang < bestScore) {
-                bestScore = ang;
-                best = e;
-                bestAimY = knocked ? KNOCKED_OFFSET : EYE_HEIGHT_STAND;
-                bestDist = dist;
-            }
-        }
+        // выбор цели общий (использует и AutoShoot через findTarget)
+        float[] sel = new float[3]; // [0]=угол к прицелу °, [1]=смещение кости, [2]=дистанция
+        IIlIIliIiI best = selectTarget(ctx, mx, my, mz, DIST_MAX, sel);
+        double bestScore = sel[0];
+        double bestAimY = sel[1];
+        double bestDist = sel[2];
         if (best == null) {
             long nw = System.currentTimeMillis();
+            clearSilent();
             if (aimDebug && nw - lastNoTargetLog > 1000L) {
                 lastNoTargetLog = nw;
                 if (lastTargetId != -1) {
@@ -293,6 +916,7 @@ public final class AimBot extends Module {
         //   трекинга + пинг); k2 = clamp(Prediction,0,2)*factor(=1.0); dist для
         //   баллистики и дропа — ГОРИЗОНТАЛЬНАЯ; 3 итерации фикс. точки (edi=3).
         long id = best.iiIIIIlIII();
+        lastTargetSeen = System.currentTimeMillis();
         if (id != lastTargetId) {
             Log.info("AimBot", (lastTargetId == -1 ? "target ACQ: id=" + id
                 : "target SWITCH id=" + lastTargetId + " -> id=" + id)
@@ -301,7 +925,7 @@ public final class AimBot extends Module {
         }
         Snapshot[] buf = buffers.get(Long.valueOf(id));
         Long seenAt = trackingSince.get(Long.valueOf(id));
-        if (buf == null || seenAt == null) return;
+        if (buf == null || seenAt == null) { clearSilent(); return; }
         Snapshot newest = buf[0];
         Snapshot prev = buf[1];
 
@@ -328,6 +952,20 @@ public final class AimBot extends Module {
                 Log.info("AimBot", "vel clamp 100: было " + f1(velMag) + " бл/с id=" + id);
             }
         }
+
+        // ВЕРТИКАЛЬ (лог 09-11, k00shka): сырой velY из 2 точек/50мс даёт
+        // whiplash ±8 м/с → предикт скачет ±2.5м, прицел дёргается вверх-вниз.
+        // Чиним: кламп + EMA + span-земля (разброс Y за 250мс < 0.15м → vy=0).
+        double vyRawC = velY;
+        if (vyRawC > VY_UP_MAX) vyRawC = VY_UP_MAX;
+        if (vyRawC < VY_DOWN_MAX) vyRawC = VY_DOWN_MAX;
+        double spanY = ySpan(buf, System.currentTimeMillis(), VY_SPAN_MS);
+        Double psm = (Double) smoothVy.get(Long.valueOf(id));
+        double svy;
+        if (spanY < VY_GROUND_SPAN) svy = 0.0;
+        else if (psm == null) svy = vyRawC;
+        else svy = psm.doubleValue() + VY_EMA * (vyRawC - psm.doubleValue());
+        smoothVy.put(Long.valueOf(id), Double.valueOf(svy));
 
         // k: возраст СВЕЖЕГО снапшота в тиках + пинг (их aimLatency*0.02*pingComp).
         // ВАЖНО (09-10): у конкурента +0x50 = время ПОСЛЕДНЕГО обновления структуры
@@ -356,7 +994,7 @@ public final class AimBot extends Module {
         // первый член: pos + vel*k
         double predX = newest.x + velX * kSec;
         double predZ = newest.z + velZ * kSec;
-        double predY = boneY + (predictY ? velY * kSec : 0.0);
+        double predY = boneY + (predictY ? svy * kSec : 0.0);
 
         // 3 итерации фиксированной точки: dist(pred) → тики полёта → pred заново
         double cLast = 0; // последнее c — в лог (полётное упреждение в сек)
@@ -369,9 +1007,15 @@ public final class AimBot extends Module {
                 cLast = c;
                 predX = newest.x + velX * (kSec + c);
                 predZ = newest.z + velZ * (kSec + c);
-                if (predictY) predY = boneY + velY * (kSec + c);
+                if (predictY) predY = boneY + svy * (kSec + c);
             }
         }
+
+        // кап вертикального лида (сырой vy дёргается — дроп идёт отдельно ниже)
+        double yLead = predY - boneY;
+        if (yLead > Y_LEAD_MAX) yLead = Y_LEAD_MAX;
+        else if (yLead < -Y_LEAD_MAX) yLead = -Y_LEAD_MAX;
+        predY = boneY + yLead;
 
         // Y-drop: их таблицы (0x1760c0/0x176110/0x176160), dist ГОРИЗОНТАЛЬНАЯ
         double dhx = predX - mx, dhz = predZ - mz;
@@ -399,6 +1043,7 @@ public final class AimBot extends Module {
             // данные устарели — пересоздаём буфер
             buffers.remove(Long.valueOf(id));
             trackingSince.remove(Long.valueOf(id));
+            clearSilent();
             return;
         }
 
@@ -411,8 +1056,39 @@ public final class AimBot extends Module {
         float dpitch = targetPitch - curPitch;
         float rawDyaw = dyaw, rawDpitch = dpitch; // для флага CLAMP в логе
 
+        // ==== AUTO SHOOT (настройка): цель есть и видна (selectTarget уже
+        // отфильтровал) → ЛКМ-клик через java.awt.Robot. Форк читает мышь
+        // напрямую — поле KeyBinding огонь не триггерит (лог 09-11: pressing
+        // = true без выстрелов). Клик эмулирует реальное нажатие ОС.
+        try {
+            if (stAutoShoot.get()) {
+                long now = System.currentTimeMillis();
+                // silent: первые пули после смены цели летят в старый взгляд —
+                // держим огонь, пока свежий взгляд едет до сервера
+                if (silentMode() && now - lastAcquireMs < SETTLE_MS) {
+                    if (now - lastSettleLog > 2000L) {
+                        lastSettleLog = now;
+                        Log.info("AimBot", "auto shoot held: look settling");
+                    }
+                } else {
+                long interval = (long) stShootInterval.value;
+                if (now - lastAutoShootLog > 2000L) {
+                    lastAutoShootLog = now;
+                    Log.info("AimBot", "auto shoot: target d=" + f1(bestDist)
+                        + " interval=" + interval);
+                }
+                if (now - lastAutoClick >= interval) {
+                    lastAutoClick = now;
+                    requestClick();
+                }
+                }
+            }
+        } catch (Throwable t) {
+            Log.error("AimBot", "auto shoot failed", t);
+        }
+
         // МЁРТВАЯ ЗОНА: малые отклонения не пишем (мышь игрока доминирует)
-        
+
         // Ограничение скорости на запись (10° за 50мс = 200°/с максимум)
         float MAX_TURN = 10f;
         if (dyaw > MAX_TURN) dyaw = MAX_TURN;
@@ -423,22 +1099,54 @@ public final class AimBot extends Module {
         float newPitch = curPitch + dpitch;
         if (newPitch > 90f) newPitch = 90f;
         if (newPitch < -90f) newPitch = -90f;
-        // Вызываем МЕТОДЫ setRotation(yaw,pitch) — они обновляют prev-поля и
-        // синхронизируют камеру (field-write этого НЕ делает → дёрганье).
-        // Entity root: iiiiIllIII(FF)V = setRotation(yaw,pitch) [ZNANIA 14.1]
-        if (rotateMethod == null) {
-            Class root = ctx.gameLoader.loadClass("rustme.IIlIIliIiI");
-            for (Method m : root.getMethods()) {
-                if (m.getName().equals("iiiiIllIII") && m.getParameterCount() == 2
-                    && m.getParameterTypes()[0] == Float.TYPE
-                    && m.getParameterTypes()[1] == Float.TYPE) {
-                    rotateMethod = m;
-                    break;
+        // silent-снапшот (ОБА режима — бесшовное переключение Vector/Silent):
+        // слушатель шины перенаправит удар, Netty-хендлер — взгляд C03.
+        // Углы клампим тем же MAX_TURN от прошлого опубликованного (паритет
+        // с vector: сервер видит ту же динамику доводки, камера стоит).
+        if (!silentHave) {
+            silentYaw = curYaw;
+            silentPitch = curPitch;
+        }
+        float sdy = (float) wrapDeg((double) targetYaw - (double) silentYaw);
+        float sdp = targetPitch - silentPitch;
+        if (sdy > MAX_TURN) sdy = MAX_TURN;
+        else if (sdy < -MAX_TURN) sdy = -MAX_TURN;
+        if (sdp > MAX_TURN) sdp = MAX_TURN;
+        else if (sdp < -MAX_TURN) sdp = -MAX_TURN;
+        silentYaw += sdy;
+        silentPitch += sdp;
+        if (silentPitch > 90f) silentPitch = 90f;
+        else if (silentPitch < -90f) silentPitch = -90f;
+        // новая цель/свежий трек: взгляд на сервере обновится только со
+        // следующим C03 — шлём Rotation сразу + держим автоогонь SETTLE_MS
+        if (!silentHave || id != lastSilentId) {
+            lastSilentId = id;
+            lastAcquireMs = System.currentTimeMillis();
+            sendProactiveLook(ctx);
+        }
+        silentTarget = best;
+        silentTime = System.currentTimeMillis();
+        silentHave = true;
+        if (!silentMode()) {
+            // VECTOR: доворот камеры через setRotation (как раньше).
+            // SILENT: камеру НЕ трогаем — удар перенаправит слушатель шины.
+            // Вызываем МЕТОДЫ setRotation(yaw,pitch) — они обновляют prev-поля и
+            // синхронизируют камеру (field-write этого НЕ делает → дёрганье).
+            // Entity root: iiiiIllIII(FF)V = setRotation(yaw,pitch) [ZNANIA 14.1]
+            if (rotateMethod == null) {
+                Class root = ctx.gameLoader.loadClass("rustme.IIlIIliIiI");
+                for (Method m : root.getMethods()) {
+                    if (m.getName().equals("iiiiIllIII") && m.getParameterCount() == 2
+                        && m.getParameterTypes()[0] == Float.TYPE
+                        && m.getParameterTypes()[1] == Float.TYPE) {
+                        rotateMethod = m;
+                        break;
+                    }
                 }
             }
-        }
-        if (rotateMethod != null) {
-            rotateMethod.invoke(me, Float.valueOf(newYaw), Float.valueOf(newPitch));
+            if (rotateMethod != null) {
+                rotateMethod.invoke(me, Float.valueOf(newYaw), Float.valueOf(newPitch));
+            }
         }
 
         // ==== ДИАГНОСТИКА ДЛЯ АНАЛИЗА ПРОМАХОВ ====
@@ -448,15 +1156,17 @@ public final class AimBot extends Module {
         if (aimDebug && nw - lastStateLog >= 100L) {
             lastStateLog = nw;
             Log.info("AimBot", "aim: " + nameOf(best) + "#" + id
+                + " mode=" + (silentMode() ? "silent" : "vector")
                 + " d=" + f1(distH)
                 + " ammo=" + ammoType + " ping=" + pingMs
                 + " snapAge=" + (nw - newest.t) + "мс dt=" + f0(dtSec * 1000.0) + "мс"
                 + " vel=(" + f2(velX) + "," + f2(velY) + "," + f2(velZ) + ")"
+                + " vyS=" + f2(svy) + " sp=" + f2(spanY)
                 + " k=" + f2(kTicks) + " c=" + f2(cLast) + " drop=" + f2(drop)
                 + " pred=(" + f1(px) + "," + f1(py) + "," + f1(pz) + ")"
                 + " real=(" + f1(best.IlIiillIII()) + "," + f1(best.liiiIllIII())
                     + "," + f1(best.lIilillIII()) + ")"
-                + " yaw " + f1(curYaw) + "->" + f1(targetYaw)
+                + " yaw " + f1(curYaw) + "->" + f1(wrapDeg(targetYaw))
                 + " pitch " + f1(curPitch) + "->" + f1(targetPitch)
                 + (clamped ? " [CLAMP]" : ""));
         }
@@ -471,6 +1181,7 @@ public final class AimBot extends Module {
                 + " d=" + f1(distH) + " ammo=" + ammoType + " ping=" + pingMs
                 + " snapAge=" + (nw - newest.t) + "мс"
                 + " vel=(" + f2(velX) + "," + f2(velY) + "," + f2(velZ) + ")"
+                + " vyS=" + f2(svy) + " sp=" + f2(spanY)
                 + " k=" + f2(kTicks) + " c=" + f2(cLast) + " drop=" + f2(drop)
                 + " pred=(" + f1(px) + "," + f1(py) + "," + f1(pz) + ")"
                 + " real=(" + f1(best.IlIiillIII()) + "," + f1(best.liiiIllIII())
@@ -478,6 +1189,14 @@ public final class AimBot extends Module {
                 + " yaw=" + f1(newYaw) + " pitch=" + f1(newPitch));
         }
         lastLmb = lmb;
+        // статистика шины (события атаки seen — идут ли выстрелы через событие)
+        if (nw - lastBusStatLog > 5000L) {
+            lastBusStatLog = nw;
+            if (steerEvents > 0 || busSubscribed) {
+                Log.info("AimBot", "bus: subscribed=" + busSubscribed
+                    + " attackEvents=" + steerEvents + " steered=" + steerShots);
+            }
+        }
     }
 
 
@@ -719,21 +1438,127 @@ public final class AimBot extends Module {
         }
     }
 
-    /** Ray-trace видимость: глаза → голова цели. Fail-open (резолв не удался = видно). */
+    /**
+     * Выбор цели: перебор playerEntities, FOV-КОНУС (3D-угол взгляд↔цель,
+     * 0..180; FOV=360 → half=180 → цели со всех сторон), Visible Check.
+     * out[0]=угол °, out[1]=смещение кости (knocked/head), out[2]=дистанция.
+     * Работает и при выключенном модуле (нужно AutoShoot) — настройки INSTANCE.
+     */
+    private IIlIIliIiI selectTarget(GameContext ctx, double mx, double my, double mz,
+                                    float maxDist, float[] out) throws Exception {
+        out[0] = 999f; out[1] = 0f; out[2] = 0f;
+        java.util.List<?> players = (java.util.List<?>) ctx.playersField.get(ctx.world);
+        if (players == null) return null;
+        Object[] arr = players.toArray(new Object[0]);
+
+        IIlIIliIiI best = null;
+        double bestScore = Double.MAX_VALUE;
+        double bestAimY = 0;
+        double bestDist = 0;
+        candTotal = 0; candFov = 0; candVis = 0;
+
+        // вектор взгляда (MC: pitch+ = вниз)
+        IIlIIliIiI me = (IIlIIliIiI) ctx.player;
+        double myYaw = me.IIiIillIII(), myPitch = me.iilIIIlIII();
+        double yr = Math.toRadians(myYaw), pr = Math.toRadians(myPitch);
+        double vx = -Math.sin(yr) * Math.cos(pr);
+        double vy = -Math.sin(pr);
+        double vz = Math.cos(yr) * Math.cos(pr);
+
+        for (int i = 0; i < arr.length; i++) {
+            Object w = arr[i];
+            if (w == null || ctx.localSpClass.isInstance(w)) continue;
+            if (!(w instanceof IIlIIliIiI)) continue;
+            candTotal++;
+            IIlIIliIiI e = (IIlIIliIiI) w;
+            double tx = e.IlIiillIII(), ty = e.liiiIllIII(), tz = e.lIilillIII();
+            double dx = tx - mx, dy = ty - my, dz = tz - mz;
+            double dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+            if (dist < DIST_MIN || dist > maxDist) continue;
+
+            boolean knocked = isKnocked(e);
+            if (aimIgnoreKnocked && knocked) continue;
+
+            // друзья вне прицела (utils.etc.Friends): не наводимся, не стреляем
+            try {
+                if (utils.etc.Friends.isFriend(nameOf(e))) continue;
+            } catch (Throwable ignore) {}
+
+            // угол цель↔прицел (3D, градусы)
+            double dot = (dx * vx + dy * vy + dz * vz) / Math.max(1e-9, dist);
+            double ang = Math.toDegrees(Math.acos(Math.max(-1.0, Math.min(1.0, dot))));
+            if (ang > aimFov() * 0.5) continue;
+            candFov++;
+
+            if (visibleCheck() && !isVisible(ctx, mx, my, mz, tx, ty + EYE_HEIGHT_STAND, tz)) continue;
+            candVis++;
+
+            if (ang < bestScore) {
+                bestScore = ang;
+                best = e;
+                bestAimY = knocked ? KNOCKED_OFFSET : EYE_HEIGHT_STAND;
+                bestDist = dist;
+            }
+        }
+        if (best != null) {
+            out[0] = (float) bestScore;
+            out[1] = (float) bestAimY;
+            out[2] = (float) bestDist;
+        }
+        return best;
+    }
+
+    /**
+     * Публичная точка для AutoShoot: выбор цели с настройками AimBot
+     * (FOV-конус + Visible Check), НЕ зависит от состояния модуля AimBot.
+     */
+    public static IIlIIliIiI findTarget(GameContext ctx, float maxDist, float[] out) {
+        AimBot inst = INSTANCE;
+        if (inst == null || ctx == null || ctx.world == null || ctx.player == null) {
+            if (out != null) { out[0] = 999f; out[1] = 0f; out[2] = 0f; }
+            return null;
+        }
+        try {
+            IIlIIliIiI me = (IIlIIliIiI) ctx.player;
+            double mx = me.IlIiillIII(), my = me.liiiIllIII() + me.iliilIiilI(), mz = me.lIilillIII();
+            return inst.selectTarget(ctx, mx, my, mz, maxDist, out);
+        } catch (Throwable t) {
+            if (out != null) { out[0] = 999f; out[1] = 0f; out[2] = 0f; }
+            return null;
+        }
+    }
+
+    // видимость: Vec3-ctor + World.IlIilllllI(Vec3,Vec3) (ванильный
+    // rayTraceBlocks(start,end); null = чисто). Кэш: резолв один раз —
+    // вызов был на каждого кандидата каждый тик.
+    private java.lang.reflect.Constructor<?> vecCtor;
+    private Method rayM;
+    private boolean visFailLogged;
+
+    /**
+     * Ray-trace видимость: глаза → голова цели. Fail-open, но с РАЗОВЫМ
+     * логом: прежняя версия резолвила несуществующую сигнатуру
+     * (lIllIilIiI = BlockPos, а не Vec3!) и молча всегда возвращала true —
+     * проверка фактически не работала (выяснено 09-10).
+     */
     private boolean isVisible(GameContext ctx, double x0, double y0, double z0,
                               double x1, double y1, double z1) {
         try {
             if (ctx.world == null) return true;
-            Class vecCls = ctx.gameLoader.loadClass("rustme.lIllIilIiI");
-            Class vecBufCls = ctx.gameLoader.loadClass("rustme.lIiIlilIiI");
-            Object vec = vecBufCls.getMethod("iIIIIlillI", Double.TYPE, Double.TYPE, Double.TYPE)
-                .invoke(null, Double.valueOf(x1), Double.valueOf(y1), Double.valueOf(z1));
-            // world.ilIlillllI(vec) → RayTraceResult; null = чисто
-            Method rt = ctx.worldClass.getMethod("ilIlillllI", vecCls);
-            Object hit = rt.invoke(ctx.world, vec);
-            return hit == null;
+            if (rayM == null) {
+                Class vecC = ctx.gameLoader.loadClass("rustme.lliililIiI"); // Vec3
+                vecCtor = vecC.getConstructor(Double.TYPE, Double.TYPE, Double.TYPE);
+                rayM = ctx.worldClass.getMethod("IlIilllllI", vecC, vecC);
+            }
+            Object start = vecCtor.newInstance(Double.valueOf(x0), Double.valueOf(y0), Double.valueOf(z0));
+            Object end = vecCtor.newInstance(Double.valueOf(x1), Double.valueOf(y1), Double.valueOf(z1));
+            return rayM.invoke(ctx.world, start, end) == null;
         } catch (Throwable t) {
-            return true; // fail-open
+            if (!visFailLogged) {
+                visFailLogged = true;
+                Log.error("AimBot", "visible check failed (fail-open)", t);
+            }
+            return true;
         }
     }
 
@@ -776,6 +1601,20 @@ public final class AimBot extends Module {
         while (d > 180.0) d -= 360.0;
         while (d < -180.0) d += 360.0;
         return d;
+    }
+
+    /** Разброс Y по свежим снимкам кольца (для span-земли вертикали). */
+    private static double ySpan(Snapshot[] buf, long now, long windowMs) {
+        double mn = Double.MAX_VALUE, mx = -Double.MAX_VALUE;
+        boolean any = false;
+        for (int i = 0; i < buf.length; i++) {
+            Snapshot s = buf[i];
+            if (s == null || now - s.t > windowMs) continue;
+            if (s.y < mn) mn = s.y;
+            if (s.y > mx) mx = s.y;
+            any = true;
+        }
+        return any ? mx - mn : 0.0;
     }
 
     // ===== форматирование лога (Locale.US — иначе на ru-WIN запятые) =====
@@ -822,8 +1661,25 @@ public final class AimBot extends Module {
             if (INSTANCE == null || !INSTANCE.isState() || !INSTANCE.drawFov()) return;
             if (!ctx.inWorld || ctx.player == null) return;
 
-            // радиус круга: aimFov/180 * (высота экрана/2) — конус в градусах -> экран
-            float r = INSTANCE.aimFov() / 180f * (scaledH * 0.5f);
+            // радиус FOV-конуса на экране от КАМЕРЫ: r = tan(fov/2)/tan(camFov/2)
+            // × (высота экрана/2). camFovY — вертикальный FOV камеры из
+            // захваченной PROJ (m11 = 1/tan(fovY/2); fallback 90 — рендер форка).
+            // Прежний r = fov/180 × screenH/2 мерил от ЭКРАНА, не от камеры.
+            float camFovY = 90f;
+            try {
+                java.nio.FloatBuffer proj = rustme.lliIilliiI.lIIlIlIl;
+                if (proj != null && proj.capacity() >= 16) {
+                    float m11 = proj.get(5);
+                    if (Math.abs(m11) > 0.2f && Math.abs(m11) < 5f) {
+                        camFovY = (float) Math.toDegrees(2.0 * Math.atan(1.0 / m11));
+                    }
+                }
+            } catch (Throwable ignore) {}
+            float half = INSTANCE.aimFov() * 0.5f;
+            if (half >= 89.9f) return; // конус ≥180° накрывает весь экран
+            float r = (float) (Math.tan(Math.toRadians(half))
+                / Math.tan(Math.toRadians(Math.min(89.0, camFovY * 0.5f))) * (scaledH * 0.5f));
+            if (r > Math.max(scaledW, scaledH) * 1.5f) return; // круг ушёл за экран
             float cx = scaledW * 0.5f, cy = scaledH * 0.5f;
 
             boolean blendWas = GL11.glIsEnabled(GL11.GL_BLEND);

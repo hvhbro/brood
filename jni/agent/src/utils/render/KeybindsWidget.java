@@ -2,72 +2,62 @@ package utils.render;
 
 import modules.api.Module;
 import modules.api.Modules;
+import org.lwjglx.opengl.GL11;
 import utils.etc.GameContext;
+import utils.etc.Log;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
- * Keybinds HUD-виджет — порт sweetie KeybindsWidget 1:1.
+ * Keybinds HUD-виджет — порт rich HotKeys (rich.screens.hud.HotKeys) 1:1,
+ * адаптирован под наш стек (MSDF-шрифт, SDF-плашки, scissor).
  *
- * ОРИГИНАЛ (sweetie.evaware.client.ui.widget.overlay.KeybindsWidget):
- *  - позиция (3, 120), драг;
- *  - ХЕДЕР (если есть бинды), две BLUR-плашки:
- *      1) иконка: (x-5, y-5, h1+10, w1+10), радиус-углы (5,1,1,1);
- *         глиф "L" (ICON_NE1Z 14.6f) градиентом primary→secondary;
- *         h1 = iconFont.getHeight(13), w1 = iconFont.getWidth("L", 13);
- *      2) текст: (x + w1 + 10 + отступ - 4, y - 5, w2 + 8, h1 + 10),
- *         углы (1,5,1,1); отступ = 3;
- *         "KeyBinds" (SF_SEMIBOLD 10.5, белый), drawCenteredText на
- *         x + 4 + w1 + 10 + отступ + 20;
- *      headerWidth = (w1 + 10) + отступ + (w2 + 8);
- *  - СПИСОК: offsetY = y + 21; maxWidth = headerWidth - 9.3;
- *    rowHeight = height(10) + 2; targetHeight = rows + 6; lerp 0.15/0.12;
- *    BLUR (x - 5, offsetY, maxWidth + 10, listHeight), углы (1,1,5,5),
- *    альфа = 255 * alphaAnimation; listY = offsetY + 3;
- *    animationOffset = 6 * (1 - alphaAnimation);
- *  - СТРОКИ: включённый модуль с биндом; bind слева (x + 2), имя справа
- *    (x + maxWidth - width(name)); обрезка до maxWidth - 25 + "...";
- *    per-module lerp 0.12, alpha = 255 * anim;
- *  - габариты: width = max(headerWidth, maxWidth + 10), height = 21 + listHeight.
+ * МЕТРИКИ rich (1:1):
+ *   HEADER_HEIGHT = 22, ROW_HEIGHT = 16 (шаг ряда 14);
+ *   фон: blur (20,20,20,70) r10, углы (9,9,9,9) — у нас единый r9;
+ *   шапка: градиент (28,28,28,110 → 24,24,24,120) высотой 19.5, r9 —
+ *     у нас сплошной (27,27,27,114) r9 (градиент незаметен на 19.5px);
+ *   "Keybinds" BOLD 7px на (x+6, y+6), иконка справа x+w-12, y+6 (180,180,180);
+ *   ряды с y+19 (HEADER-3): имя 7px (214,214,214) на x+8,
+ *     rowY + (16-7)/2 + 0.5; бинд 7px (130,130,140) в боксе 12px высотой,
+ *     boxWidth = max(12, bindWidth+6), boxX = x + w - boxWidth - 5,
+ *     boxY = rowY + (16-12)/2, текст центрирован в боксе;
+ *   ширина = max(100, nameWidth + bindWidth + 28) — анимируется lerp'ом
+ *     (factor = 1 - 0.001^(dt*8)); высота = 22 + rows*14;
+ *   весь виджет под scissor (хвост списка обрезается при сжатии высоты).
  *
- * НАША АДАПТАЦИЯ (только то, чего нет в клиенте):
- *  - глиф "L" (NE1Z icon font) → IconRender.drawIcon("setting") — атлас-иконка,
- *    тон primary (градиент на 13px глифе неразличим);
- *  - SF_SEMIBOLD → наш HUD_FONT (sf_semibold);
- *  - BLUR_RECT → drawRoundedRectShader (единый радиус; per-corner радиусы
- *    их Vector4f наш SDF-шейдер не поддерживает — взят больший из углов);
- *  - KeyStorage.getBind → bindKey → keyName().
+ * Иконка — наша атласная (IconRender "setting"), вместо глифа "L".
  */
 public final class KeybindsWidget {
 
-    private static final float FONT_SIZE = 10f;
-    private static final float HEADER_FONT_SIZE = 10.5f;
-    private static final float ICON_FONT_SIZE = 13f;
-    private static final float ICON_DRAW_SIZE = 14.6f;
-    private static final float HEADER_H = 21f;
-    private static final float OTSTUP = 3f;
+    private static final float HEADER_HEIGHT = 22f;
+    private static final float ROW_STEP = 14f;
+    private static final float ROW_HEIGHT = 16f;
+    private static final float FONT_SIZE = 7f;
+    private static final float ANIMATION_SPEED = 8.0f;
 
-    // UIColors темы
-    private static final int PRIMARY = 0xFF906BFF;
-    private static final int SECONDARY = 0xFF5A4BFF;
-    private static final int WIDGET_BLUR = 0xDC0C0C12;
-    private static final int TEXT_WHITE = 0xFFFFFFFF;
+    // rich-цвета
+    private static final int BG_BLUR = 0x46141414;      // (20,20,20,70)
+    private static final int BG_HEADER = 0x721B1B1B;    // (27,27,27,114)
+    private static final int COL_TITLE = 0xFFFFFFFF;
+    private static final int COL_ICON = 0xFFB4B4B4;     // (180,180,180)
+    private static final int COL_NAME = 0xFFD6D6D6;     // (214,214,214)
+    private static final int COL_BIND = 0xFF82828C;     // (130,130,140)
 
-    // позиция (их super(3f, 120f)); x<0 = авто-прилипание справа (ArrayList слева)
+    // позиция (драг из меню); x<0 = авто-прилипание справа
     private static float posX = -1f;
     private static float posY = 120f;
 
-    // анимации (их поля 1:1)
-    private static final Map<String, Float> animations = new HashMap<String, Float>();
-    private static float heightAnimation;
+    // анимация (lerp как в rich)
     private static float alphaAnimation;
+    private static float animatedWidth = 100f;
+    private static float animatedHeight = HEADER_HEIGHT;
+    private static long lastUpdateTime;
 
     // последний рендер — для драга
-    private static float lastW = 60f;
-    private static float lastH = 21f;
+    private static float lastW = 100f;
+    private static float lastH = HEADER_HEIGHT;
     private static float lastX;
     private static float lastY;
 
@@ -90,7 +80,7 @@ public final class KeybindsWidget {
 
     // ===== сбор биндов =====
 
-    /** Активные бинды: [имя модуля, имя клавиши] — их map<String,String>. */
+    /** Активные бинды: [имя модуля, имя клавиши]. */
     private static List<String[]> collectBinds() {
         List<String[]> map = new ArrayList<String[]>();
         Module[] all = Modules.all().toArray(new Module[0]);
@@ -110,117 +100,113 @@ public final class KeybindsWidget {
             float x = posX >= 0f ? posX : scaledWidth - lastW - 3f;
             float y = posY;
 
-            MsdfFont font = CustomFont.HUD_FONT;
-
             List<String[]> binds = collectBinds();
 
-            // --- ХЕДЕР (1:1, только если есть бинды) ---
-            // их метрики икон-шрифта: h1 = height(13), w1 = width("L", 13);
-            // у нас иконка квадратная size×size → w1 = h1 = 13
-            float h1 = ICON_FONT_SIZE;
-            float w1 = ICON_FONT_SIZE;
+            long currentTime = System.currentTimeMillis();
+            float deltaTime = Math.min((currentTime - lastUpdateTime) / 1000f, 0.1f);
+            lastUpdateTime = currentTime;
 
-            float w2 = CustomFont.getWidth("KeyBinds", HEADER_FONT_SIZE, font);
+            // alpha появления/скрытия (rich: startAnimation/stopAnimation)
+            float alphaTarget = binds.isEmpty() ? 0f : 1f;
+            alphaAnimation = lerp(alphaAnimation, alphaTarget, deltaTime);
 
-            float headerWidth = 0f;
-            if (!binds.isEmpty()) {
-                // 1) иконка-плашка: (x-5, y-5, h1+10, w1+10)
-                RenderUtil.drawRoundedRectShader(ctx,
-                    x - 5f, y - 5f, h1 + 10f, w1 + 10f, 5f,
-                    WIDGET_BLUR, WIDGET_BLUR, WIDGET_BLUR, WIDGET_BLUR);
-                // глиф по центру плашки (их drawCenteredGradientText, 14.6f):
-                // NE1Z-шрифта у нас нет — атлас-иконка с tint primary
-                float icX = (x - 5f) + (h1 + 10f - ICON_DRAW_SIZE) / 2f;
-                float icY = (y - 5f) + (w1 + 10f - ICON_DRAW_SIZE) / 2f;
-                IconRender.drawIcon("setting", icX, icY, ICON_DRAW_SIZE, PRIMARY);
-
-                // 2) текст-плашка: (x + w1 + 10 + отступ - 4, y - 5, w2 + 8, h1 + 10)
-                float tpX = x + w1 + 10f + OTSTUP - 4f;
-                RenderUtil.drawRoundedRectShader(ctx,
-                    tpX, y - 5f, w2 + 8f, h1 + 10f, 5f,
-                    WIDGET_BLUR, WIDGET_BLUR, WIDGET_BLUR, WIDGET_BLUR);
-                // их drawCenteredText: центр текста на x + 4 + w1 + 10 + отступ + 20
-                float textCenter = x + 4f + w1 + 10f + OTSTUP + 20f;
-                CustomFont.drawString("KeyBinds",
-                    textCenter - w2 / 2f, y + 1f, TEXT_WHITE, false, HEADER_FONT_SIZE, font);
-
-                headerWidth = (w1 + 10f) + OTSTUP + (w2 + 8f);
-            }
-
-            // --- СПИСОК (1:1) ---
-            float offsetY = y + HEADER_H;
-            alphaAnimation = interpolate(alphaAnimation, binds.isEmpty() ? 0f : 1f, 0.12f);
-
-            float rowHeight = CustomFont.cellHeight(FONT_SIZE, font) + 2f;
-            float maxWidth = headerWidth - 9.3f;
-
-            float targetHeight = rowHeight * binds.size() + 6f;
-            heightAnimation = interpolate(heightAnimation, targetHeight, 0.15f);
-            float listHeight = heightAnimation;
-
-            if (alphaAnimation > 0.01f) {
-                int blurAlpha = (int) (255f * alphaAnimation);
-                int blurCol = (blurAlpha << 24) | 0x0C0C12;
-                RenderUtil.drawRoundedRectShader(ctx,
-                    x - 5f, offsetY, maxWidth + 10f, listHeight, 5f,
-                    blurCol, blurCol, blurCol, blurCol);
-            }
-
-            float listY = offsetY + 3f;
-            float animationOffset = 6f * (1f - alphaAnimation);
-
+            // целевые размеры (rich: max(100, name+bind+28))
+            float targetWidth = 100f;
             for (String[] e : binds) {
-                String module = e[0];
-                String bind = e[1];
-
-                Float af = animations.get(module);
-                float anim = af != null ? af.floatValue() : 0f;
-                anim = interpolate(anim, 1f, 0.12f);
-                animations.put(module, Float.valueOf(anim));
-
-                int alpha = (int) (255f * anim);
-                int textCol = (alpha << 24) | 0xFFFFFF;
-
-                // обрезка имени: резерв под бинд = его РЕАЛЬНАЯ ширина (их фикс
-                // -25px был под короткие бинды; MOUSE4/BACKSPACE шире → имя
-                // наезжало на бинд — тест юзера 09-10)
-                float bindW = CustomFont.getWidth(bind, FONT_SIZE, font);
-                float maxNameW = maxWidth - 2f - bindW - 6f; // 2 = паддинг бинда, 6 = зазор
-                if (maxNameW < 8f) maxNameW = 8f;
-                String displayName = module;
-                if (CustomFont.getWidth(displayName, FONT_SIZE, font) > maxNameW) {
-                    while (displayName.length() > 1
-                        && CustomFont.getWidth(displayName + "...", FONT_SIZE, font) > maxNameW) {
-                        displayName = displayName.substring(0, displayName.length() - 1);
-                    }
-                    displayName += "...";
-                }
-
-                float rowY = listY + animationOffset * (1f - anim);
-                // bind слева, имя справа (их раскладка 1:1)
-                CustomFont.drawString(bind, x + 2f, rowY, textCol, false, FONT_SIZE, font);
-                float nameX = x + maxWidth - CustomFont.getWidth(displayName, FONT_SIZE, font);
-                CustomFont.drawString(displayName, nameX, rowY, textCol, false, FONT_SIZE, font);
-
-                listY += rowHeight;
+                float nameW = CustomFont.getWidth(e[0], FONT_SIZE, CustomFont.HUD_FONT);
+                float bindW = CustomFont.getWidth(e[1], FONT_SIZE, CustomFont.HUD_FONT);
+                targetWidth = Math.max(targetWidth, nameW + bindW + 28f);
             }
+            float targetHeight = HEADER_HEIGHT + binds.size() * ROW_STEP;
 
-            // чистка анимаций выключенных модулей (их map растёт бесконечно — фикс)
-            if (animations.size() > binds.size() + 16) {
-                animations.clear();
+            animatedWidth = lerp(animatedWidth, targetWidth, deltaTime);
+            animatedHeight = lerp(animatedHeight, targetHeight, deltaTime);
+
+            float w = animatedWidth;
+            float h = animatedHeight;
+            float alphaFactor = alphaAnimation;
+            if (alphaFactor <= 0.01f || w < 40f || h < 10f) {
+                lastX = x; lastY = y; lastW = 100f; lastH = HEADER_HEIGHT;
+                return 0f;
             }
-
-            // габариты для драга (их setWidth/setHeight)
-            lastW = Math.max(headerWidth, maxWidth + 10f);
-            if (lastW <= 0f) lastW = 60f;
-            lastH = HEADER_H + listHeight;
+            lastW = w;
+            lastH = h;
             lastX = x;
             lastY = y;
-            return lastW;
+
+            int a = (int) (255f * alphaFactor);
+
+            // фон: blur-плашка r9 (rich: blur 20,20,20,70, corners 9)
+            RenderUtil.drawRoundedRectShader(ctx, x, y, w, h, 9f,
+                mixA(BG_BLUR, a), mixA(BG_BLUR, a), mixA(BG_BLUR, a), mixA(BG_BLUR, a), 0.25f);
+            // шапка: r9 (rich: градиент 110→120 на 19.5px — незаметен, сплошной)
+            RenderUtil.drawRoundedRectShader(ctx, x, y, w, 19.5f, 9f,
+                mixA(BG_HEADER, a), mixA(BG_HEADER, a), mixA(BG_HEADER, a), mixA(BG_HEADER, a), 0.25f);
+
+            // scissor по габаритам виджета (rich: Scissor.enable(x,y,w,h))
+            int gs = Math.max(1, Math.round(GuiScale.get(ctx)));
+            int fbH = ctx.fbHeight > 0 ? ctx.fbHeight : (int) (scaledHeightSafe(ctx) * gs);
+            GL11.glEnable(GL11.GL_SCISSOR_TEST);
+            GL11.glScissor(Math.round(x * gs), Math.round(fbH - (y + h) * gs),
+                Math.max(1, Math.round(w * gs)), Math.max(1, Math.round(h * gs)));
+
+            // заголовок + иконка справа
+            CustomFont.drawString("Keybinds", x + 6f, y + 6f,
+                mixA(COL_TITLE, a), false, FONT_SIZE, CustomFont.HUD_FONT);
+            IconRender.drawIcon("setting", x + w - 12f, y + 6f, 7f, mixA(COL_ICON, a));
+
+            // ряды: с y + HEADER - 3, шаг 14 (rich 1:1)
+            float rowY = y + HEADER_HEIGHT - 3f;
+            for (String[] e : binds) {
+                drawKeyRow(ctx, x, rowY, w, e[0], e[1], a);
+                rowY += ROW_STEP;
+            }
+
+            GL11.glDisable(GL11.GL_SCISSOR_TEST);
+            return w;
         } catch (Throwable t) {
             utils.etc.Log.error("Keybinds", "render failed", t);
             return 0f;
         }
+    }
+
+    /** Один ряд: имя слева, бинд в боксе справа.
+     *  Центрирование — по ФАКТИЧЕСКОЙ клетке шрифта (cellHeight), а не по
+     *  «7» из референса: наш drawString рисует полную клетку глифа от y
+     *  (у rockstar/rich «7» — визуальная высота), иначе текст уползает. */
+    private static void drawKeyRow(GameContext ctx, float x, float rowY, float w,
+                                   String name, String bind, int a) {
+        float cell = CustomFont.cellHeight(FONT_SIZE, CustomFont.HUD_FONT);
+
+        // имя: x+8, вертикальный центр ряда
+        CustomFont.drawString(name, x + 8f, rowY + (ROW_HEIGHT - cell) / 2f,
+            mixA(COL_NAME, a), false, FONT_SIZE, CustomFont.HUD_FONT);
+
+        // бинд: бокс 12px высотой, ширина по тексту (+6), справа с отступом 5
+        float bindWidth = CustomFont.getWidth(bind, FONT_SIZE, CustomFont.HUD_FONT);
+        float boxWidth = Math.max(12f, bindWidth + 6f);
+        float boxHeight = 12f;
+        float boxX = x + w - boxWidth - 5f;
+        float boxY = rowY + (ROW_HEIGHT - boxHeight) / 2f;
+        CustomFont.drawString(bind, boxX + (boxWidth - bindWidth) / 2f,
+            boxY + (boxHeight - cell) / 2f, mixA(COL_BIND, a), false,
+            FONT_SIZE, CustomFont.HUD_FONT);
+    }
+
+    /** alpha-подмешивание: цвет (0xAARRGGBB) × a/255. */
+    private static int mixA(int argb, int a) {
+        int srcA = (argb >>> 24) & 0xFF;
+        int outA = srcA * a / 255;
+        return (outA << 24) | (argb & 0xFFFFFF);
+    }
+
+    private static float lerp(float current, float target, float deltaTime) {
+        float factor = 1f - (float) Math.pow(0.001, deltaTime * ANIMATION_SPEED);
+        return current + (target - current) * factor;
+    }
+
+    private static int scaledHeightSafe(GameContext ctx) {
+        return ctx.scaledHeight > 0 ? ctx.scaledHeight : 320;
     }
 
     /** GLFW-клавиша → короткое имя (маппинг CheatMenuScreen.keyName). */
@@ -259,9 +245,5 @@ public final class KeybindsWidget {
         if (key >= 48 && key <= 57) return String.valueOf((char) key);
         if (key >= 65 && key <= 90) return String.valueOf((char) key);
         return "K" + key;
-    }
-
-    private static float interpolate(float current, float target, float factor) {
-        return current + (target - current) * factor;
     }
 }

@@ -101,10 +101,20 @@ public final class CheatHud {
             modules.impl.Esp.render(GameContext.get(), partialTicks, scaledWidth, scaledHeight);
             // Tracers: линии до игроков (после Esp — делит камеру/проекцию)
             modules.impl.Tracers.render(GameContext.get(), partialTicks, scaledWidth, scaledHeight);
+            // Arrows: стрелочки на игроков вокруг прицела (текстура arrow.png)
+            modules.impl.Arrows.render(GameContext.get(), partialTicks, scaledWidth, scaledHeight);
             // AimBot: FOV-круг (центр экрана, поверх трейсеров)
             modules.impl.AimBot.render(GameContext.get(), partialTicks, scaledWidth, scaledHeight);
             // SoundEsp: метки звуков мира (поверх, только текст/квады)
             modules.impl.SoundEsp.render(GameContext.get(), partialTicks, scaledWidth, scaledHeight);
+            // ItemEsp: текст на предметах на полу (после SoundEsp, тот же стиль)
+            modules.impl.ItemEsp.render(GameContext.get(), partialTicks, scaledWidth, scaledHeight);
+            // Hitmarker: ✕ на месте попадания (мировая привязка, поверх мира)
+            modules.impl.Hitmarker.render(GameContext.get(), partialTicks, scaledWidth, scaledHeight);
+            // KillEffect: шейдерный эффект на месте убийства (билборд-шейдер)
+            modules.impl.KillEffect.render(GameContext.get(), partialTicks, scaledWidth, scaledHeight);
+            // Hotbar: кастомный хотбар rockstar (непрозрачная панель накрывает ваниль)
+            modules.impl.Hotbar.render(GameContext.get(), scaledWidth, scaledHeight);
 
             MsdfFont f = CustomFont.WM_FONT; // их getMediumFont()
 

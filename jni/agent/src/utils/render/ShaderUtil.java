@@ -13,7 +13,7 @@ import org.lwjgl.opengl.GL20;
  */
 public final class ShaderUtil {
 
-    private final int program;
+    private int program;
 
     /** id GL-программы (для glGetInteger-обёрток save/restore). */
     public int programId() {
@@ -36,18 +36,27 @@ public final class ShaderUtil {
             program = 0;
             return;
         }
-        program = GL20.glCreateProgram();
-        if (vs != 0) GL20.glAttachShader(program, vs);
-        GL20.glAttachShader(program, fs);
-        GL20.glLinkProgram(program);
-        if (GL20.glGetProgrami(program, GL20.GL_LINK_STATUS) == 0) {
-            String log = GL20.glGetProgramInfoLog(program, 1024);
+        int prog = GL20.glCreateProgram();
+        if (vs != 0) GL20.glAttachShader(prog, vs);
+        GL20.glAttachShader(prog, fs);
+        GL20.glLinkProgram(prog);
+        boolean linked = GL20.glGetProgrami(prog, GL20.GL_LINK_STATUS) != 0;
+        if (!linked) {
+            String log = GL20.glGetProgramInfoLog(prog, 1024);
             utils.etc.Log.error("Shader", "link failed: " + log, null);
         }
-        if (vs != 0) GL20.glDetachShader(program, vs);
-        GL20.glDetachShader(program, fs);
+        if (vs != 0) GL20.glDetachShader(prog, vs);
+        GL20.glDetachShader(prog, fs);
         if (vs != 0) GL20.glDeleteShader(vs);
         GL20.glDeleteShader(fs);
+        if (!linked) {
+            // битой программой рисовать нельзя (иначе glUseProgram даёт
+            // GL-ошибку каждый кадр) — только program=0 + ванильный fallback
+            GL20.glDeleteProgram(prog);
+            program = 0;
+        } else {
+            program = prog;
+        }
     }
 
     private static int compile(int type, String source) {

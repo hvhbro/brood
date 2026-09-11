@@ -134,21 +134,9 @@ public final class RenderUtil {
      */
     public static void drawRoundedRect(GameContext ctx, float x, float y, float w, float h, float r, int color) {
         if (w <= 0 || h <= 0) return;
-        if (r < 0.5f) { drawRect(ctx, x, y, w, h, color); return; }
-        // центральная часть
-        drawRect(ctx, x + r, y, w - 2 * r, h, color);
-        // боковые части
-        drawRect(ctx, x, y + r, r, h - 2 * r, color);
-        drawRect(ctx, x + w - r, y + r, r, h - 2 * r, color);
-        // углы: ступеньки по диагонали (r/2 ступень)
-        int steps = 2;
-        float step = r / steps;
-        for (int i = 0; i < steps; i++) {
-            float inset = r - (i + 1) * step;
-            float yy = y + i * step;
-            drawRect(ctx, x + r - inset, yy, inset * 2 + (w - 2 * r), step, color);
-            drawRect(ctx, x + r - inset, y + h - (i + 1) * step, inset * 2 + (w - 2 * r), step, color);
-        }
+        // шейдерный путь: ровные скругления вместо ступенчатых квадов
+        drawRoundedRectShader(ctx, x, y, w, h, Math.max(r, 0.5f),
+            color, color, color, color, 0.25f);
     }
 
 
@@ -231,6 +219,78 @@ public final class RenderUtil {
 
     private static ShaderUtil borderShader;
 
+    private static ShaderUtil cornersShader;
+    private static boolean cornersFailed;
+
+    /**
+     * Скруглённый прямоугольник с разными радиусами углов (rockstar squircle
+     * TL,TR,BR,BL — хотбар-панель 1,0,7,8). Радиусы в scaled-пикселях.
+     * При ошибке компиляции — fallback на равномерный радиус (средний).
+     */
+    public static void drawRoundedRectCorners(GameContext ctx, float x, float y, float w, float h,
+                                              float rTL, float rTR, float rBR, float rBL,
+                                              int c1, int c2, int c3, int c4, float smoothness) {
+        try {
+            if (cornersShader == null && !cornersFailed) {
+                cornersShader = new ShaderUtil(Shaders.VERT, Shaders.ROUND_CORNERS);
+                if (cornersShader.programId() == 0) {
+                    cornersFailed = true;
+                    cornersShader = null;
+                    utils.etc.Log.error("Render", "corners shader failed, fallback uniform", null);
+                }
+            }
+            if (cornersShader == null) {
+                float avg = (rTL + rTR + rBR + rBL) * 0.25f;
+                drawRoundedRectShader(ctx, x, y, w, h, avg, c1, c2, c3, c4, smoothness);
+                return;
+            }
+            float scale = GuiScale.get(ctx);
+            float ex = x * scale, ey = y * scale;
+            float ew = w * scale, eh = h * scale;
+            float cap = Math.min(ew, eh) / 2f;
+            float q1 = Math.min(rTL * scale, cap);
+            float q2 = Math.min(rTR * scale, cap);
+            float q3 = Math.min(rBR * scale, cap);
+            float q4 = Math.min(rBL * scale, cap);
+
+            int prevProgram = GL11.glGetInteger(GL_CURRENT_PROGRAM);
+
+            ShaderUtil sh = cornersShader;
+            sh.start();
+            sh.uniform4F("rect", ex, ey, ew, eh);
+            sh.uniform4F("radii", q1, q2, q3, q4);
+            sh.uniformF("RectSmoothness", smoothness * scale);
+            sh.uniformF("fbHeight", (float) ctx.fbHeight);
+            sh.uniform4F("color1",
+                ((c1 >> 16) & 0xFF) / 255f, ((c1 >> 8) & 0xFF) / 255f, (c1 & 0xFF) / 255f, ((c1 >> 24) & 0xFF) / 255f);
+            sh.uniform4F("color2",
+                ((c2 >> 16) & 0xFF) / 255f, ((c2 >> 8) & 0xFF) / 255f, (c2 & 0xFF) / 255f, ((c2 >> 24) & 0xFF) / 255f);
+            sh.uniform4F("color3",
+                ((c3 >> 16) & 0xFF) / 255f, ((c3 >> 8) & 0xFF) / 255f, (c3 & 0xFF) / 255f, ((c3 >> 24) & 0xFF) / 255f);
+            sh.uniform4F("color4",
+                ((c4 >> 16) & 0xFF) / 255f, ((c4 >> 8) & 0xFF) / 255f, (c4 & 0xFF) / 255f, ((c4 >> 24) & 0xFF) / 255f);
+
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glDisable(GL11.GL_TEXTURE_2D);
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+            GL11.glBegin(GL11.GL_QUADS);
+            GL11.glColor4f(1, 1, 1, 1);
+            GL11.glVertex2f(x, y);
+            GL11.glVertex2f(x, y + h);
+            GL11.glVertex2f(x + w, y + h);
+            GL11.glVertex2f(x + w, y);
+            GL11.glEnd();
+
+            GL11.glEnable(GL11.GL_TEXTURE_2D);
+            // blend НЕ выключаем (кэш GlStateManager, см. drawRoundedRectShader)
+            sh.stop();
+            GL20.glUseProgram(prevProgram); // безусловно: и 0, и чужую программу
+        } catch (Throwable t) {
+            utils.etc.Log.error("Render", "corners rect failed", t);
+        }
+    }
+
     private static ShaderUtil borderShader() {
         if (borderShader == null) {
             borderShader = new ShaderUtil(Shaders.VERT, Shaders.BORDER);
@@ -295,5 +355,52 @@ public final class RenderUtil {
 
     public static void scissorEnd() {
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
+    }
+
+    // ===== Depth-проба (общая для CustomSky/Ambience) =====
+
+    private static java.nio.FloatBuffer probeBuf;
+    private static long lastProbe;
+    private static boolean lastLive;
+    private static boolean probeLogged;
+
+    /**
+     * Живой ли depth в текущем FBO: проба 64x8 в центре (glReadPixels
+     * DEPTH_COMPONENT) раз в 3с; живой = есть значения < 1.0. Игра очищает
+     * depth перед рендером руки — после этого (и при MSAA aa>=2) проба мертва,
+     * и любые far-plane трюки (CustomSky/Ambience) рисовать нельзя.
+     * Нулевой буфер = шим не заполнил (как glGetFloat) — вердикт не меняем.
+     */
+    public static boolean depthProbeLive(int fbW, int fbH) {
+        long now = System.currentTimeMillis();
+        if (now - lastProbe < 3000L) return lastLive;
+        lastProbe = now;
+        try {
+            if (probeBuf == null) {
+                probeBuf = java.nio.ByteBuffer.allocateDirect(64 * 8 * 4)
+                    .order(java.nio.ByteOrder.nativeOrder()).asFloatBuffer();
+            }
+            probeBuf.clear();
+            GL11.glReadPixels(Math.max(0, fbW / 2 - 32), Math.max(0, fbH / 2 - 4),
+                64, 8, 0x1902 /*GL_DEPTH_COMPONENT*/, 0x1406 /*GL_FLOAT*/, probeBuf);
+            float min = 1f, max = 0f;
+            for (int i = 0; i < 64 * 8; i++) {
+                float v = probeBuf.get(i);
+                if (v < min) min = v;
+                if (v > max) max = v;
+            }
+            if (max <= 0f && min >= 1f) return lastLive; // буфер не заполнен
+            boolean live = min < 0.9999f;
+            if (!probeLogged) {
+                probeLogged = true;
+                Log.info("Render", "depth probe: " + (live ? "live" : "DEAD")
+                    + " min=" + min + " max=" + max
+                    + (live ? "" : " — far-plane эффекты (sky/tint) недоступны"));
+            }
+            lastLive = live;
+        } catch (Throwable t) {
+            Log.error("Render", "depth probe failed", t);
+        }
+        return lastLive;
     }
 }
