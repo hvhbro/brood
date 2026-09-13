@@ -44,10 +44,7 @@ cheats/
 newdump/
 jni/dll.backup/
 jni/build/dll/brood.dll
-tools/asmmapper/bin/
-tools/asmmapper/out*/
-tools/asmmapper/hs_err*.log
-tools/asmmapper/replay*.log
+tools/asmmapper/
 tools/javap_glw/
 tools/javap_iso*/
 tools/javap_shim/
