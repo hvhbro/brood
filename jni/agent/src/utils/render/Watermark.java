@@ -67,20 +67,25 @@ public final class Watermark {
         }
     }
 
-    /** Левый край ВСЕЙ группы (лейбла). Авто: остров+бары по центру,
-     *  лейбл слева с LABEL_GAP; драг задаёт posX = этот же левый край. */
+    /** Левый край ВСЕЙ группы (лейбла). Авто: остров СТРОГО по центру
+     *  экрана, лейбл и пинг-бары — симметричные «уши» (иначе coreGroup =
+     *  остров+бары тянул остров влево на (gap+bars)/2 и ватермарка казалась
+     *  кривой). Драг задаёт posX = этот же левый край. */
     public static float getX(int scaledWidth) {
         if (posX >= 0f) return posX;
         try {
-            float leftW = CustomFont.getWidth(leftLabel(), TEXT_SIZE, CustomFont.WM_FONT);
-            float coreGroup = coreGroupW();
-            return scaledWidth / 2f - coreGroup / 2f - LABEL_GAP - leftW;
+            MsdfFont f = CustomFont.WM_FONT;
+            float textW = CustomFont.getWidth("Brood", TEXT_SIZE, f);
+            float flowW = PAD_LEFT + textW + PAD_RIGHT;
+            float leftW = CustomFont.getWidth(leftLabel(), TEXT_SIZE, f);
+            return scaledWidth / 2f - flowW / 2f - LABEL_GAP - leftW;
         } catch (Throwable t) {
             return scaledWidth / 2f;
         }
     }
 
-    /** Остров + пинг-бары (без лейбла) — центрируемая часть. */
+    /** Остров + пинг-бары (без лейбла) — для getTotalW/хитректа. Центр
+     *  больше не от него, но ширина группы прежняя. */
     private static float coreGroupW() {
         MsdfFont f = CustomFont.WM_FONT;
         float textW = CustomFont.getWidth("Brood", TEXT_SIZE, f);
@@ -291,13 +296,12 @@ public final class Watermark {
 
             float flowW = PAD_LEFT + textW + PAD_RIGHT;
             float barsW = (PING_THRESHOLDS.length - 1) * BAR_STEP + BAR_W;
-            float coreGroup = flowW + BARS_GAP + barsW;   // остров + бары
+            float coreGroup = flowW + BARS_GAP + barsW;   // остров + бары (для totalW)
             float totalW = leftW + LABEL_GAP + coreGroup;
-            // posX>=0 (драг) = левый край лейбла; авто: остров+бары СТРОГО по
-            // центру экрана, лейбл пристаёт слева с тем же зазором, что был у
-            // часов (4px) — имя не расталкивает остров
+            // posX>=0 (драг) = левый край лейбла; авто: остров СТРОГО по
+            // центру экрана (flowW/2), лейбл/бары — «уши» (фикс кривого центра)
             float islandX = posX >= 0f ? posX + leftW + LABEL_GAP
-                                       : scaledWidth / 2f - coreGroup / 2f;
+                                       : scaledWidth / 2f - flowW / 2f;
             float islandY = posY;
             float labelX = islandX - LABEL_GAP - leftW;
 

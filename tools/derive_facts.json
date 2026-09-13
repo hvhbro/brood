@@ -1,0 +1,27 @@
+{
+ "facts": {
+  "playerClass": "lliiiIIIiI",
+  "entityRolesOk": false,
+  "aabbOk": true
+ },
+ "evidence": [
+  "player: inv=['rustme/lliiiIIIiI'] prof=['rustme/lIIlilliiI', 'rustme/lliiiIIIiI'] cap=['rustme/lliiiIIIiI'] both=['rustme/lliiiIIIiI']",
+  "player: base=rustme/iilIiiIIiI markedLivingBase=True kids=['rustme/IlIIiiIIiI', 'rustme/lliiiIIIiI', 'rustme/lliliiIIiI']",
+  "player: children(rustme/lliiiIIIiI)=['rustme/IiIiiIIIiI', 'rustme/iilliIliiI']",
+  "sound: loc=[] x=[] y=[] z=[] ctorFputs=True",
+  "overlay: factoryOrder=['ilIIiiillI', 'lllIiiillI', 'iIiliiillI', 'IIiliiillI', 'lIiliiillI', 'ililiiillI', 'IliliiillI', 'lliliiillI', 'iiIliiillI', 'IlIIiiillI', 'llIIiiillI', 'iilIiiillI', 'IilIiiillI', 'lilIiiillI', 'iIlIiiillI', 'IIlIiiillI', 'lIlIiiillI', 'illIiiillI', 'IllIiiillI', 'iiiliiillI', 'IiiliiillI', 'liiliiillI']",
+  "overlay: hotbarFactoryIdx=-1 mutable=None immutable=lllliiillI",
+  "time: live=['IlIlIlilII'] celestialReads={'ilIIIIiIil': ['illIlIiIil', 'lllliliIil']} setterWrites=['iillililII'] getterReads=['iillililII'] saveFields=0 saveHopCallers=['IiiIIIliiI.lIIiiiliII', 'iiillIliiI.ilIlllliII', 'iilIIilIiI.ilIiIiiiil', 'iliiIilIiI.ilIiIiiiil', 'iliiIilIiI.<init>']",
+  "entity setpos: [('IiiliiiiII', 'lIiilIiilI'), ('IiiIIiiiII', 'llIliliilI'), ('lIlIiiiiII', 'iiiiiliilI')] // setpos lIIIllIilI(DDDFF)V: ['lIiilIiilI', 'llIliliilI', 'iiiiiliilI']",
+  "entity prev: [('iiiIiiiiII', 'lllllIiilI'), ('lliliiiiII', 'liIiIIiilI'), ('IllIiiiiII', 'liiiIIiilI')] // T1=['lllllIiilI', 'liIiIIiilI', 'liiiIIiilI'] в ['lIIIllIilI(DDDFF)V', 'iIIllIiilI(DDDFF)V']",
+  "entity last: [('iIIiIiiiII', 'IIIIIIiilI'), ('liiiIiiiII', 'IliIiliilI'), ('IlIIiiiiII', 'IlillIiilI')] // T2=['IIIIIIiilI', 'IliIiliilI', 'IlillIiilI'] в ['lIIIllIilI(DDDFF)V']",
+  "entity roles: pos=['iIliiliilI', 'illiiliilI', 'liilIIiilI'] prev=['lilIiIiilI', 'IiliIIiilI', 'IiiiiliilI'] last=['llliIIiilI', 'IlIliIiilI', 'lIiIiliilI']",
+  "aabb: ctorPuts=['ilIlIIlIII', 'IiIlIIlIII', 'IIIlIIlIII', 'liIlIIlIII', 'lIIlIIlIII', 'iIIlIIlIII']"
+ ],
+ "stop": [
+  "sound-геттеры неоднозначны: loc=[] x=[] y=[] z=[] ctorFputs=True",
+  "overlay-цепочка не сошлась: hotbarFactoryIdx=-1 mutable=None immutable=lllliiillI widgetOk=True",
+  "worldtime-цепочка не сошлась: live=['IlIlIlilII'] celestialReads={'ilIIIIiIil': ['illIlIiIil', 'lllliliIil']} setterWrites=['iillililII'] getterReads=['iillililII'] saveFields=0 saveHopCallers=['IiiIIIliiI.lIIiiiliII', 'iiillIliiI.ilIlllliII', 'iilIIilIiI.ilIiIiiiil', 'iliiIilIiI.ilIiIiiiil', 'iliiIilIiI.<init>']",
+  "роли координат НЕ совпали с Esp: pos=['iIliiliilI', 'illiiliilI', 'liilIIiilI'] prev=['lilIiIiilI', 'IiliIIiilI', 'IiiiiliilI'] last=['llliIIiilI', 'IlIliIiilI', 'lIiIiliilI']"
+ ]
+}

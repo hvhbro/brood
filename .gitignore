@@ -1,44 +1,28 @@
-# === ЧУВСТВИТЕЛЬНОЕ / НЕВАЛЕЗИДНОЕ ===
 
-# Минидамп запущенной игры — 7.4GB. GitHub: жёсткий лимит 100MB на файл
-# (LFS — 2GB/file). Файл физически не может уехать на GitHub одним куском.
 rustme_*.dmp
 *.dmp
-
-# Кэш образов jvm.dll (приватный билд) + сторонний тул генерации атласов
 tools/cache/
 tools/msdf-atlas-gen/
-
-# Скомпилированные промежуточные артефакты (регенерируются build_dll.bat)
 jni/agent/build/
 jni/dll/src/agent_payload.h
+jni/dll/src/agent_payload.rs
+jni/dll/target/
 __pycache__/
-
-# javap-темп (копии классов дампа) и javap-диагностики (регенерируются jv.py)
 tools/javap_tmp*/
 tools/javap_tmp7/
 tools/javap_*.txt
-
-# CP-скан (регенерируется scan_all.py за минуту)
 tools/scan_db.json
 
-
-# Скомпилированные классы игры как jar (в dump/ они и так есть)
-tools/game_cp.jar
-tools/game_stubs.jar
+jni/agent/compile_stubs/build/
 dump/minecraft_FULL_DEOBF.jar
 
-# Декомпиляция игры (регенерируется из dump/ через CFR)
 tools/decomp/
 
-# Дамп конкурента (chtdump) — в репозиторий не едет
 chtdump/
 
-# Сторонние референс-клиенты (исходники, не наш код)
 kimiko/
 rockstar-client-src/
 
-# Скретч javap-дампы в корне tools/
 tools/javap_caps/
 tools/javap_lwjglx/
 tools/javap_srv/
@@ -49,9 +33,25 @@ tools/jt_lmb/
 tools/jt_ol/
 tools/mrgchk/
 
-# Скретч javap-дампы в корне tools/
+
 tools/_*.txt
 DashboardPlayerUiData
 
-# Лог сборки
 jni/dll/build_out.txt
+
+# === Локальные тяжёлые данные / артефакты (не едут на GitHub, лимит 100МБ/файл) ===
+cheats/
+newdump/
+jni/dll.backup/
+jni/build/dll/brood.dll
+jni/agent/libs/game_cp.jar
+tools/asmmapper/bin/
+tools/asmmapper/out*/
+tools/asmmapper/hs_err*.log
+tools/asmmapper/replay*.log
+tools/stubs_cls/
+tools/javap_glw/
+tools/javap_iso*/
+tools/javap_shim/
+tools/javap_sky*/
+tools/javap_tp/
